@@ -1,27 +1,23 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <h2>Charts here</h2>
+  <Chart :width="400" :height="300" :data="data">
+    <Bar dataKey="pv" />
+    <XAxis />
+  </Chart>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
+import { defineComponent } from 'vue'
+import data from '@/mockup/pages'
 
 export default defineComponent({
-  name: "App",
-  components: {
-    HelloWorld
+  name: 'App',
+  setup() {
+    return { data }
   }
-});
+})
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+@import './assets/main.css';
 </style>
