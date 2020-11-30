@@ -11,12 +11,12 @@ export default [
   },
   {
     name: 'Page C',
-    uv: 2000,
-    pv: 9800
+    uv: 3100,
+    pv: 30000
   },
   {
     name: 'Page D',
-    uv: 2780,
+    uv: 1000,
     pv: 3908
   },
   {

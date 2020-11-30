@@ -1,3 +1,5 @@
-export { default as Chart } from './core/Chart/index.vue'
-export { default as Bar } from './core/Bar/index.vue'
-export { default as XAxis } from './core/XAxis/index.vue'
+export { default as Chart } from './Chart/index.vue'
+export { default as Bar } from './Bar/index.vue'
+export { default as Line } from './Line/index.vue'
+export { default as Area } from './Area/index.vue'
+export { default as XAxis } from './XAxis/index.vue'
