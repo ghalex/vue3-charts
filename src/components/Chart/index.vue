@@ -9,6 +9,7 @@ import { computed, defineComponent, provide, ref, watch } from 'vue'
 import { Layer, Margin } from '@/types'
 import { scaleBand, scaleLinear } from 'd3-scale'
 import { extent } from 'd3-array'
+import { select } from 'd3-selection'
 
 export default defineComponent({
   name: 'Chart',
@@ -31,12 +32,18 @@ export default defineComponent({
     const yScale = ref(scaleLinear())
     const layers = ref<Layer[]>([])
     const allValues = ref([] as number[])
+    const hasXAxis = computed(() => {
+      return select(el.value).selectChild('.axis-x').size() > 0
+    })
+    const hasYAxis = computed(() => {
+      return select(el.value).selectChild('.axis-y').size() > 0
+    })
     const canvas = computed(() => {
       const res = {
-        x: props.margin.left,
+        x: props.margin.left + (hasYAxis.value ? 20 : 0),
         y: props.margin.top,
         width: props.width - props.margin.right,
-        height: props.height - props.margin.bottom
+        height: props.height - props.margin.bottom - (hasXAxis.value ? 20 : 0)
       }
 
       return res
@@ -44,31 +51,28 @@ export default defineComponent({
     const plane = computed(() => {
       return {
         data: data.value,
-        xScale: xScale.value,
-        yScale: yScale.value,
-        canvas: canvas.value,
-        addLayer: (layer: Layer) => {
-          layers.value = [...layers.value, layer]
-        }
+        canvas: canvas.value
       }
     })
 
     provide('plane', plane)
     provide('layers', layers)
+    provide('xScale', xScale)
+    provide('yScale', yScale)
 
     function updateRange() {
-      xScale.value = xScale.value.range([canvas.value.x, canvas.value.width])
-      yScale.value = yScale.value.rangeRound([canvas.value.height, canvas.value.y])
+      xScale.value = xScale.value.copy().range([canvas.value.x, canvas.value.width])
+      yScale.value = yScale.value.copy().rangeRound([canvas.value.height, canvas.value.y])
     }
 
     function updateDomain() {
       const xDomain = data.value.map((_, i) => i.toString())
       const yDomain = extent(allValues.value)
 
-      xScale.value = xScale.value.domain(xDomain)
+      xScale.value = xScale.value.copy().domain(xDomain)
 
       if (yDomain[0] !== undefined && yDomain[1] !== undefined) {
-        yScale.value = yScale.value.domain(yDomain)
+        yScale.value = yScale.value.copy().domain(yDomain)
       }
     }
 
@@ -81,7 +85,6 @@ export default defineComponent({
     )
 
     watch(layers, () => {
-      //updateDomain()
       let values: number[] = []
 
       for (const layer of layers.value) {

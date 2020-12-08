@@ -13,9 +13,8 @@
 </template>
 
 <script>
-import { defineComponent, watch } from 'vue'
+import { defineComponent } from 'vue'
 import { useLayer } from '@/hooks'
-import { ObjectId } from 'bson'
 
 export default defineComponent({
   name: 'Bar',
@@ -30,7 +29,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { rectangles } = useLayer({ id: new ObjectId().toHexString(), type: 'bar', dataKey: props.dataKey })
+    const { rectangles } = useLayer({ type: 'bar', dataKey: props.dataKey })
 
     return { rectangles }
   }

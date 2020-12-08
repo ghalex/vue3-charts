@@ -20,8 +20,7 @@ export interface Rectangle {
 }
 
 export interface Layer {
-  id: string
-  type: 'bar' | 'line'
+  type: 'bar' | 'line' | 'axis'
   dataKey: string
 }
 
@@ -34,8 +33,5 @@ export interface Canvas {
 
 export interface Plane {
   data: any[]
-  xScale: ScaleBand<string>
-  yScale: ScaleLinear<number, number>
   canvas: Canvas
-  addLayer: (layer: Layer) => void
 }

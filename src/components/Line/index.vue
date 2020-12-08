@@ -28,7 +28,6 @@ import { computed, defineComponent } from 'vue'
 import { line, curveLinear } from 'd3-shape'
 import { useLayer } from '@/hooks'
 import { Point } from '@/types'
-import { ObjectId } from 'bson'
 
 export default defineComponent({
   name: 'Line',
@@ -58,7 +57,7 @@ export default defineComponent({
       .y((p) => p.y)
       .curve(curveLinear)
 
-    const { points } = useLayer({ id: new ObjectId().toHexString(), type: 'line', dataKey: props.dataKey })
+    const { points } = useLayer({ type: 'line', dataKey: props.dataKey })
     const d = computed(() => buildLine(points.value))
     const dotProps = computed(() => ({
       stroke: props.stroke,
