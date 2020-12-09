@@ -5,9 +5,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, watch } from 'vue'
+import { computed, defineComponent } from 'vue'
 import { area, curveLinear } from 'd3-shape'
-import { useLayer, usePlane } from '@/hooks'
+import { useDataLayer, usePlane } from '@/hooks'
 import { Point } from '@/types'
 
 export default defineComponent({
@@ -23,13 +23,13 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { plane } = usePlane()
-    const { points } = useLayer({ type: 'line', dataKey: props.dataKey })
+    const { canvas } = usePlane()
+    const { points } = useDataLayer({ type: 'area', dataKey: props.dataKey })
     const buildArea = computed(() =>
       area<Point>()
         .curve(curveLinear)
         .x((p) => p.x)
-        .y0(() => plane.value.canvas.height)
+        .y0(() => canvas.value.height)
         .y1((p) => p.y)
     )
 

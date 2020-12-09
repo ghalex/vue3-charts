@@ -19,8 +19,10 @@ export interface Rectangle {
   height: number
 }
 
+export type LayerType = 'bar' | 'line' | 'area'
+
 export interface Layer {
-  type: 'bar' | 'line' | 'axis'
+  type: LayerType
   dataKey: string
 }
 

@@ -1,16 +1,14 @@
-import { Plane } from '@/types'
+import { Canvas } from '@/types'
 import { inject, ref, Ref } from 'vue'
 
-const emptyPlane: Plane = {
-  data: [],
-  canvas: { x: 0, y: 0, width: 600, height: 300 }
-}
-
 interface Return {
-  plane: Ref<Plane>
+  data: Ref<any[]>
+  canvas: Ref<Canvas>
 }
 
 export default (): Return => {
-  const plane = inject<Ref<Plane>>('plane', ref(emptyPlane))
-  return { plane }
+  const data = inject('data', ref<any[]>([]))
+  const canvas = inject('canvas', ref({ x: 0, y: 0, width: 600, height: 300 }))
+
+  return { data, canvas }
 }

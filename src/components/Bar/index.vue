@@ -14,7 +14,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { useLayer } from '@/hooks'
+import { useDataLayer } from '@/hooks'
 
 export default defineComponent({
   name: 'Bar',
@@ -29,7 +29,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { rectangles } = useLayer({ type: 'bar', dataKey: props.dataKey })
+    const { rectangles } = useDataLayer({ type: 'bar', dataKey: props.dataKey })
 
     return { rectangles }
   }

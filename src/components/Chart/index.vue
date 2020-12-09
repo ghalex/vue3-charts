@@ -5,11 +5,10 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, provide, ref, watch } from 'vue'
+import { computed, defineComponent, onMounted, provide, ref, watch } from 'vue'
 import { Layer, Margin } from '@/types'
 import { scaleBand, scaleLinear } from 'd3-scale'
 import { extent } from 'd3-array'
-import { select } from 'd3-selection'
 
 export default defineComponent({
   name: 'Chart',
@@ -25,38 +24,53 @@ export default defineComponent({
       default: []
     }
   },
-  setup(props) {
+  setup(props, { slots }) {
     const el = ref(null)
-    const data = computed(() => props.data)
+    const data = ref(props.data)
+    const layers = ref([] as Array<Layer>)
+    const layersData = ref([] as Array<number>)
     const xScale = ref(scaleBand())
     const yScale = ref(scaleLinear())
-    const layers = ref<Layer[]>([])
-    const allValues = ref([] as number[])
-    const hasXAxis = computed(() => {
-      return select(el.value).selectChild('.axis-x').size() > 0
-    })
-    const hasYAxis = computed(() => {
-      return select(el.value).selectChild('.axis-y').size() > 0
-    })
-    const canvas = computed(() => {
-      const res = {
-        x: props.margin.left + (hasYAxis.value ? 20 : 0),
-        y: props.margin.top,
-        width: props.width - props.margin.right,
-        height: props.height - props.margin.bottom - (hasXAxis.value ? 20 : 0)
+    const xAxis = computed(() => {
+      if (slots.default) {
+        const slot = slots.default().find((s: any) => s.type.name === 'XAxis')
+
+        if (slot) {
+          return {
+            name: 'xaxis',
+            dataKey: slot.props?.dataKey
+          }
+        }
       }
 
-      return res
-    })
-    const plane = computed(() => {
-      return {
-        data: data.value,
-        canvas: canvas.value
-      }
+      return undefined
     })
 
-    provide('plane', plane)
+    const yAxis = computed(() => {
+      if (slots.default) {
+        const slot = slots.default().find((s: any) => s.type.name === 'YAxis')
+        console.log(slot)
+        if (slot) {
+          return {
+            name: 'yaxis'
+          }
+        }
+      }
+
+      return undefined
+    })
+
+    const canvas = ref({
+      x: props.margin.left,
+      y: props.margin.top + 10,
+      width: props.width - props.margin.right,
+      height: props.height - props.margin.bottom
+    })
+
+    provide('data', data)
+    provide('canvas', canvas)
     provide('layers', layers)
+    provide('layersData', layersData)
     provide('xScale', xScale)
     provide('yScale', yScale)
 
@@ -66,8 +80,8 @@ export default defineComponent({
     }
 
     function updateDomain() {
-      const xDomain = data.value.map((_, i) => i.toString())
-      const yDomain = extent(allValues.value)
+      const xDomain = data.value.map((_: any, i: number) => i.toString())
+      const yDomain = extent(layersData.value)
 
       xScale.value = xScale.value.copy().domain(xDomain)
 
@@ -75,6 +89,31 @@ export default defineComponent({
         yScale.value = yScale.value.copy().domain(yDomain)
       }
     }
+
+    function updateLayerData() {
+      let values: number[] = []
+
+      for (const layer of layers.value) {
+        const layerData = data.value.map((d: any) => d[layer.dataKey])
+        values = values.concat(layerData)
+      }
+
+      layersData.value = Array.from(new Set(values))
+    }
+
+    watch(props, () => {
+      data.value = props.data
+      canvas.value = {
+        x: props.margin.left + (yAxis.value ? 40 : 0),
+        y: props.margin.top + 10,
+        width: props.width - props.margin.right,
+        height: props.height - props.margin.bottom - (xAxis.value ? 20 : 0)
+      }
+
+      updateLayerData()
+      updateDomain()
+      updateRange()
+    })
 
     watch(
       canvas,
@@ -85,15 +124,16 @@ export default defineComponent({
     )
 
     watch(layers, () => {
-      let values: number[] = []
-
-      for (const layer of layers.value) {
-        const layerData = data.value.map((d) => d[layer.dataKey])
-        values = values.concat(layerData)
-      }
-
-      allValues.value = Array.from(new Set(values))
+      updateLayerData()
       updateDomain()
+      // const xAxis = layers.value.find((l) => l.type === 'axis' && l.props.axis === 'x')
+      // if (xAxis) {
+      //   console.log('new canvas')
+      //   canvas.value = {
+      //     ...canvas.value,
+      //     height: props.height - props.margin.bottom - 20
+      //   }
+      // }
     })
 
     return { el }

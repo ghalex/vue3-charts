@@ -1,23 +1,23 @@
-import { computed, inject, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { Layer, Point, Rectangle } from '@/types'
 
 import usePlane from './usePlane'
 import useScales from './useScales'
+import useLayers from './useLayers'
 
 export default (layer: Layer): any => {
-  const { plane } = usePlane()
-  const { xScale, yScale } = useScales()
-
-  const layers = inject('layers', ref<Layer[]>([]))
-
-  const values = computed<number[]>(() => {
-    return plane.value.data.map((d) => d[layer.dataKey])
-  })
   const points = ref<Point[]>([])
   const rectangles = ref<Rectangle[]>([])
 
+  const { layers, addLayer } = useLayers()
+  const { data, canvas } = usePlane()
+  const { xScale, yScale } = useScales()
+
+  const values = computed<number[]>(() => {
+    return data.value.map((d) => d[layer.dataKey])
+  })
+
   function updatePoints() {
-    console.log(plane.value.canvas)
     points.value = values.value.map((d, i) => {
       const p: Point = {
         x: (xScale.value(i.toString()) || 0) + xScale.value.bandwidth() / 2,
@@ -40,7 +40,7 @@ export default (layer: Layer): any => {
         x: (xScale.value(i.toString()) || 0) + index * barWidth + gap / 2,
         y: yScale.value(d),
         width: barWidth,
-        height: plane.value.canvas.height - yScale.value(d)
+        height: canvas.value.height - yScale.value(d)
       }
 
       return r
@@ -48,18 +48,20 @@ export default (layer: Layer): any => {
   }
 
   watch(
-    layers,
+    [xScale, yScale],
     () => {
-      updatePoints()
-      if (layer.type === 'bar') {
-        updateRectangles()
+      if (data.value.length > 0) {
+        updatePoints()
+        if (layer.type === 'bar') {
+          updateRectangles()
+        }
       }
     },
     { immediate: true }
   )
 
   onMounted(() => {
-    layers.value = [...layers.value, layer]
+    addLayer(layer)
   })
 
   return {

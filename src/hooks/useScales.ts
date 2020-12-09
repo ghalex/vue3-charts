@@ -1,18 +1,9 @@
 import { scaleBand, scaleLinear } from 'd3-scale'
-import { inject, ref, watch } from 'vue'
-
-const defaultScales = {
-  xScale: ref(scaleBand()),
-  yScale: ref(scaleLinear())
-}
+import { inject, ref } from 'vue'
 
 export default (): any => {
-  const xScale = inject('xScale', defaultScales.xScale)
-  const yScale = inject('yScale', defaultScales.yScale)
-
-  // watch(xScale, () => {
-  //   console.log('scale change')
-  // })
+  const xScale = inject('xScale', ref(scaleBand()))
+  const yScale = inject('yScale', ref(scaleLinear()))
 
   return { xScale, yScale }
 }
