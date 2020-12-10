@@ -1,5 +1,5 @@
 <template>
-  <g class="layer-line">
+  <Layer type="line" :dataKey="dataKey">
     <path
       :d="d"
       fill="none"
@@ -20,17 +20,19 @@
         :cy="c.y"
       />
     </g>
-  </g>
+  </Layer>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
 import { line, curveLinear } from 'd3-shape'
-import { useDataLayer } from '@/hooks'
+import { usePoints } from '@/hooks'
 import { Point } from '@/types'
+import Layer from '../Layer/index.vue'
 
 export default defineComponent({
   name: 'Line',
+  components: { Layer },
   props: {
     stroke: {
       type: String,
@@ -57,7 +59,7 @@ export default defineComponent({
       .y((p) => p.y)
       .curve(curveLinear)
 
-    const { points } = useDataLayer({ type: 'line', dataKey: props.dataKey })
+    const { points } = usePoints(props.dataKey)
     const d = computed(() => buildLine(points.value))
     const dotProps = computed(() => ({
       stroke: props.stroke,

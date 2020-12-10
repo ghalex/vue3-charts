@@ -1,5 +1,6 @@
 <template>
-  <g class="layer-bar">
+  <Layer type="bar" :dataKey="dataKey">
+    <text v-if="rectangles.length === 0">No Data</text>
     <rect
       v-for="(bar, i) in rectangles"
       :key="i"
@@ -9,15 +10,17 @@
       :height="bar.height"
       :fill="fill"
     />
-  </g>
+  </Layer>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
-import { useDataLayer } from '@/hooks'
+import { useRectangles } from '@/hooks'
+import Layer from '../Layer/index.vue'
 
 export default defineComponent({
   name: 'Bar',
+  components: { Layer },
   props: {
     fill: {
       type: String,
@@ -29,8 +32,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { rectangles } = useDataLayer({ type: 'bar', dataKey: props.dataKey })
-
+    const { rectangles } = useRectangles(props.dataKey)
     return { rectangles }
   }
 })

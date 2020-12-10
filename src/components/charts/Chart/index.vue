@@ -1,11 +1,13 @@
 <template>
-  <svg class="chart" :width="width" :height="height" :viewBox="`0 0 ${width} ${height}`" ref="el">
-    <slot />
-  </svg>
+  <div class="chart">
+    <svg :width="width" :height="height" :viewBox="`0 0 ${width} ${height}`" ref="el">
+      <slot />
+    </svg>
+  </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, provide, ref, watch } from 'vue'
+import { computed, defineComponent, provide, ref, watch } from 'vue'
 import { Layer, Margin } from '@/types'
 import { scaleBand, scaleLinear } from 'd3-scale'
 import { extent } from 'd3-array'
@@ -45,11 +47,9 @@ export default defineComponent({
 
       return undefined
     })
-
     const yAxis = computed(() => {
       if (slots.default) {
         const slot = slots.default().find((s: any) => s.type.name === 'YAxis')
-        console.log(slot)
         if (slot) {
           return {
             name: 'yaxis'
@@ -85,7 +85,7 @@ export default defineComponent({
 
       xScale.value = xScale.value.copy().domain(xDomain)
 
-      if (yDomain[0] !== undefined && yDomain[1] !== undefined) {
+      if (yDomain && yDomain[0] !== undefined && yDomain[1] !== undefined) {
         yScale.value = yScale.value.copy().domain(yDomain)
       }
     }
@@ -126,14 +126,6 @@ export default defineComponent({
     watch(layers, () => {
       updateLayerData()
       updateDomain()
-      // const xAxis = layers.value.find((l) => l.type === 'axis' && l.props.axis === 'x')
-      // if (xAxis) {
-      //   console.log('new canvas')
-      //   canvas.value = {
-      //     ...canvas.value,
-      //     height: props.height - props.margin.bottom - 20
-      //   }
-      // }
     })
 
     return { el }
@@ -141,8 +133,9 @@ export default defineComponent({
 })
 </script>
 
-<style>
-svg {
-  border: 1px solid red;
+<style scoped>
+.chart {
+  display: flex;
+  padding: 4px;
 }
 </style>

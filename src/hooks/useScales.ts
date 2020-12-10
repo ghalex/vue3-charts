@@ -1,7 +1,12 @@
-import { scaleBand, scaleLinear } from 'd3-scale'
-import { inject, ref } from 'vue'
+import { ScaleBand, scaleBand, ScaleLinear, scaleLinear } from 'd3-scale'
+import { inject, Ref, ref } from 'vue'
 
-export default (): any => {
+interface Return {
+  xScale: Ref<ScaleBand<string>>
+  yScale: Ref<ScaleLinear<number, number>>
+}
+
+export default (): Return => {
   const xScale = inject('xScale', ref(scaleBand()))
   const yScale = inject('yScale', ref(scaleLinear()))
 

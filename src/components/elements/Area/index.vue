@@ -1,17 +1,19 @@
 <template>
-  <g class="layer-area">
+  <Layer type="area" :dataKey="dataKey">
     <path :d="d" :fill="fill" :stroke="none" opacity="0.3" />
-  </g>
+  </Layer>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
 import { area, curveLinear } from 'd3-shape'
-import { useDataLayer, usePlane } from '@/hooks'
+import { usePlane, usePoints } from '@/hooks'
+import Layer from '../Layer/index.vue'
 import { Point } from '@/types'
 
 export default defineComponent({
   name: 'Area',
+  components: { Layer },
   props: {
     fill: {
       type: String,
@@ -24,7 +26,7 @@ export default defineComponent({
   },
   setup(props) {
     const { canvas } = usePlane()
-    const { points } = useDataLayer({ type: 'area', dataKey: props.dataKey })
+    const { points } = usePoints(props.dataKey)
     const buildArea = computed(() =>
       area<Point>()
         .curve(curveLinear)

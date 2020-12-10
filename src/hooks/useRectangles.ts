@@ -1,37 +1,24 @@
-import { computed, onMounted, ref, watch } from 'vue'
-import { Layer, Point, Rectangle } from '@/types'
+import { computed, ref, watch } from 'vue'
+import { Rectangle } from '@/types'
 
 import usePlane from './usePlane'
 import useScales from './useScales'
 import useLayers from './useLayers'
 
-export default (layer: Layer): any => {
-  const points = ref<Point[]>([])
+export default (dataKey: string): any => {
   const rectangles = ref<Rectangle[]>([])
-
-  const { layers, addLayer } = useLayers()
   const { data, canvas } = usePlane()
   const { xScale, yScale } = useScales()
+  const { layers } = useLayers()
 
   const values = computed<number[]>(() => {
-    return data.value.map((d) => d[layer.dataKey])
+    return data.value.map((d) => d[dataKey])
   })
-
-  function updatePoints() {
-    points.value = values.value.map((d, i) => {
-      const p: Point = {
-        x: (xScale.value(i.toString()) || 0) + xScale.value.bandwidth() / 2,
-        y: yScale.value(d)
-      }
-
-      return p
-    })
-  }
 
   function updateRectangles() {
     const gap = 10
     const barLayers = layers.value.filter((l) => l.type === 'bar')
-    const index = barLayers.findIndex((l) => l.dataKey === layer.dataKey && l.type === layer.type)
+    const index = barLayers.findIndex((l) => l.dataKey === dataKey)
     const maxWidth = xScale.value.bandwidth() - gap
     const barWidth = barLayers.length > 0 ? maxWidth / barLayers.length : maxWidth
 
@@ -51,22 +38,13 @@ export default (layer: Layer): any => {
     [xScale, yScale],
     () => {
       if (data.value.length > 0) {
-        updatePoints()
-        if (layer.type === 'bar') {
-          updateRectangles()
-        }
+        updateRectangles()
       }
     },
     { immediate: true }
   )
 
-  onMounted(() => {
-    addLayer(layer)
-  })
-
   return {
-    points,
-    rectangles,
-    values
+    rectangles
   }
 }
