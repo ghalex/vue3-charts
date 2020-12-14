@@ -16,7 +16,7 @@
       <Grid />
       <Bar dataKey="uv" fill="#82ca9d" />
       <Bar dataKey="pv" fill="#8884d8" />
-      <!-- <Line dataKey="uv" stroke="red" /> -->
+      <Line dataKey="uv" stroke="purple" />
       <Tooltip />
       <XAxis />
       <YAxis />

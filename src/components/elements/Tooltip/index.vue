@@ -3,14 +3,14 @@
     class="tooltip"
     :style="{
       top: canvas.y + 'px',
-      left: pos.x + 4 + 'px'
+      left: position.x + 4 + 'px'
     }"
     v-if="show"
   >
     <div
       class="tooltip-content"
       :style="{
-        top: pos.y + 'px',
+        top: position.y + 'px',
         transform: `translateX(${isRight ? '-100%' : 0})`,
         left: 5
       }"
@@ -43,16 +43,12 @@ export default defineComponent({
   props: {},
   setup() {
     const el = ref(null)
-    const { data, canvas } = usePlane()
-    const { pos, payload, isMouseOver } = useTooltip()
-    const show = computed(() => isMouseOver.value && data.value.length)
+    const { data, canvas, isMouseOver } = usePlane()
+    const { position, payload } = useTooltip()
+    const show = computed(() => isMouseOver.value && payload.value && data.value.length)
 
     const isRight = computed(() => {
-      return pos.value.x >= canvas.value.width / 2
-    })
-
-    const width = computed(() => {
-      return el.value?.offsetWidth || 0
+      return position.value.x >= (canvas.value.width / 4) * 3
     })
 
     const items = computed(() => {
@@ -61,7 +57,7 @@ export default defineComponent({
       })
     })
 
-    return { el, show, canvas, pos, items, width, isRight, isMouseOver }
+    return { el, show, canvas, position, items, isRight }
   }
 })
 </script>
@@ -85,6 +81,8 @@ export default defineComponent({
   background-color: white;
   padding: 8px;
   text-align: left;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 .tooltip-right {

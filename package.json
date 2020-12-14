@@ -1,6 +1,6 @@
 {
   "name": "vue3-charts",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "main": "./dist/vue3-charts.common.js",
   "scripts": {

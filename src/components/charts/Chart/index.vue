@@ -1,6 +1,13 @@
 <template>
   <div class="chart">
-    <svg :width="width" :height="height" :viewBox="`0 0 ${width} ${height}`" ref="el" @mousemove="onMouseMove">
+    <svg
+      :width="width"
+      :height="height"
+      :viewBox="`0 0 ${width} ${height}`"
+      ref="el"
+      @mousemove="onMouseMove"
+      @mouseout="onMouseOut"
+    >
       <slot />
     </svg>
     <slot name="tooltip">
@@ -10,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, provide, ref, watch } from 'vue'
+import { computed, defineComponent, provide, ref, watch } from 'vue'
 import { Layer, Margin } from '@/types'
 import { scaleBand, scaleLinear } from 'd3-scale'
 import { extent } from 'd3-array'
@@ -37,8 +44,9 @@ export default defineComponent({
     const layersData = ref([] as Array<number>)
     const xScale = ref(scaleBand())
     const yScale = ref(scaleLinear())
-    const mouse = ref({ x: 0, y: 0 })
-    const selectedX = ref(-1)
+    const mousePos = ref({ x: 0, y: 0 })
+    const mouseIdx = ref({ x: 0, y: 0 })
+    const isMouseOver = ref(false)
 
     const xAxis = computed(() => {
       if (slots.default) {
@@ -81,6 +89,9 @@ export default defineComponent({
     provide('layersData', layersData)
     provide('xScale', xScale)
     provide('yScale', yScale)
+    provide('mousePos', mousePos)
+    provide('mouseIdx', mouseIdx)
+    provide('isMouseOver', isMouseOver)
 
     function updateRange() {
       xScale.value = xScale.value.copy().range([canvas.value.x, canvas.value.width])
@@ -109,11 +120,19 @@ export default defineComponent({
       layersData.value = Array.from(new Set(values))
     }
 
-    function onMouseMove(e: any) {
-      mouse.value = { x: pointer(e)[0], y: pointer(e)[1] }
-      selectedX.value = Math.round(mouse.value.x / xScale.value.bandwidth()) - 1
+    function onMouseOut() {
+      mouseIdx.value = { x: -1, y: 0 }
+      isMouseOver.value = false
+    }
 
-      console.log(selectedX)
+    function onMouseMove(e: any) {
+      mousePos.value = { x: pointer(e)[0], y: pointer(e)[1] }
+      mouseIdx.value = {
+        x: Math.round(mousePos.value.x / xScale.value.bandwidth()) - 1,
+        y: pointer(e)[1]
+      }
+
+      isMouseOver.value = true
     }
 
     watch(props, () => {
@@ -143,7 +162,7 @@ export default defineComponent({
       updateDomain()
     })
 
-    return { el, onMouseMove }
+    return { el, onMouseMove, onMouseOut }
   }
 })
 </script>

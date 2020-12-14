@@ -10,10 +10,10 @@
     />
     <g v-if="dot">
       <circle
-        :fill="dotProps.fill"
-        :stroke="dotProps.stroke"
+        :fill="i === mouseIdx.x ? dotActiveProps.fill : dotProps.fill"
+        :stroke="i === mouseIdx.x ? dotActiveProps.stroke : dotProps.stroke"
         :stroke-width="dotProps.strokeWidth"
-        :r="dotProps.r"
+        :r="i === mouseIdx.x ? dotActiveProps.r : dotProps.r"
         v-for="(c, i) in points"
         :key="i"
         :cx="c.x"
@@ -26,7 +26,7 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
 import { line, curveLinear, curveStep, curveNatural, curveMonotoneX } from 'd3-shape'
-import { usePoints } from '@/hooks'
+import { usePlane, usePoints } from '@/hooks'
 import { Point } from '@/types'
 import Layer from '../Layer/index.vue'
 
@@ -49,7 +49,10 @@ export default defineComponent({
       })
     },
     activeDot: {
-      type: Object
+      type: Object,
+      default: () => ({
+        r: 5
+      })
     },
     dataKey: {
       type: String,
@@ -73,6 +76,7 @@ export default defineComponent({
       .y((p) => p.y)
       .curve(lineType[props.type])
 
+    const { mouseIdx } = usePlane()
     const { points } = usePoints(props.dataKey)
     const d = computed(() => buildLine(points.value))
     const dotProps = computed(() => ({
@@ -83,7 +87,12 @@ export default defineComponent({
       ...props.dot
     }))
 
-    return { d, points, dotProps }
+    const dotActiveProps = computed(() => ({
+      ...dotProps.value,
+      ...props.activeDot
+    }))
+
+    return { d, points, mouseIdx, dotProps, dotActiveProps }
   }
 })
 </script>
