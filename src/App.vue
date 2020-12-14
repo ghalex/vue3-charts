@@ -3,19 +3,26 @@
   <div class="layout">
     <Chart :width="400" :height="350" :data="data" :margin="margin">
       <Grid />
-      <Line dataKey="pv" fill="red" />
-      <Area dataKey="pv" fill="blue" />
-      <Line dataKey="uv" stroke="red" />
+      <Line type="monotone" dataKey="pv" fill="red" />
+      <Area type="monotone" dataKey="pv" fill="blue" />
+      <Line type="monotone" dataKey="uv" stroke="red" />
       <XAxis />
       <YAxis />
+      <template #tooltip>
+        <Tooltip />
+      </template>
     </Chart>
     <Chart class="ml-2" :width="400" :height="300" :data="data" :margin="margin">
       <Grid />
       <Bar dataKey="uv" fill="#82ca9d" />
       <Bar dataKey="pv" fill="#8884d8" />
-      <Line dataKey="uv" stroke="red" />
+      <!-- <Line dataKey="uv" stroke="red" /> -->
+      <Tooltip />
       <XAxis />
       <YAxis />
+      <template #tooltip>
+        <Tooltip />
+      </template>
     </Chart>
   </div>
   <div>

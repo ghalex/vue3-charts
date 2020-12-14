@@ -1,5 +1,5 @@
 <template>
-  <Layer type="line" :dataKey="dataKey">
+  <Layer type="line" :dataKey="dataKey" :color="stroke">
     <path
       :d="d"
       fill="none"
@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
-import { line, curveLinear } from 'd3-shape'
+import { line, curveLinear, curveStep, curveNatural, curveMonotoneX } from 'd3-shape'
 import { usePoints } from '@/hooks'
 import { Point } from '@/types'
 import Layer from '../Layer/index.vue'
@@ -48,16 +48,30 @@ export default defineComponent({
         r: 3
       })
     },
+    activeDot: {
+      type: Object
+    },
     dataKey: {
       type: String,
       default: 'value'
+    },
+    type: {
+      type: String as () => 'normal' | 'step' | 'natural' | 'monotone',
+      default: () => 'normal'
     }
   },
   setup(props) {
+    const lineType = {
+      normal: curveLinear,
+      natural: curveNatural,
+      step: curveStep,
+      monotone: curveMonotoneX
+    }
+
     const buildLine = line<Point>()
       .x((p) => p.x)
       .y((p) => p.y)
-      .curve(curveLinear)
+      .curve(lineType[props.type])
 
     const { points } = usePoints(props.dataKey)
     const d = computed(() => buildLine(points.value))

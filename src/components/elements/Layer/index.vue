@@ -19,6 +19,9 @@ export default defineComponent({
     dataKey: {
       type: String,
       default: 'value'
+    },
+    color: {
+      type: String
     }
   },
   setup(props) {
@@ -27,7 +30,10 @@ export default defineComponent({
     onMounted(() => {
       addLayer({
         type: props.type,
-        dataKey: props.dataKey
+        dataKey: props.dataKey,
+        props: {
+          color: props.color || 'black'
+        }
       })
     })
     return {}

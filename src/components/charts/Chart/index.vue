@@ -1,16 +1,20 @@
 <template>
   <div class="chart">
-    <svg :width="width" :height="height" :viewBox="`0 0 ${width} ${height}`" ref="el">
+    <svg :width="width" :height="height" :viewBox="`0 0 ${width} ${height}`" ref="el" @mousemove="onMouseMove">
       <slot />
     </svg>
+    <slot name="tooltip">
+      <div>tooltip here</div>
+    </slot>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, provide, ref, watch } from 'vue'
+import { computed, defineComponent, onMounted, provide, ref, watch } from 'vue'
 import { Layer, Margin } from '@/types'
 import { scaleBand, scaleLinear } from 'd3-scale'
 import { extent } from 'd3-array'
+import { pointer } from 'd3-selection'
 
 export default defineComponent({
   name: 'Chart',
@@ -33,6 +37,9 @@ export default defineComponent({
     const layersData = ref([] as Array<number>)
     const xScale = ref(scaleBand())
     const yScale = ref(scaleLinear())
+    const mouse = ref({ x: 0, y: 0 })
+    const selectedX = ref(-1)
+
     const xAxis = computed(() => {
       if (slots.default) {
         const slot = slots.default().find((s: any) => s.type.name === 'XAxis')
@@ -67,6 +74,7 @@ export default defineComponent({
       height: props.height - props.margin.bottom
     })
 
+    provide('chart', el)
     provide('data', data)
     provide('canvas', canvas)
     provide('layers', layers)
@@ -101,6 +109,13 @@ export default defineComponent({
       layersData.value = Array.from(new Set(values))
     }
 
+    function onMouseMove(e: any) {
+      mouse.value = { x: pointer(e)[0], y: pointer(e)[1] }
+      selectedX.value = Math.round(mouse.value.x / xScale.value.bandwidth()) - 1
+
+      console.log(selectedX)
+    }
+
     watch(props, () => {
       data.value = props.data
       canvas.value = {
@@ -128,7 +143,7 @@ export default defineComponent({
       updateDomain()
     })
 
-    return { el }
+    return { el, onMouseMove }
   }
 })
 </script>
@@ -137,5 +152,6 @@ export default defineComponent({
 .chart {
   display: flex;
   padding: 4px;
+  position: relative;
 }
 </style>

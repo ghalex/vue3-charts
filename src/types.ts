@@ -24,6 +24,7 @@ export type LayerType = 'bar' | 'line' | 'area'
 export interface Layer {
   type: LayerType
   dataKey: string
+  props: any
 }
 
 export interface Canvas {

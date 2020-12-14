@@ -1,5 +1,5 @@
 <template>
-  <Layer type="bar" :dataKey="dataKey">
+  <Layer type="bar" :dataKey="dataKey" :color="fill">
     <text v-if="rectangles.length === 0">No Data</text>
     <rect
       v-for="(bar, i) in rectangles"
