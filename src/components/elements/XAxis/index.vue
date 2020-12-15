@@ -14,6 +14,10 @@ export default defineComponent({
     dataKey: {
       type: String,
       default: 'name'
+    },
+    domain: {
+      type: Object as () => [string, string],
+      default: () => ['dataMin', 'dataMax']
     }
   },
   setup(props) {
@@ -35,6 +39,7 @@ export default defineComponent({
     }
 
     watch(xScale, () => drawAxis())
+
     return { el, height }
   }
 })

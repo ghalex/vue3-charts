@@ -20,7 +20,7 @@
         <!-- <div><b>Page 1</b></div> -->
         <div v-for="(item, i) in items" :key="i" :style="{ color: item.color }">
           <b>{{ item.key }}</b
-          >: {{ item.value }}
+          >: {{ formatNumber(item.value) }}
         </div>
       </div>
     </div>
@@ -36,16 +36,23 @@
 <script>
 import { computed, defineComponent, ref } from 'vue'
 import { usePlane, useTooltip } from '@/hooks'
+import { format } from 'd3-format'
 
 export default defineComponent({
   name: 'Tooltip',
   components: {},
-  props: {},
-  setup() {
+  props: {
+    format: {
+      type: String,
+      default: '(0,.0f'
+    }
+  },
+  setup(props) {
     const el = ref(null)
     const { data, canvas, isMouseOver } = usePlane()
     const { position, payload } = useTooltip()
     const show = computed(() => isMouseOver.value && payload.value && data.value.length)
+    const formatNumber = computed(() => format(props.format))
 
     const isRight = computed(() => {
       return position.value.x >= (canvas.value.width / 4) * 3
@@ -57,7 +64,7 @@ export default defineComponent({
       })
     })
 
-    return { el, show, canvas, position, items, isRight }
+    return { el, show, canvas, formatNumber, position, items, isRight }
   }
 })
 </script>

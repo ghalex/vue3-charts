@@ -8,10 +8,11 @@
       <Line type="monotone" dataKey="uv" stroke="red" />
       <XAxis />
       <YAxis />
-      <template #tooltip>
-        <Tooltip />
+      <template #extra>
+        <Tooltip format=",.0f" />
       </template>
     </Chart>
+
     <Chart class="ml-2" :width="400" :height="300" :data="data" :margin="margin">
       <Grid />
       <Bar dataKey="uv" fill="#82ca9d" />
@@ -19,8 +20,8 @@
       <Line dataKey="uv" stroke="purple" />
       <Tooltip />
       <XAxis />
-      <YAxis />
-      <template #tooltip>
+      <YAxis :domain="['0', 'dataMax + 2000']" />
+      <template #extra>
         <Tooltip />
       </template>
     </Chart>

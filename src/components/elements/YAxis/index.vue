@@ -10,9 +10,15 @@ import { usePlane, useScales } from '@/hooks'
 
 export default defineComponent({
   name: 'YAxis',
-  setup() {
+  props: {
+    domain: {
+      type: Object as () => [string, string],
+      default: () => ['dataMin', 'dataMax']
+    }
+  },
+  setup(props) {
     const el = ref(null)
-    const { canvas, data } = usePlane()
+    const { canvas, data, domain } = usePlane()
     const { yScale } = useScales()
     const left = computed(() => {
       return canvas.value.x
@@ -26,6 +32,13 @@ export default defineComponent({
     }
 
     watch(yScale, () => drawAxis())
+    watch(
+      props,
+      () => {
+        domain.value = props.domain
+      },
+      { immediate: true }
+    )
 
     return { el, left }
   }

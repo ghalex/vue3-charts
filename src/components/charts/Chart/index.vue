@@ -10,9 +10,7 @@
     >
       <slot />
     </svg>
-    <slot name="tooltip">
-      <div>tooltip here</div>
-    </slot>
+    <slot name="extra" />
   </div>
 </template>
 
@@ -47,6 +45,7 @@ export default defineComponent({
     const mousePos = ref({ x: 0, y: 0 })
     const mouseIdx = ref({ x: 0, y: 0 })
     const isMouseOver = ref(false)
+    const domain = ref(['dataMin', 'dataMax'])
 
     const xAxis = computed(() => {
       if (slots.default) {
@@ -84,6 +83,7 @@ export default defineComponent({
 
     provide('chart', el)
     provide('data', data)
+    provide('domain', domain)
     provide('canvas', canvas)
     provide('layers', layers)
     provide('layersData', layersData)
@@ -100,9 +100,20 @@ export default defineComponent({
 
     function updateDomain() {
       const xDomain = data.value.map((_: any, i: number) => i.toString())
-      const yDomain = extent(layersData.value)
-
       xScale.value = xScale.value.copy().domain(xDomain)
+
+      const [dataMin, dataMax] = extent(layersData.value)
+      const yMin = eval(`
+        let dataMin = ${dataMin || 0}
+        ${domain.value[0]}
+      `)
+
+      const yMax = eval(`
+        let dataMax = ${dataMax || 0}
+        ${domain.value[1]}
+      `)
+
+      const yDomain = [yMin, yMax]
 
       if (yDomain && yDomain[0] !== undefined && yDomain[1] !== undefined) {
         yScale.value = yScale.value.copy().domain(yDomain)
@@ -159,6 +170,10 @@ export default defineComponent({
 
     watch(layers, () => {
       updateLayerData()
+      updateDomain()
+    })
+
+    watch(domain, () => {
       updateDomain()
     })
 
