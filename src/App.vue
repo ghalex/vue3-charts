@@ -8,7 +8,7 @@
       <Line type="monotone" dataKey="uv" stroke="red" />
       <XAxis />
       <YAxis />
-      <template #extra>
+      <template #widgets>
         <Tooltip format=",.0f" />
       </template>
     </Chart>
@@ -21,7 +21,7 @@
       <Tooltip />
       <XAxis />
       <YAxis :domain="['0', 'dataMax + 2000']" />
-      <template #extra>
+      <template #widgets>
         <Tooltip />
       </template>
     </Chart>

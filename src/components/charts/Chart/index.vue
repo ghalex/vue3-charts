@@ -10,7 +10,7 @@
     >
       <slot />
     </svg>
-    <slot name="extra" />
+    <slot name="widgets" />
   </div>
 </template>
 
