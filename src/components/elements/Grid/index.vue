@@ -1,5 +1,12 @@
 <template>
-  <g v-if="data.length" class="layer-grid" stroke="black" stroke-opacity="0.15" stroke-width="1" stroke-dasharray="3,3">
+  <g
+    v-if="data.length"
+    class="layer-grid"
+    stroke="black"
+    stroke-opacity="0.15"
+    stroke-width="1"
+    :stroke-dasharray="strokeDasharray"
+  >
     <g class="grid-x">
       <line v-for="(y, i) in xLines" :key="i" :x1="canvas.x" :y1="y" :x2="canvas.width" :y2="y" />
       <!-- <line :x1="canvas.x" :y1="canvas.y" :x2="canvas.width" :y2="canvas.y" /> -->
@@ -19,8 +26,10 @@ import { nth } from 'ramda'
 export default defineComponent({
   name: 'Grid',
   props: {
-    strokeDasharray: String,
-    default: () => '3 3'
+    strokeDasharray: {
+      type: String,
+      default: () => '3 3'
+    }
   },
   setup() {
     const { data, canvas } = usePlane()

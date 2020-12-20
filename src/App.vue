@@ -2,10 +2,12 @@
   <h2>Charts here</h2>
   <div class="layout">
     <Chart :width="400" :height="350" :data="data" :margin="margin">
-      <Grid />
+      <Grid strokeDasharray="3,5" />
       <Line type="monotone" dataKey="pv" fill="red" />
       <Area type="monotone" dataKey="pv" fill="blue" />
       <Line type="monotone" dataKey="uv" stroke="red" />
+      <YMarker :value="3000" color="green" label="min" />
+      <YMarker :value="6000" color="blue" label="max" />
       <XAxis />
       <YAxis />
       <template #widgets>
