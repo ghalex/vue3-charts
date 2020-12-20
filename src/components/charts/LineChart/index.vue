@@ -142,10 +142,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style scoped>
-.chart {
-  border: 1px solid red;
-  padding: 4px;
-}
-</style>

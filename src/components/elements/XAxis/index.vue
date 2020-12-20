@@ -38,7 +38,7 @@ export default defineComponent({
       }
     }
 
-    watch(xScale, () => drawAxis())
+    watch([xScale, canvas], () => drawAxis())
 
     return { el, height }
   }

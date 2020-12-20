@@ -2,19 +2,18 @@
   <h2>Charts here</h2>
   <div class="layout">
     <Chart :width="400" :height="350" :data="data" :margin="margin">
-      <!-- <Grid /> -->
+      <Grid />
       <Line type="monotone" dataKey="pv" fill="red" />
-      <!-- <XAxis /> -->
-      <!-- <Area type="monotone" dataKey="pv" fill="blue" />
+      <Area type="monotone" dataKey="pv" fill="blue" />
       <Line type="monotone" dataKey="uv" stroke="red" />
-      
+      <XAxis />
       <YAxis />
       <template #widgets>
         <Tooltip format=",.0f" />
-      </template> -->
+      </template>
     </Chart>
 
-    <Chart class="ml-2" :width="400" :height="300" :data="data" :margin="margin">
+    <!-- <Chart class="ml-2" :width="400" :height="300" :data="data" :margin="margin">
       <Grid />
       <Bar dataKey="uv" fill="#82ca9d" />
       <Bar dataKey="pv" fill="#8884d8" />
@@ -25,7 +24,7 @@
       <template #widgets>
         <Tooltip />
       </template>
-    </Chart>
+    </Chart> -->
   </div>
   <div>
     <button @click="setData">Data 1</button>
@@ -43,7 +42,7 @@ export default defineComponent({
   name: 'App',
   setup() {
     const margin = { top: 0, right: 0, bottom: 0, left: 0 }
-    const data = ref([] as any[])
+    const data = ref(mockupData)
 
     function setData() {
       data.value = mockupData

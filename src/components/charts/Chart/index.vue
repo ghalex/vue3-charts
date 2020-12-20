@@ -1,5 +1,5 @@
 <template>
-  <div class="chart">
+  <div class="chart" :style="{ display: 'flex', padding: '4px', position: 'relative' }">
     <svg
       :width="width"
       :height="height"
@@ -146,19 +146,23 @@ export default defineComponent({
       isMouseOver.value = true
     }
 
-    watch(props, () => {
-      data.value = props.data
-      canvas.value = {
-        x: props.margin.left + (yAxis.value ? 40 : 0),
-        y: props.margin.top + 10,
-        width: props.width - props.margin.right,
-        height: props.height - props.margin.bottom - (xAxis.value ? 20 : 0)
-      }
+    watch(
+      props,
+      () => {
+        data.value = props.data
+        canvas.value = {
+          x: props.margin.left + (yAxis.value ? 40 : 0),
+          y: props.margin.top + 10,
+          width: props.width - props.margin.right,
+          height: props.height - props.margin.bottom - (xAxis.value ? 20 : 0)
+        }
 
-      updateLayerData()
-      updateDomain()
-      updateRange()
-    })
+        updateLayerData()
+        updateDomain()
+        updateRange()
+      },
+      { immediate: true }
+    )
 
     watch(
       canvas,
@@ -181,11 +185,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style scoped>
-.chart {
-  display: flex;
-  padding: 4px;
-  position: relative;
-}
-</style>
