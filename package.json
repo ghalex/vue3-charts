@@ -1,7 +1,7 @@
 {
   "name": "vue3-charts",
-  "version": "1.0.0",
-  "main": "./dist/vue3-charts.common.js",
+  "version": "1.0.3",
+  "main": "./dist/vue3-charts.umd.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name vue3-charts ./src/index.ts",

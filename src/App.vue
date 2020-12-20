@@ -2,15 +2,16 @@
   <h2>Charts here</h2>
   <div class="layout">
     <Chart :width="400" :height="350" :data="data" :margin="margin">
-      <Grid />
+      <!-- <Grid /> -->
       <Line type="monotone" dataKey="pv" fill="red" />
-      <Area type="monotone" dataKey="pv" fill="blue" />
+      <!-- <XAxis /> -->
+      <!-- <Area type="monotone" dataKey="pv" fill="blue" />
       <Line type="monotone" dataKey="uv" stroke="red" />
-      <XAxis />
+      
       <YAxis />
       <template #widgets>
         <Tooltip format=",.0f" />
-      </template>
+      </template> -->
     </Chart>
 
     <Chart class="ml-2" :width="400" :height="300" :data="data" :margin="margin">
