@@ -40,11 +40,7 @@ export default defineComponent({
   setup(props) {
     const { data, canvas } = usePlane()
     const { yScale } = useScales()
-    const y = computed(() => {
-      const res = yScale.value(props.value)
-      console.log(props.value, res)
-      return res
-    })
+    const y = computed(() => yScale.value(props.value))
 
     return { data, y, canvas }
   }

@@ -1,6 +1,6 @@
 {
   "name": "vue3-charts",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "./dist/vue3-charts.umd.js",
   "scripts": {
     "serve": "vue-cli-service serve",

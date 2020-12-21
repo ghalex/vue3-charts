@@ -2,7 +2,7 @@
   <h2>Charts here</h2>
   <div class="layout">
     <Chart :width="400" :height="350" :data="data" :margin="margin">
-      <Grid strokeDasharray="3,5" />
+      <Grid strokeDasharray="3,3" />
       <Line type="monotone" dataKey="pv" fill="red" />
       <Area type="monotone" dataKey="pv" fill="blue" />
       <Line type="monotone" dataKey="uv" stroke="red" />
@@ -42,6 +42,7 @@ import mockupData2 from '@/mockup/pages2'
 
 export default defineComponent({
   name: 'App',
+  components: {},
   setup() {
     const margin = { top: 0, right: 0, bottom: 0, left: 0 }
     const data = ref(mockupData)

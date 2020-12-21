@@ -69,7 +69,7 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .tooltip {
   position: absolute;
   pointer-events: none;
