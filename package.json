@@ -1,9 +1,9 @@
 {
   "name": "vue3-charts",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "./dist/vue3-charts.umd.js",
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "start": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name vue3-charts ./src/index.ts",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"

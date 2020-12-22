@@ -138,8 +138,12 @@ export default defineComponent({
 
     function onMouseMove(e: any) {
       mousePos.value = { x: pointer(e)[0], y: pointer(e)[1] }
+
+      const band = xScale.value.bandwidth()
+      const x = mousePos.value.x - canvas.value.x
+
       mouseIdx.value = {
-        x: Math.round(mousePos.value.x / xScale.value.bandwidth()) - 1,
+        x: Math.round((x + band / 2) / band) - 1,
         y: pointer(e)[1]
       }
 
