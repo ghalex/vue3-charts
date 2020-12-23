@@ -28,9 +28,11 @@
               :fill="r.color"
               :fill-opacity="0.9"
             />
-            <text :x="0 + 10" :y="0 + 20" :font-size="`15px`" :fill="`white`" font-weight="bold">
-              {{ r.data.name }}
-            </text>
+            <slot :data="r.data" name="text">
+              <text :x="0 + 10" :y="0 + 20" :font-size="`15px`" :fill="`white`" font-weight="bold">
+                {{ r.data.name }}
+              </text>
+            </slot>
           </slot>
         </g>
       </g>
