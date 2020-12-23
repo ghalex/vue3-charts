@@ -6,6 +6,7 @@
 import { computed, defineComponent, ref, watch } from 'vue'
 import { select } from 'd3-selection'
 import { axisLeft } from 'd3-axis'
+import { format } from 'd3-format'
 import { usePlane, useScales } from '@/hooks'
 
 export default defineComponent({
@@ -14,6 +15,18 @@ export default defineComponent({
     domain: {
       type: Object as () => [string, string],
       default: () => ['dataMin', 'dataMax']
+    },
+    ticks: {
+      type: Number,
+      default: -1
+    },
+    tickValues: {
+      type: Array,
+      default: () => null
+    },
+    format: {
+      type: String,
+      default: ',.0f'
     }
   },
   setup(props) {
@@ -26,7 +39,16 @@ export default defineComponent({
 
     function drawAxis() {
       if (data.value.length > 0) {
-        const ax: any = axisLeft(yScale.value).ticks(Math.round(canvas.value.height / 60)) // .tickValues([0, 1, 3])
+        const ax: any = axisLeft(yScale.value).tickFormat(format(props.format))
+
+        if (props.ticks > -1) {
+          ax.ticks(props.ticks)
+        } else if (props.tickValues) {
+          ax.tickValues(props.tickValues)
+        } else {
+          ax.ticks(Math.round(canvas.value.height / 60))
+        }
+
         select(el.value).call(ax)
       }
     }
@@ -36,6 +58,7 @@ export default defineComponent({
       props,
       () => {
         domain.value = props.domain
+        drawAxis()
       },
       { immediate: true }
     )

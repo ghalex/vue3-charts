@@ -3,7 +3,7 @@
     class="tooltip"
     :style="{
       top: canvas.y + 'px',
-      left: position.x + 4 + 'px'
+      left: position.x - 0.5 + 'px'
     }"
     v-if="show"
   >
@@ -16,13 +16,14 @@
       }"
       ref="el"
     >
-      <div>
-        <!-- <div><b>Page 1</b></div> -->
-        <div v-for="(item, i) in items" :key="i" :style="{ color: item.color }">
-          <b>{{ item.key }}</b
-          >: {{ formatNumber(item.value) }}
+      <slot :payload="items">
+        <div>
+          <div v-for="(item, i) in items" :key="i" :style="{ color: item.color }">
+            <b>{{ item.key }}</b
+            >: {{ formatNumber(item.value) }}
+          </div>
         </div>
-      </div>
+      </slot>
     </div>
     <div
       class="tooltip-line"
@@ -98,11 +99,11 @@ export default defineComponent({
 }
 
 .tooltip-line {
-  top: 4px;
+  top: 0px;
   position: absolute;
   width: 1px;
   background-color: black;
   pointer-events: none;
-  opacity: 0.2;
+  opacity: 0.3;
 }
 </style>

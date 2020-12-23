@@ -1,4 +1,6 @@
-export { default as Chart } from './charts/Chart/index.vue'
+export { default as Chart } from './containers/Chart/index.vue'
+export { default as Responsive } from './containers/Responsive/index.vue'
+export { default as Treemap } from './containers/Treemap/index.vue'
 
 export { default as Bar } from './elements/Bar/index.vue'
 export { default as Line } from './elements/Line/index.vue'

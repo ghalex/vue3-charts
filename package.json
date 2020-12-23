@@ -1,6 +1,6 @@
 {
   "name": "vue3-charts",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "./dist/vue3-charts.umd.js",
   "scripts": {
     "start": "vue-cli-service serve",
@@ -14,6 +14,8 @@
     "d3-array": "^2.9.0",
     "d3-axis": "^2.0.0",
     "d3-format": "^2.0.0",
+    "d3-hierarchy": "^2.0.0",
+    "d3-interpolate": "^2.0.1",
     "d3-scale": "^3.2.3",
     "d3-selection": "^2.0.0",
     "d3-shape": "^2.0.0",
@@ -25,6 +27,8 @@
     "@types/d3-array": "^2.8.0",
     "@types/d3-axis": "^2.0.0",
     "@types/d3-format": "^2.0.0",
+    "@types/d3-hierarchy": "^2.0.0",
+    "@types/d3-interpolate": "^2.0.0",
     "@types/d3-scale": "^3.2.1",
     "@types/d3-selection": "^2.0.0",
     "@types/d3-shape": "^2.0.0",

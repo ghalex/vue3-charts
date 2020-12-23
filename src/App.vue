@@ -15,19 +15,28 @@
       </template>
     </Chart>
 
-    <!-- <Chart class="ml-2" :width="400" :height="300" :data="data" :margin="margin">
-      <Grid />
-      <Bar dataKey="uv" fill="#82ca9d" />
-      <Bar dataKey="pv" fill="#8884d8" />
-      <Line dataKey="uv" stroke="purple" />
-      <Tooltip />
-      <XAxis />
-      <YAxis :domain="['0', 'dataMax + 2000']" />
-      <template #widgets>
-        <Tooltip />
+    <Responsive class="container">
+      <template #main="{ width }">
+        <Chart :width="width" :height="350" :data="data" :margin="margin">
+          <Grid strokeDasharray="3,3" />
+          <Bar dataKey="uv" fill="#82ca9d" />
+          <Bar dataKey="pv" fill="#8884d8" />
+          <Line type="monotone" dataKey="pv" stroke="green" />
+          <YMarker :value="3000" color="green" label="min" />
+          <YMarker :value="6000" color="blue" label="max" />
+          <XAxis />
+          <YAxis :domain="['0', 'dataMax']" format="$,.0f" />
+          <template #widgets>
+            <Tooltip format=",.0f" />
+          </template>
+        </Chart>
       </template>
-    </Chart> -->
+    </Responsive>
   </div>
+  <div class="layout">
+    <Treemap :width="400" :height="350" :data="data" :margin="margin" dataKey="pv" />
+  </div>
+
   <div>
     <button @click="setData">Data 1</button>
     <button @click="setData2">Data 2</button>
@@ -68,6 +77,12 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   padding: 16px;
+}
+
+.container {
+  width: 100%;
+  margin-left: 10px;
+  min-height: 300px;
 }
 
 .ml-2 {

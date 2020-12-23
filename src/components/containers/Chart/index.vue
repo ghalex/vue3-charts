@@ -1,5 +1,5 @@
 <template>
-  <div class="chart" :style="{ display: 'flex', padding: '4px', position: 'relative' }">
+  <div class="chart" :style="{ display: 'flex', position: 'relative' }">
     <svg
       :width="width"
       :height="height"

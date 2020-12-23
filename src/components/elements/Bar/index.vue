@@ -6,8 +6,8 @@
       :key="i"
       :x="bar.x"
       :y="bar.y"
-      :width="bar.width"
-      :height="bar.height"
+      :width="bar.width > 0 ? bar.width : 0"
+      :height="bar.height > 0 ? bar.height : 0"
       :fill="fill"
     />
   </Layer>
