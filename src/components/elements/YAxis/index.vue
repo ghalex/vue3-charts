@@ -50,7 +50,10 @@ export default defineComponent({
         }
 
         select(el.value).call(ax)
+        return ax
       }
+
+      return null
     }
 
     watch(yScale, () => drawAxis())

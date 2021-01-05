@@ -96,7 +96,6 @@ export default defineComponent({
         .domain(values as [number, number])
         .interpolator(props.colorFn())
 
-      console.log(values)
       const res = buildTree(data.value)
         .leaves()
         .map((d: any) => {

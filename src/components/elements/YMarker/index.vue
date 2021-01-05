@@ -3,9 +3,9 @@
     <text :x="canvas.x + 5" :y="y - 5" text-anchor="start" :fill="color">{{ label }}</text>
     <line
       :x1="canvas.x"
-      :y1="y"
+      :y1="y + 0.5"
       :x2="canvas.width"
-      :y2="y"
+      :y2="y + 0.5"
       :stroke="color"
       stroke-opacity="0.5"
       :stroke-width="1"

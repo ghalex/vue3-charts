@@ -7,12 +7,14 @@
     stroke-width="1"
     :stroke-dasharray="strokeDasharray"
   >
-    <g class="grid-x">
+    <g class="grid-x" v-if="!hideX">
       <line v-for="(y, i) in xLines" :key="i" :x1="canvas.x" :y1="y" :x2="canvas.width" :y2="y" />
-      <!-- <line :x1="canvas.x" :y1="canvas.y" :x2="canvas.width" :y2="canvas.y" /> -->
     </g>
-    <g class="grid-y">
+    <g class="grid-y" v-if="!hideY">
       <line v-for="(x, i) in yLines" :key="i" :x1="x" :y1="canvas.y" :x2="x" :y2="canvas.height" />
+    </g>
+    <g>
+      <line :x1="canvas.x" :y1="canvas.y" :x2="canvas.width" :y2="canvas.y" />
       <line :x1="canvas.width - 1" :y1="canvas.y" :x2="canvas.width - 1" :y2="canvas.height" />
     </g>
   </g>
@@ -21,7 +23,7 @@
 <script>
 import { computed, defineComponent } from 'vue'
 import { usePlane, useScales } from '@/hooks'
-import { nth } from 'ramda'
+// import { nth } from 'ramda'
 
 export default defineComponent({
   name: 'Grid',
@@ -29,6 +31,14 @@ export default defineComponent({
     strokeDasharray: {
       type: String,
       default: () => '3 3'
+    },
+    hideX: {
+      type: Boolean,
+      default: false
+    },
+    hideY: {
+      type: Boolean,
+      default: false
     }
   },
   setup() {
@@ -38,10 +48,6 @@ export default defineComponent({
     const xLines = computed(() => {
       const ticks = yScale.value.ticks(Math.round(canvas.value.height / 60))
       const res = ticks.map((v) => yScale.value(v))
-
-      if (nth(-1, res) > canvas.value.y) {
-        res.push(canvas.value.y)
-      }
 
       return res
     })

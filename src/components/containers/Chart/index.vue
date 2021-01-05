@@ -95,7 +95,7 @@ export default defineComponent({
 
     function updateRange() {
       xScale.value = xScale.value.copy().range([canvas.value.x, canvas.value.width])
-      yScale.value = yScale.value.copy().rangeRound([canvas.value.height, canvas.value.y])
+      yScale.value = yScale.value.copy().range([canvas.value.height, canvas.value.y])
     }
 
     function updateDomain() {
