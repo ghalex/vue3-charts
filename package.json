@@ -4,7 +4,7 @@
   "main": "./dist/vue3-charts.umd.js",
   "scripts": {
     "start": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --name vue3-charts ./src/index.ts",
+    "build": "vue-cli-service build --target lib --name vue3-charts ./src/lib/index.ts",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
   },
