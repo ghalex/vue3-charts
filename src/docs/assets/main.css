@@ -1,0 +1,7 @@
+@import './tailwind.css';
+
+body {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+}
+
+@tailwind utilities;
