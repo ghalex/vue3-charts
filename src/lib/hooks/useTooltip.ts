@@ -1,5 +1,5 @@
 import { ref, watch, Ref } from 'vue'
-
+import { is } from 'ramda'
 import useLayers from './useLayers'
 import usePlane from './usePlane'
 import useScales from './useScales'
@@ -25,21 +25,26 @@ export default (): Return => {
     }
 
     const d = data.value[mouseIdx.value.x]
+
     if (d) {
-      payload.value = generatePayload(d)
+      payload.value = generatePayload(mouseIdx.value.x, d)
     } else {
       payload.value = null
     }
     //}
   })
 
-  function generatePayload(rawData: any) {
+  function generatePayload(x: number, rawData: any) {
     const res = {} as any
 
     for (const layer of layers.value) {
+      const color = is(Function, layer.props.color)
+        ? layer.props.color({ x, y: rawData[layer.dataKey], data: rawData })
+        : layer.props.color
+
       res[layer.dataKey] = {
         key: layer.dataKey,
-        color: layer.props.color,
+        color,
         value: rawData[layer.dataKey]
       }
     }

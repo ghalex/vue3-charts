@@ -8,7 +8,7 @@
       :y="bar.y"
       :width="bar.width > 0 ? bar.width : 0"
       :height="bar.height > 0 ? bar.height : 0"
-      :fill="getFill(bar)"
+      :fill="getFill(bar.props)"
       :stroke-width="strokeWidth"
       :stroke="stroke"
     />
@@ -37,13 +37,17 @@ export default defineComponent({
       type: Number,
       default: 0
     },
+    maxWidth: {
+      type: Number,
+      default: 100
+    },
     dataKey: {
       type: String,
       default: 'value'
     }
   },
   setup(props) {
-    const { rectangles } = useRectangles(props.dataKey)
+    const { rectangles } = useRectangles(props.dataKey, { maxWidth: props.maxWidth })
     const getFill = computed(() => {
       if (is(Function, props.fill)) {
         return props.fill
