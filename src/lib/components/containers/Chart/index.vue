@@ -95,7 +95,7 @@ export default defineComponent({
 
     function updateRange() {
       xScale.value = xScale.value.copy().range([canvas.value.x, canvas.value.width])
-      yScale.value = yScale.value.copy().range([canvas.value.height, canvas.value.y])
+      yScale.value = yScale.value.copy().range([canvas.value.height, canvas.value.y]).nice()
     }
 
     function updateDomain() {
@@ -176,10 +176,14 @@ export default defineComponent({
       { immediate: true }
     )
 
-    watch(layers, () => {
-      updateLayerData()
-      updateDomain()
-    })
+    watch(
+      layers,
+      () => {
+        updateLayerData()
+        updateDomain()
+      },
+      { immediate: true }
+    )
 
     watch(domain, () => {
       updateDomain()

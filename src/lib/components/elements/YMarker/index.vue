@@ -7,8 +7,8 @@
       :x2="canvas.width"
       :y2="y + 0.5"
       :stroke="color"
-      stroke-opacity="0.5"
-      :stroke-width="1"
+      :stroke-opacity="strokeOpacity"
+      :stroke-width="strokeWidth"
       :stroke-dasharray="strokeDasharray"
     />
   </g>
@@ -26,7 +26,7 @@ export default defineComponent({
     },
     label: {
       type: String,
-      default: 'label'
+      default: ''
     },
     color: {
       type: String,
@@ -35,6 +35,14 @@ export default defineComponent({
     strokeDasharray: {
       type: String,
       default: () => '3'
+    },
+    strokeWidth: {
+      type: Number,
+      default: 1
+    },
+    strokeOpacity: {
+      type: Number,
+      default: 0.5
     }
   },
   setup(props) {

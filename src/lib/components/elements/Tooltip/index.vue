@@ -19,7 +19,7 @@
       <slot :payload="items">
         <div>
           <div v-for="(item, i) in items" :key="i" :style="{ color: item.color }">
-            <b>{{ item.key }}</b
+            <b>{{ getLabel(item.key) }}</b
             >: {{ formatNumber(item.value) }}
           </div>
         </div>
@@ -34,7 +34,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { computed, defineComponent, ref } from 'vue'
 import { usePlane, useTooltip } from '@/lib/hooks'
 import { format } from 'd3-format'
@@ -46,6 +46,10 @@ export default defineComponent({
     format: {
       type: String,
       default: '(0,.0f'
+    },
+    labels: {
+      type: Object,
+      default: null
     }
   },
   setup(props) {
@@ -65,7 +69,14 @@ export default defineComponent({
       })
     })
 
-    return { el, show, canvas, formatNumber, position, items, isRight }
+    const getLabel = (key: string) => {
+      if (props.labels && props.labels[key]) {
+        return props.labels[key]
+      }
+      return key
+    }
+
+    return { el, show, canvas, formatNumber, position, items, isRight, getLabel }
   }
 })
 </script>

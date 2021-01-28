@@ -15,6 +15,7 @@ export interface Rectangle {
   y: number
   width: number
   height: number
+  props: any
 }
 
 export type LayerType = 'bar' | 'line' | 'area'

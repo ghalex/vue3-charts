@@ -8,14 +8,17 @@
       :y="bar.y"
       :width="bar.width > 0 ? bar.width : 0"
       :height="bar.height > 0 ? bar.height : 0"
-      :fill="fill"
+      :fill="getFill(bar)"
+      :stroke-width="strokeWidth"
+      :stroke="stroke"
     />
   </Layer>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
 import { useRectangles } from '@/lib/hooks'
+import { is } from 'ramda'
 import Layer from '../Layer/index.vue'
 
 export default defineComponent({
@@ -23,8 +26,16 @@ export default defineComponent({
   components: { Layer },
   props: {
     fill: {
-      type: String,
+      type: [String, Function],
       default: 'blue'
+    },
+    stroke: {
+      type: String,
+      default: null
+    },
+    strokeWidth: {
+      type: Number,
+      default: 0
     },
     dataKey: {
       type: String,
@@ -33,7 +44,15 @@ export default defineComponent({
   },
   setup(props) {
     const { rectangles } = useRectangles(props.dataKey)
-    return { rectangles }
+    const getFill = computed(() => {
+      if (is(Function, props.fill)) {
+        return props.fill
+      }
+
+      return () => props.fill
+    })
+
+    return { getFill, rectangles }
   }
 })
 </script>

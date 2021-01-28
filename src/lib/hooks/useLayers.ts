@@ -12,7 +12,8 @@ export default (): Return => {
   const layers = inject('layers', ref([] as Layer[]))
   const layersData = inject('layersData', ref([] as number[]))
   const layersKey = computed(() => {
-    return layers.value.map((l) => l.dataKey)
+    if (layers.value) return layers.value.map((l: any) => l.dataKey)
+    return []
   })
 
   function addLayer(layer: Layer) {

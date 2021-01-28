@@ -10,7 +10,7 @@ import { LayerType } from '@/lib/types'
 import { defineComponent, onMounted } from 'vue'
 
 export default defineComponent({
-  name: 'Line',
+  name: 'Layer',
   props: {
     type: {
       type: String as () => LayerType,
