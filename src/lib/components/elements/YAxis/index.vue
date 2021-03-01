@@ -40,8 +40,8 @@ export default defineComponent({
 
     function drawAxis() {
       if (data.value.length > 0) {
-        const formatFn = is(Function, props.format) ? (props.format as any) : format
-        const ax: any = axisLeft(yScale.value).tickFormat(formatFn(props.format))
+        const formatFn = is(String, props.format) ? format(props.format as string) : (props.format as any)
+        const ax: any = axisLeft(yScale.value).tickFormat(formatFn)
 
         if (props.ticks > -1) {
           ax.ticks(props.ticks)

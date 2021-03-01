@@ -59,8 +59,7 @@ export default defineComponent({
     const { position, payload } = useTooltip()
     const show = computed(() => isMouseOver.value && payload.value && data.value.length)
     const formatNumber = computed(() => {
-      const formatFn = is(Function, props.format) ? (props.format as any) : format
-      return formatFn(props.format)
+      return is(String, props.format) ? format(props.format) : (props.format as any)
     })
 
     const isRight = computed(() => {
