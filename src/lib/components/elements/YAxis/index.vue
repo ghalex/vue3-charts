@@ -7,6 +7,7 @@ import { computed, defineComponent, ref, watch } from 'vue'
 import { select } from 'd3-selection'
 import { axisLeft } from 'd3-axis'
 import { format } from 'd3-format'
+import { is } from 'ramda'
 import { usePlane, useScales } from '@/lib/hooks'
 
 export default defineComponent({
@@ -25,7 +26,7 @@ export default defineComponent({
       default: () => null
     },
     format: {
-      type: String,
+      type: [String, Function],
       default: ',.0f'
     }
   },
@@ -39,7 +40,8 @@ export default defineComponent({
 
     function drawAxis() {
       if (data.value.length > 0) {
-        const ax: any = axisLeft(yScale.value).tickFormat(format(props.format))
+        const formatFn = is(Function, props.format) ? (props.format as any) : format
+        const ax: any = axisLeft(yScale.value).tickFormat(formatFn(props.format))
 
         if (props.ticks > -1) {
           ax.ticks(props.ticks)
