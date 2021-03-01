@@ -38,6 +38,7 @@
 import { computed, defineComponent, ref } from 'vue'
 import { usePlane, useTooltip } from '@/lib/hooks'
 import { format } from 'd3-format'
+import { is } from 'ramda'
 
 export default defineComponent({
   name: 'Tooltip',
@@ -57,7 +58,10 @@ export default defineComponent({
     const { data, canvas, isMouseOver } = usePlane()
     const { position, payload } = useTooltip()
     const show = computed(() => isMouseOver.value && payload.value && data.value.length)
-    const formatNumber = computed(() => format(props.format))
+    const formatNumber = computed(() => {
+      const formatFn = is(Function, props.format) ? (props.format as any) : format
+      return formatFn(props.format)
+    })
 
     const isRight = computed(() => {
       return position.value.x >= (canvas.value.width / 4) * 3
