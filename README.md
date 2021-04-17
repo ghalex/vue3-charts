@@ -26,7 +26,7 @@
 </p>
 
 <p align="center">
-<img src="https://github.com/ghalex/zebbra-ui/raw/main/public/images/charts.png" width="300"/>
+<img src="https://github.com/ghalex/vue3-charts/raw/main/public/images/charts.png" width="300"/>
 </p>
 
 <hr/>
