@@ -55,14 +55,14 @@
         </div>
       </div>
       <div class="ml-2">
-        <Chart :data="data" :margin="margin" :direction="direction">
+        <Chart :data="data3" :margin="margin" :direction="direction">
           <template #layers>
             <Grid strokeDasharray="2,2" />
             <!-- <Line :dataKeys="['name', 'pl']" type="monotone" /> -->
-            <Group :stacked="true">
-              <Area :dataKeys="['name', 'pl']" fill="blue" />
-              <Area :dataKeys="['name', 'avg']" fill="red" />
-            </Group>
+
+            <Line :dataKeys="['name', 'pl']" fill="blue" />
+
+            <Area :dataKeys="['name', 'pl']" fill="red" />
           </template>
           <template #widgets>
             <Tooltip />
@@ -78,13 +78,14 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { plByMonth, trades } from '@/mockup'
+import * as mockup from '@/mockup'
 import * as r from 'ramda'
 export default defineComponent({
   name: 'App',
   setup() {
-    const data = ref<any>(plByMonth)
-    const data2 = ref(r.sortBy(r.prop('nbOfTrades'), trades))
+    const data = ref<any>(mockup.plByMonth)
+    const data2 = ref(r.sortBy(r.prop('nbOfTrades'), mockup.trades))
+    const data3 = ref<any>(mockup.plMonthYear)
 
     const direction = ref('horizontal')
     const margin = ref({
@@ -136,7 +137,7 @@ export default defineComponent({
       console.log('click me')
     }
 
-    return { data, data2, axis, margin, direction, add, updateConfig, test }
+    return { data, data2, data3, axis, margin, direction, add, updateConfig, test }
   }
 })
 </script>

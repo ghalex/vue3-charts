@@ -9,7 +9,7 @@ import { computed, defineComponent, inject } from 'vue'
 import { area, curveLinear, curveStep, curveNatural, curveMonotoneX } from 'd3-shape'
 import Layer from '../Layer/index.vue'
 import { useBars, useChart, usePoints } from '@/hooks'
-import { Point, Rectangle } from '@/types'
+// import { Point, Rectangle } from '@/types'
 
 export default defineComponent({
   name: 'Area',
@@ -31,8 +31,8 @@ export default defineComponent({
   setup(props) {
     const chart = useChart()
     const { stacked } = inject('layerProps', { stacked: false })
-    // const { points } = usePoints(props.dataKeys, { stacked, type: 'area' })
-    const { bars } = useBars(props.dataKeys, { stacked, type: 'area', maxWidth: 100 })
+    const { points } = usePoints(props.dataKeys, { stacked: false, type: 'area' })
+    const { bars } = useBars(props.dataKeys, { stacked, type: 'area', maxWidth: -1 })
 
     const lineType = {
       normal: curveLinear,
@@ -41,16 +41,28 @@ export default defineComponent({
       monotone: curveMonotoneX
     }
 
-    const buildArea = computed(() =>
-      area<Rectangle>()
-        .curve(lineType[props.type])
-        .x0((p) => p.x + p.width / 2)
-        .y0((p) => p.y)
-        .x1((p) => p.x + p.width / 2)
-        .y1((p) => p.y + p.height)
-    )
+    const buildArea = computed(() => {
+      const { secondary } = chart.scales
+      if (stacked) {
+        return area<any>()
+          .curve(lineType[props.type])
+          .x0((p) => p.x + p.width / 2)
+          .y0((p) => p.y)
+          .x1((p) => p.x + p.width / 2)
+          .y1((p) => p.y + p.height)
+      }
 
-    const d = computed(() => buildArea.value(bars.value))
+      return area<any>()
+        .curve(lineType[props.type])
+        .x0((p) => p.x)
+        .x1((p) => p.x)
+        .y0((p) => p.y)
+        .y1((_) => secondary.scale(0))
+    })
+
+    const d = computed(() => {
+      return stacked ? buildArea.value(bars.value) : buildArea.value(points.value)
+    })
 
     return { d }
   }

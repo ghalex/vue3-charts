@@ -8,6 +8,13 @@ export const plByMonth = [
   { name: 'Jul', pl: 500, avg: 90, inc: 100 }
 ]
 
+export const plMonthYear = [
+  { name: 'Jan/21', pl: 80, avg: 100, inc: 300 },
+  { name: 'Feb/21', pl: -15, avg: 100, inc: 400 },
+  { name: 'Apr/21', pl: 170, avg: 100, inc: 500 },
+  { name: 'Mar/21', pl: -400, avg: 100, inc: 700 }
+]
+
 export const trades = [
   { nbOfTrades: 3, pl: 200 },
   { nbOfTrades: 10, pl: 100 },

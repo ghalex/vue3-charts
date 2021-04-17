@@ -27,8 +27,10 @@ export default (dataKeys: [string, string], props = { maxWidth: -1, stacked: fal
       return 0
     }
 
-    const barLayers = chart.getLayers('bar')
-    return barLayers.findIndex((l) => l.dataKeys.join(',') === dataKeys.join(','))
+    const barLayers = chart.getLayers(type as any)
+    const idx = barLayers.findIndex((l) => l.dataKeys.join(',') === dataKeys.join(','))
+
+    return idx > -1 ? idx : 0
   }
 
   function getBarWidth() {
@@ -65,7 +67,6 @@ export default (dataKeys: [string, string], props = { maxWidth: -1, stacked: fal
         rect.y = diff + xVal + index * barSize + gap / 2
         rect.height = barSize
       }
-
       return rect
     })
 
@@ -73,9 +74,9 @@ export default (dataKeys: [string, string], props = { maxWidth: -1, stacked: fal
   }
 
   function update() {
-    const keys = chart.getStackedKeys(1, type)
+    const keys = stacked ? chart.getStackedKeys(1, type) : [dataKeys[1]]
     const [primaryKey, secondaryKey] = dataKeys
-    const stack = chart.getStackedData(stacked ? keys : [dataKeys[1]])
+    const stack = chart.getStackedData(keys)
     const data = stack.find((s) => s.key === secondaryKey)
 
     if (data) {
