@@ -9,6 +9,10 @@ export default defineComponent({
     stacked: {
       type: Boolean,
       default: false
+    },
+    maxWidth: {
+      type: Number,
+      default: -1
     }
   },
   setup(props) {

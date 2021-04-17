@@ -8,7 +8,7 @@ export interface BarsReturn {
   bars: Ref<Rectangle[]>
 }
 
-export default (dataKeys: [string, string], props = { maxWidth: 100, stacked: false, type: 'bar' }): BarsReturn => {
+export default (dataKeys: [string, string], props = { maxWidth: -1, stacked: false, type: 'bar' }): BarsReturn => {
   const bars = ref<Rectangle[]>([])
   const chart = useChart()
   const gap = 5
@@ -33,7 +33,9 @@ export default (dataKeys: [string, string], props = { maxWidth: 100, stacked: fa
 
   function getBarWidth() {
     const { bandScale } = scales()
-    const maxWidth = Math.min(bandScale.bandwidth() - gap, props.maxWidth)
+    const maxWidth =
+      props.maxWidth > -1 ? Math.min(bandScale.bandwidth() - gap, props.maxWidth) : bandScale.bandwidth() - gap
+
     const barLayers = chart.getLayers('bar')
 
     return barLayers.length > 0 && !stacked ? maxWidth / barLayers.length : maxWidth
@@ -43,7 +45,7 @@ export default (dataKeys: [string, string], props = { maxWidth: 100, stacked: fa
     const { bandScale, linearScale } = scales()
     const index = getIndex()
     const barSize = getBarWidth()
-    // const diff = (bandScale.bandwidth() - gap - maxWidth) / 2
+    const diff = (bandScale.bandwidth() - gap - barSize) / 2
 
     bars.value = values.map((val) => {
       let rect: Rectangle = { x: 0, y: 0, width: 0, height: 0, props: val }
@@ -54,13 +56,13 @@ export default (dataKeys: [string, string], props = { maxWidth: 100, stacked: fa
         rect.y = Math.min(yVal0, yVal1)
         rect.height = Math.abs(yVal0 - yVal1)
 
-        rect.x = xVal + index * barSize + gap / 2
+        rect.x = diff + xVal + index * barSize + gap / 2
         rect.width = barSize
       } else {
         rect.x = Math.min(yVal0, yVal1)
         rect.width = Math.abs(yVal0 - yVal1)
 
-        rect.y = xVal + index * barSize + gap / 2
+        rect.y = diff + xVal + index * barSize + gap / 2
         rect.height = barSize
       }
 

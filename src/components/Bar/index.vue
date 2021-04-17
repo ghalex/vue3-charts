@@ -39,7 +39,7 @@ export default defineComponent({
     },
     maxWidth: {
       type: Number,
-      default: 100
+      default: -1
     },
     dataKeys: {
       type: Object as () => [string, string],
@@ -47,8 +47,8 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { stacked } = inject('layerProps', { stacked: false })
-    const { bars } = useBars(props.dataKeys, { maxWidth: props.maxWidth, stacked, type: 'bar' })
+    const { stacked, maxWidth } = inject('layerProps', { stacked: false, maxWidth: -1 })
+    const { bars } = useBars(props.dataKeys, { maxWidth: Math.max(props.maxWidth, maxWidth), stacked, type: 'bar' })
     const getFill = computed(() => {
       if (is(Function, props.fill)) {
         return props.fill

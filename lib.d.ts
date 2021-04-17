@@ -9,19 +9,22 @@ import { DefineComponent, Plugin, Ref } from 'vue'
 declare const Lib: Exclude<Plugin['install'], undefined>
 export default Lib
 
+export const Area: DefineComponent<{}, {}, any>
 export const Bar: DefineComponent<{}, {}, any>
 export const Chart: DefineComponent<{}, {}, any>
 export const Grid: DefineComponent<{}, {}, any>
+export const Group: DefineComponent<{}, {}, any>
 export const Layer: DefineComponent<{}, {}, any>
 export const Line: DefineComponent<{}, {}, any>
 export const Responsive: DefineComponent<{}, {}, any>
+export const Marker: DefineComponent<{}, {}, any>
 export const Tooltip: DefineComponent<{}, {}, any>
 
-declare const useChart: () => ChartModel
-declare const usePoints: () => PointsReturn
 declare const useBars: () => BarsReturn
-declare const useResize: (el: Ref) => ResizeReturn
+declare const useChart: () => ChartModel
 declare const useMouse: (el: Ref) => MouseReturn
+declare const usePoints: () => PointsReturn
+declare const useResize: (el: Ref) => ResizeReturn
 
-export { useResize, useChart, usePoints, useBars }
+export { useResize, useChart, usePoints, useBars, useMouse }
 export * from './src/types'

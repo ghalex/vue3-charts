@@ -1,35 +1,39 @@
 <template>
   <div>
     <div class="flex">
-      <div>
-        <Chart :data="data" :axis="axis" :margin="margin" :direction="direction">
-          <template #layers>
-            <Grid strokeDasharray="2,2" />
-            <Group :stacked="true">
-              <Bar :dataKeys="['name', 'pl']" fill="#0077b6" />
-              <Bar :dataKeys="['name', 'avg']" fill="#0096c7" />
-              <Bar :dataKeys="['name', 'inc']" fill="#48cae4" />
-            </Group>
-            <Line :dataKeys="['name', 'pl']" stroke="#e63946" type="step" />
-            <Marker :value="1500" label="Avg." color="#e63946" strokeWidth="2" strokeDasharray="6 6" />
-          </template>
-          <template #widgets>
-            <Tooltip
-              borderColor="#48CAE4"
-              :config="{
-                name: { hide: true },
-                inc: { color: '#48cae4' },
-                pl: { color: '#0077b6' },
-                avg: { label: 'averange', color: '#0096c7' }
-              }"
-            />
-          </template>
-        </Chart>
-        <div>
-          <button @click="add">Add Data</button>
-          <button @click="updateConfig">Update Config</button>
-        </div>
-      </div>
+      <Responsive class="w-full">
+        <template #main="{ width }">
+          <Chart :size="{ width, height: 400 }" :data="data" :axis="axis" :margin="margin" :direction="direction">
+            <template #layers>
+              <Grid strokeDasharray="2,2" />
+              <Group :stacked="true" :maxWidth="50">
+                <Bar :dataKeys="['name', 'pl']" fill="#0077b6" />
+                <Bar :dataKeys="['name', 'avg']" fill="#0096c7" />
+                <Bar :dataKeys="['name', 'inc']" fill="#48cae4" />
+              </Group>
+              <Line :dataKeys="['name', 'pl']" stroke="#e63946" type="step" />
+              <Marker :value="1500" label="Avg." color="#e63946" strokeWidth="2" strokeDasharray="6 6" />
+            </template>
+            <template #widgets>
+              <Tooltip
+                borderColor="#48CAE4"
+                :config="{
+                  name: { hide: true },
+                  inc: { color: '#48cae4' },
+                  pl: { color: '#0077b6' },
+                  avg: { label: 'averange', color: '#0096c7' }
+                }"
+              />
+            </template>
+          </Chart>
+          <div>
+            <button @click="add">Add Data</button>
+            <button @click="updateConfig">Update Config</button>
+          </div>
+        </template>
+      </Responsive>
+    </div>
+    <div class="flex">
       <div class="ml-2">
         <Chart
           :data="data2"
@@ -50,8 +54,6 @@
           <button @click="test">Test</button>
         </div>
       </div>
-    </div>
-    <div class="flex">
       <div class="ml-2">
         <Chart :data="data" :margin="margin" :direction="direction">
           <template #layers>
@@ -107,8 +109,8 @@ export default defineComponent({
       secondary: {
         domain: ['dataMin -100', 'dataMax + 100'],
         type: 'linear',
-        // ticks: 8,
-        tickValues: [-500, 0, 500, 1500, 3000],
+        ticks: 4,
+        //tickValues: [-500, 0, 500, 1500, 3000],
         format: (val: string) => {
           return val
         }
@@ -142,6 +144,10 @@ export default defineComponent({
 <style scoped>
 .flex {
   display: flex;
+}
+
+.w-full {
+  width: 100%;
 }
 
 .mt-2 {
