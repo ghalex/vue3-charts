@@ -1,7 +1,7 @@
 <p align="center">
   <br>
   <a href="https://www.gridsome.org">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Vue.js_Logo_2.svg/1184px-Vue.js_Logo_2.svg.png" width="90"/>
+    <img src="https://github.com/ghalex/vue3-charts/raw/main/public/images/logo.png" width="100"/>
   </a>
 </p>
 
