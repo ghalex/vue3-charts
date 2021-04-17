@@ -11,14 +11,23 @@
 <b>Vue3-Charts</b> is a SVG-based charting library that is very easy to use and highly customizable.
 </p>
 
-<hr />
+<p align="center">
+<a title="Total downloads" href="https://www.npmjs.com/package/vue3-charts">
+    <img src="https://img.shields.io/npm/dm/vue3-charts.svg?style=flat-square">
+  </a>
+  <a title="Current version" href="https://www.npmjs.com/package/vue3-charts">
+    <img src="https://img.shields.io/npm/v/vue3-charts.svg?style=flat-square">
+  </a>
+  <a title="MIT License" href="LICENSE">
+    <img src="https://img.shields.io/github/license/vue3-charts/vue3-charts.svg?style=flat-square">
+  </a>
+  <br>
+  <br>
+</p>
 
-[![npm](https://img.shields.io/npm/dm/@zebbra/ui?style=flat-square)](https://www.npmjs.com/package/vue3-charts)
-[![npm](https://img.shields.io/npm/v/@zebbra/ui?style=flat-square)](https://www.npmjs.com/package/vue3-charts)
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg?style=flat-square)](https://standardjs.com)
-[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+<hr/>
 
-Here is a basic example:
+## Here is a basic example:
 
 ```xml
 <div>
