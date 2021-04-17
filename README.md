@@ -1,4 +1,15 @@
-## Vue3-Charts
+<p align="center">
+  <br>
+  <a href="https://www.gridsome.org">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Vue.js_Logo_2.svg/1184px-Vue.js_Logo_2.svg.png" width="90"/>
+  </a>
+</p>
+
+<h1 align="center">Vue3-Charts</h1>
+<h3 align="center">Data visualization in Vue3 made easy.</h3>
+<p align="center">
+<b>Vue3-Charts</b> is a SVG-based charting library that is very easy to use and highly customizable.
+</p>
 
 <hr />
 
@@ -7,9 +18,7 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg?style=flat-square)](https://standardjs.com)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-**Vue3-Charts** is a SVG-based charting library. It is very easy to use and highly customizable.
-
-**Vue3-Charts** basic example:
+Here is a basic example:
 
 ```xml
 <div>
@@ -51,18 +60,18 @@ export default defineComponent({
 
 ## Components List
 
-This project is still in early development. New components will be added regularly.
+This project is still in early development. New charts will be added regularly.
 
 - [x] Line Chart
-- [ ] Area Chart
+- [x] Area Chart
+- [x] Stacked Area Chart
 - [x] Column Chart
-- [ ] Stacked Column Chart
+- [x] Stacked Column Chart
 - [x] Bar Chart
-- [ ] Stacked Bar Chart
+- [x] Stacked Bar Chart
 - [ ] Scatter Plot
 
 ## License
 
-Copyright (c) 2018 [Zebbra contributors](https://github.com/ghalex/zebbra-ui/graphs/contributors)
-
-Licensed under the [MIT license](https://github.com/ghalex/zebbra-ui/blob/HEAD/LICENSE).
+Copyright (c) 2018 [Vue3-Charts Contributors](https://github.com/ghalex/vue3-charts/graphs/contributors)
+Licensed under the [MIT license](https://github.com/ghalex/vue3-charts/blob/HEAD/LICENSE).
