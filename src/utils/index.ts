@@ -8,3 +8,15 @@ export const getCol = r.curry((col: string | number, df: any[]): any[] => {
 
   return r.map(r.prop(col as string), df)
 })
+
+export const mapKeys = (fn: (val: string) => string, data: { [key: string]: any }) =>
+  r.zipObj(r.map(fn, r.keys(data) as string[]), r.values(data))
+
+export const kebabize = (str: string) => {
+  return str
+    .split('')
+    .map((letter, idx) => {
+      return letter.toUpperCase() === letter ? `${idx !== 0 ? '-' : ''}${letter.toLowerCase()}` : letter
+    })
+    .join('')
+}

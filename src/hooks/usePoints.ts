@@ -13,18 +13,29 @@ export default (dataKeys: [string, string], props = { stacked: false, type: 'lin
   const chart = useChart()
   const { stacked, type } = props
 
-  function updatePoints(key: string, values: Series<any, string>) {
+  function getPoints(key: string, values: Series<any, string>): Point[] {
     const { primary, secondary } = chart.scales
 
-    const primaryVals = primary.map(values.map((v) => v.data[key])).filter((val) => !isNaN(val))
-    const secondaryValues = secondary.map(values.map((v) => v[1])).filter((val) => !isNaN(val))
-
-    if (primaryVals.length === secondaryValues.length) {
-      if (chart.config.direction === 'horizontal') {
-        points.value = r.zipWith((x, y) => ({ x, y }), primaryVals, secondaryValues)
-      } else {
-        points.value = r.zipWith((x, y) => ({ x, y }), secondaryValues, primaryVals)
-      }
+    if (chart.config.direction === 'horizontal') {
+      return values
+        .map((val) => {
+          return {
+            x: primary.mapOne(val.data[key]),
+            y: secondary.mapOne(val[1]),
+            props: { values: [...val], data: val.data }
+          }
+        })
+        .filter((p) => !isNaN(p.x) && !isNaN(p.y))
+    } else {
+      return values
+        .map((val) => {
+          return {
+            x: secondary.mapOne(val[1]),
+            y: primary.mapOne(val.data[key]),
+            props: { values: [...val], data: val.data }
+          }
+        })
+        .filter((p) => !isNaN(p.x) && !isNaN(p.y))
     }
   }
 
@@ -35,7 +46,7 @@ export default (dataKeys: [string, string], props = { stacked: false, type: 'lin
     const data = stack.find((s) => s.key === secondaryKey)
 
     if (data) {
-      updatePoints(primaryKey, data)
+      points.value = getPoints(primaryKey, data)
     }
   }
 

@@ -7,11 +7,36 @@
             <template #layers>
               <Grid strokeDasharray="2,2" />
               <Group :stacked="true" :maxWidth="50">
-                <Bar :dataKeys="['name', 'pl']" fill="#0077b6" />
-                <Bar :dataKeys="['name', 'avg']" fill="#0096c7" />
-                <Bar :dataKeys="['name', 'inc']" fill="#48cae4" />
+                <Bar
+                  :dataKeys="['name', 'pl']"
+                  :barStyle="
+                    (props) => {
+                      return {
+                        fill: '#0a80a7',
+                        fillOpacity: 0.8
+                      }
+                    }
+                  "
+                />
+                <Bar :dataKeys="['name', 'avg']" :barStyle="{ fill: '#0096c7' }" />
+                <Bar :dataKeys="['name', 'inc']" :barStyle="{ fill: '#48cae4' }" />
               </Group>
-              <Line :dataKeys="['name', 'pl']" stroke="#e63946" type="step" />
+              <Line
+                type="step"
+                :dataKeys="['name', 'pl']"
+                :lineStyle="{
+                  stroke: '#e63946',
+                  strokeWidth: 2
+                }"
+                :dotStyle="
+                  ({ active }) => ({
+                    stroke: 'red',
+                    strokeWidth: 2,
+                    fill: 'white',
+                    r: active ? 6 : 4
+                  })
+                "
+              />
               <Marker :value="1500" label="Avg." color="#e63946" strokeWidth="2" strokeDasharray="6 6" />
             </template>
             <template #widgets>
@@ -59,13 +84,12 @@
           <template #layers>
             <Grid strokeDasharray="2,2" />
             <!-- <Line :dataKeys="['name', 'pl']" type="monotone" /> -->
-
-            <Line :dataKeys="['name', 'pl']" fill="blue" />
-
-            <Area :dataKeys="['name', 'pl']" fill="red" />
+            <Line :dataKeys="['name', 'pl']" :lineStyle="{ strokeWidth: 2, stroke: 'red', strokeDasharray: '2,3' }" />
+            <Area :dataKeys="['name', 'pl']" :areaStyle="{ fill: 'red', fillOpacity: 0.7 }" />
+            <Marker :value="0" label="0$" color="red" strokeDasharray="0" />
           </template>
           <template #widgets>
-            <Tooltip />
+            <Tooltip color="red" />
           </template>
         </Chart>
         <div>
@@ -108,7 +132,7 @@ export default defineComponent({
         }
       },
       secondary: {
-        domain: ['dataMin -100', 'dataMax + 100'],
+        domain: ['dataMin', 'dataMax + 100'],
         type: 'linear',
         ticks: 4,
         //tickValues: [-500, 0, 500, 1500, 3000],
@@ -137,7 +161,7 @@ export default defineComponent({
       console.log('click me')
     }
 
-    return { data, data2, data3, axis, margin, direction, add, updateConfig, test }
+    return { data, data2, data3, axis, margin, direction, add, updateConfig, test, console }
   }
 })
 </script>

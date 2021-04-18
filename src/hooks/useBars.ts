@@ -50,7 +50,7 @@ export default (dataKeys: [string, string], props = { maxWidth: -1, stacked: fal
     const diff = (bandScale.bandwidth() - gap - barSize) / 2
 
     return values.map((val) => {
-      let rect: Rectangle = { x: 0, y: 0, width: 0, height: 0, props: val }
+      let rect: Rectangle = { x: 0, y: 0, width: 0, height: 0, props: { values: [...val], data: val.data } }
       const xVal = bandScale.scale(val.data[key])
       const [yVal0, yVal1] = linearScale.map(val)
 

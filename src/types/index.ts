@@ -1,6 +1,7 @@
 export interface Point {
   x: number
   y: number
+  props: any
 }
 
 export interface Rectangle {

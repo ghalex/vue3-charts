@@ -53,15 +53,17 @@ export default class Scale {
   }
 
   public map<T>(values: T[]): number[] {
+    return values.map((v) => this.mapOne(v))
+  }
+
+  public mapOne<T>(val: T): number {
     const { type } = this.config
 
     if (type === 'band') {
-      return values.map((val) => {
-        return this.scale(val) + this.scale.bandwidth() / 2
-      })
+      return this.scale(val) + this.scale.bandwidth() / 2
     }
 
-    return values.map((val) => this.scale(val))
+    return this.scale(val)
   }
 
   public ticks() {

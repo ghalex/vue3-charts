@@ -2,7 +2,7 @@
   <div class="tooltip" :style="style" v-if="show">
     <div class="tooltip-content" :style="styleContent" ref="el">
       <slot :payload="items">
-        <div :style="{ borderColor }">
+        <div :style="{ borderColor: color }">
           <div v-for="(item, i) in items" :key="i" :style="{ color: item.color }">
             <b>{{ item.label }}</b
             >: {{ item.valueFormatted }}
@@ -42,7 +42,7 @@ export default defineComponent({
       type: String,
       default: ',.0f'
     },
-    borderColor: {
+    color: {
       type: String,
       default: '#7876ec'
     },
@@ -97,7 +97,7 @@ export default defineComponent({
       return Object.keys(payload.value)
         .map((key) => {
           const config = {
-            ...{ label: key, format: props.format, color: '#8884d8', hide: false },
+            ...{ label: key, format: props.format, color: props.color, hide: false },
             ...props.config[key]
           }
 
