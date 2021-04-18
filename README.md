@@ -1,6 +1,6 @@
 <p align="center">
   <br>
-  <a href="https://www.gridsome.org">
+  <a href="#">
     <img src="https://github.com/ghalex/vue3-charts/raw/main/public/images/logo.png" width="100"/>
   </a>
 </p>
