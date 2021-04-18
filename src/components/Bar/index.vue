@@ -53,6 +53,7 @@ export default defineComponent({
       if (is(Function, props.fill)) {
         return props.fill
       }
+
       return () => props.fill
     })
     return { getFill, bars }

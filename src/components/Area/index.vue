@@ -1,6 +1,6 @@
 <template>
   <Layer type="area" :dataKeys="dataKeys">
-    <path :d="d" :fill="fill" :stroke="none" opacity="0.3" />
+    <path :d="d" :fill="fill" :stroke="none" :opacity="opacity" />
   </Layer>
 </template>
 
@@ -22,6 +22,10 @@ export default defineComponent({
     dataKeys: {
       type: Object as () => [string, string],
       required: true
+    },
+    opacity: {
+      type: Number,
+      default: 0.25
     },
     type: {
       type: String as () => 'normal' | 'step' | 'natural' | 'monotone',

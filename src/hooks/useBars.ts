@@ -43,13 +43,13 @@ export default (dataKeys: [string, string], props = { maxWidth: -1, stacked: fal
     return barLayers.length > 0 && !stacked ? maxWidth / barLayers.length : maxWidth
   }
 
-  function updateBars(key: string, values: Series<{ [key: string]: number }, string>) {
+  function getBars(key: string, values: Series<{ [key: string]: number }, string>) {
     const { bandScale, linearScale } = scales()
     const index = getIndex()
     const barSize = getBarWidth()
     const diff = (bandScale.bandwidth() - gap - barSize) / 2
 
-    bars.value = values.map((val) => {
+    return values.map((val) => {
       let rect: Rectangle = { x: 0, y: 0, width: 0, height: 0, props: val }
       const xVal = bandScale.scale(val.data[key])
       const [yVal0, yVal1] = linearScale.map(val)
@@ -80,7 +80,7 @@ export default (dataKeys: [string, string], props = { maxWidth: -1, stacked: fal
     const data = stack.find((s) => s.key === secondaryKey)
 
     if (data) {
-      updateBars(primaryKey, data)
+      bars.value = getBars(primaryKey, data)
     }
   }
 
