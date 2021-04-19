@@ -6,7 +6,11 @@
           <Chart :size="{ width, height: 400 }" :data="data" :axis="axis" :margin="margin" :direction="direction">
             <template #layers>
               <Grid strokeDasharray="2,2" />
-              <Group :stacked="true" :maxWidth="50">
+              <Group>
+                <Bar :dataKeys="['name', 'avg']" :barStyle="{ fill: '#0096c7' }" />
+                <Bar :dataKeys="['name', 'pl']" :barStyle="{ fill: '#FC96c7' }" />
+              </Group>
+              <!-- <Group :stacked="true" :maxWidth="50">
                 <Bar
                   :dataKeys="['name', 'pl']"
                   :barStyle="
@@ -20,7 +24,7 @@
                 />
                 <Bar :dataKeys="['name', 'avg']" :barStyle="{ fill: '#0096c7' }" />
                 <Bar :dataKeys="['name', 'inc']" :barStyle="{ fill: '#48cae4' }" />
-              </Group>
+              </Group> -->
               <Line
                 type="step"
                 :dataKeys="['name', 'pl']"
@@ -122,7 +126,7 @@ export default defineComponent({
     const axis = ref({
       primary: {
         type: 'band',
-        //tickValues: ['Jan', 'Feb', 'Jul'],
+        tickValues: ['Jan', 'Feb', 'Jul'],
         format: (val: string) => {
           if (val === 'Feb') {
             return '😜'

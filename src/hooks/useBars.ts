@@ -38,16 +38,23 @@ export default (dataKeys: [string, string], props = { maxWidth: -1, stacked: fal
     const maxWidth =
       props.maxWidth > -1 ? Math.min(bandScale.bandwidth() - gap, props.maxWidth) : bandScale.bandwidth() - gap
 
-    const barLayers = chart.getLayers('bar')
+    const barLayers = chart.getLayers(type as any)
 
     return barLayers.length > 0 && !stacked ? maxWidth / barLayers.length : maxWidth
+  }
+
+  function getDiffWidth() {
+    const { bandScale } = scales()
+    const max = bandScale.bandwidth() - gap
+    const total = chart.getLayers(type as any).length * getBarWidth()
+    return (max - total) / 2
   }
 
   function getBars(key: string, values: Series<{ [key: string]: number }, string>) {
     const { bandScale, linearScale } = scales()
     const index = getIndex()
     const barSize = getBarWidth()
-    const diff = (bandScale.bandwidth() - gap - barSize) / 2
+    const diff = getDiffWidth()
 
     return values.map((val) => {
       let rect: Rectangle = { x: 0, y: 0, width: 0, height: 0, props: { values: [...val], data: val.data } }

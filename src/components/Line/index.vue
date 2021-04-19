@@ -25,7 +25,6 @@ import { is } from 'ramda'
 import { useChart, useMouse, usePoints } from '@/hooks'
 import Layer from '../Layer/index.vue'
 import { kebabize, mapKeys } from '@/utils'
-import { style } from 'd3-selection'
 
 export default defineComponent({
   name: 'Line',
