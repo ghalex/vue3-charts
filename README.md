@@ -29,7 +29,18 @@
 <img src="https://github.com/ghalex/vue3-charts/raw/main/public/images/charts.png" width="650"/>
 </p>
 
-<hr/>
+## Vue3-Charts
+
+> Data visualization in Vue3 made easy
+
+- 💡 Intuitive
+- 🔌 Extensible
+- 🏗 Modular
+- 📦 Extremely easy to use
+
+## Documentation
+
+To learn more about Vue3-Charts read the documentation [here](https://vue3-charts.netlify.app)
 
 ## Here is a basic example:
 

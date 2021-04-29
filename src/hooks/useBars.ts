@@ -44,6 +44,10 @@ export default (dataKeys: [string, string], props = { maxWidth: -1, stacked: fal
   }
 
   function getDiffWidth() {
+    if (stacked) {
+      return 0
+    }
+
     const { bandScale } = scales()
     const max = bandScale.bandwidth() - gap
     const total = chart.getLayers(type as any).length * getBarWidth()

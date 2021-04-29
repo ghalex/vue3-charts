@@ -89,7 +89,10 @@
             <Grid strokeDasharray="2,2" />
             <!-- <Line :dataKeys="['name', 'pl']" type="monotone" /> -->
             <Line :dataKeys="['name', 'pl']" :lineStyle="{ strokeWidth: 2, stroke: 'red', strokeDasharray: '2,3' }" />
-            <Area :dataKeys="['name', 'pl']" :areaStyle="{ fill: 'red', fillOpacity: 0.7 }" />
+            <Group :stacked="true">
+              <Area :dataKeys="['name', 'pl']" :areaStyle="{ fill: 'red' }" />
+              <Area :dataKeys="['name', 'avg']" :areaStyle="{ fill: 'blue' }" />
+            </Group>
             <Marker :value="0" label="0$" color="red" strokeDasharray="0" />
           </template>
           <template #widgets>
