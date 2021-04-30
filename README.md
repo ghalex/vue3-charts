@@ -35,12 +35,11 @@
 
 - 💡 Intuitive
 - 🔌 Extensible
-- 🏗 Modular
 - 📦 Extremely easy to use
 
 ## Documentation
 
-To learn more about Vue3-Charts read the documentation [here](https://vue3-charts.netlify.app)
+To learn more about Vue3-Charts read the documentation [here](https://vue3charts.org/)
 
 ## Here is a basic example:
 
@@ -95,6 +94,7 @@ This project is still in early development. New charts will be added regularly.
 - [x] Bar Chart
 - [x] Stacked Bar Chart
 - [ ] Scatter Plot
+- [ ] Treemap
 
 ## License
 
