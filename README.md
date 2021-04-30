@@ -45,12 +45,12 @@ To learn more about Vue3-Charts read the documentation [here](https://vue3charts
 
 ```xml
 <div>
-  <Chart :data="data" :axis="axis" :margin="margin" :direction="direction">
+  <Chart :data="data" :margin="margin" :direction="direction">
     <template #layers>
       <Grid strokeDasharray="2,2" />
-      <Bar :dataKeys="['name', 'pl']" fill="#48CAE4" />
-      <Bar :dataKeys="['name', 'avg']" fill="#00b4d8" />
-      <Line :dataKeys="['name', 'avg']" stroke="#e76f51" type="step" />
+      <Bar :dataKeys="['name', 'pl']" :barStyle="{ fill: '#90e0ef' }" />
+      <Bar :dataKeys="['name', 'avg']" :barStyle="{ fill: '#0096c7' }" />
+      <Line :dataKeys="['name', 'avg']" type="step" />
     </template>
   </Chart>
 </div>
@@ -98,5 +98,5 @@ This project is still in early development. New charts will be added regularly.
 
 ## License
 
-Copyright (c) 2018 [Vue3-Charts Contributors](https://github.com/ghalex/vue3-charts/graphs/contributors)
+Copyright (c) 2021 [Vue3-Charts Contributors](https://github.com/ghalex/vue3-charts/graphs/contributors)
 Licensed under the [MIT license](https://github.com/ghalex/vue3-charts/blob/HEAD/LICENSE).
