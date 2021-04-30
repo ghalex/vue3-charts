@@ -20,10 +20,13 @@ export const Responsive: DefineComponent<{}, {}, any>
 export const Marker: DefineComponent<{}, {}, any>
 export const Tooltip: DefineComponent<{}, {}, any>
 
-declare const useBars: () => BarsReturn
 declare const useChart: () => ChartModel
-declare const useMouse: (el: Ref) => MouseReturn
-declare const usePoints: () => PointsReturn
+declare const useMouse: () => MouseReturn
+declare const useBars: (
+  dataKeys: [string, string],
+  props?: { stacked: boolean; type: string; maxWidth: number }
+) => BarsReturn
+declare const usePoints: (dataKeys: [string, string], props?: { stacked: boolean; type: string }) => PointsReturn
 declare const useResize: (el: Ref) => ResizeReturn
 
 export { useResize, useChart, usePoints, useBars, useMouse }
