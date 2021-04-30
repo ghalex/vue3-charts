@@ -60,9 +60,11 @@ To learn more about Vue3-Charts read the documentation [here](https://vue3charts
 <script>
 import { defineComponent } from 'vue'
 import { plByMonth } from '@/data'
+import { Chart, Grid, Bar, Line } from 'vue3-charts'
 
 export default defineComponent({
   name: 'Main',
+  components: { Chart, Grid, Bar, Line },
   setup() {
     const data = ref(plByMonth)
 
