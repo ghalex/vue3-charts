@@ -2,14 +2,7 @@ import * as r from 'ramda'
 import { ref, Ref } from 'vue'
 import { Scales } from '.'
 import { getCol } from '@/utils'
-import {
-  stack,
-  stackOrderAscending,
-  stackOrderDescending,
-  stackOrderReverse,
-  stackOrderNone,
-  stackOrderInsideOut
-} from 'd3-shape'
+import { stack, stackOrderNone } from 'd3-shape'
 import { Canvas, ChartConfig, Data, Layer, LayerType } from '@/types'
 
 const defaultConfig: ChartConfig = {

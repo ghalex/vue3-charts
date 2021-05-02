@@ -12,6 +12,7 @@ export default Lib
 export const Area: DefineComponent<{}, {}, any>
 export const Bar: DefineComponent<{}, {}, any>
 export const Chart: DefineComponent<{}, {}, any>
+export const Treemap: DefineComponent<{}, {}, any>
 export const Grid: DefineComponent<{}, {}, any>
 export const Group: DefineComponent<{}, {}, any>
 export const Layer: DefineComponent<{}, {}, any>

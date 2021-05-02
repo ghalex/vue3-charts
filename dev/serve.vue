@@ -104,6 +104,11 @@
         </div>
       </div>
     </div>
+    <div>
+      <div class="ml-2">
+        <Treemap :dataKeys="['name', 'avg']" :data="data" dataKey="pl" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -121,7 +126,7 @@ export default defineComponent({
     const direction = ref('horizontal')
     const margin = ref({
       left: 0,
-      top: 20,
+      top: 0,
       right: 20,
       bottom: 0
     })
