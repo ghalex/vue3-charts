@@ -39,9 +39,13 @@ export default defineComponent({
     hideY: {
       type: Boolean,
       default: false
+    },
+    center: {
+      type: Boolean,
+      default: true
     }
   },
-  setup() {
+  setup(props) {
     const chart = useChart()
     const data = ref<Data[]>([])
     const canvas = ref<Canvas | null>(null)
@@ -52,16 +56,23 @@ export default defineComponent({
       const { primary, secondary } = chart.scales
       const current = chart.config.direction === 'horizontal' ? secondary : primary
 
-      const ticks = current.ticks()
-      xLines.value = current.map(ticks)
+      if (current.type === 'band' && !props.center) {
+        const vals = current.map(chart.getData(chart.getKeys(0))).map((x) => x + current.bandwidth() / 2)
+        vals.pop()
+        xLines.value = vals
+      } else {
+        const ticks = current.ticks()
+        xLines.value = current.map(ticks)
+      }
     }
 
     function updateYLines() {
       const { primary, secondary } = chart.scales
       const current = chart.config.direction === 'horizontal' ? primary : secondary
 
-      if (current.type === 'band') {
+      if (current.type === 'band' && !props.center) {
         const vals = current.map(chart.getData(chart.getKeys(0))).map((x) => x + current.bandwidth() / 2)
+        vals.pop()
         yLines.value = vals
       } else {
         const ticks = current.ticks()

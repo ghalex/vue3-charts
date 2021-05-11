@@ -5,7 +5,7 @@
         <template #main="{ width }">
           <Chart :size="{ width, height: 400 }" :data="data" :axis="axis" :margin="margin" :direction="direction">
             <template #layers>
-              <Grid strokeDasharray="2,2" />
+              <Grid strokeDasharray="2,2" :center="false" />
               <HoverBar />
               <Group :maxWidth="50">
                 <Bar :dataKeys="['name', 'avg']" :barStyle="{ fill: '#0096c7' }" />

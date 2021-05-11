@@ -112,26 +112,15 @@ export default defineComponent({
       { immediate: true }
     )
 
-    function handleMove(e: Event) {
-      console.log(chartEl.value, e)
-      // if (chartEl.value !== null) {
-      //   console.log((chartEl.value! as any).contains(e.target))
-      // }
-    }
-
     onMounted(() => {})
 
     onUnmounted(() => {
       console.log('unmounted')
     })
 
-    function onMouseOut(e: any) {
+    function onMouseOut() {
       mouse.index = -1
       mouse.hover = false
-
-      if (chartEl.value) {
-        console.log((chartEl.value as any).contains(e.target))
-      }
     }
 
     function onMouseMove(e: MouseEvent) {
