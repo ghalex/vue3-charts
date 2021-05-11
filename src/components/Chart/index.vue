@@ -1,11 +1,11 @@
 <template>
-  <div class="chart">
+  <div class="chart" ref="chartEl">
     <svg
       :width="size.width"
       :height="size.height"
       :viewBox="`0 0 ${size.width} ${size.height}`"
       @mousemove="onMouseMove"
-      @mouseout="onMouseOut"
+      @mouseleave="onMouseOut"
     >
       <g class="layers">
         <slot name="layers" />
@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, provide, watch, reactive } from 'vue'
+import { defineComponent, onMounted, onUnmounted, provide, watch, reactive, ref } from 'vue'
 import { ChartAxis, ChartConfig, Data, Direction, Margin, Size } from '@/types'
 import { Chart } from '@/models'
 import { pointer } from 'd3-selection'
@@ -71,7 +71,7 @@ export default defineComponent({
   },
   setup(props) {
     const chart = new Chart(props.data, props.config)
-
+    const chartEl = ref(null)
     const mouse = reactive({
       index: -1,
       position: { x: 0, y: 0 },
@@ -112,14 +112,26 @@ export default defineComponent({
       { immediate: true }
     )
 
+    function handleMove(e: Event) {
+      console.log(chartEl.value, e)
+      // if (chartEl.value !== null) {
+      //   console.log((chartEl.value! as any).contains(e.target))
+      // }
+    }
+
     onMounted(() => {})
+
     onUnmounted(() => {
       console.log('unmounted')
     })
 
-    function onMouseOut() {
+    function onMouseOut(e: any) {
       mouse.index = -1
       mouse.hover = false
+
+      if (chartEl.value) {
+        console.log((chartEl.value as any).contains(e.target))
+      }
     }
 
     function onMouseMove(e: MouseEvent) {
@@ -156,7 +168,7 @@ export default defineComponent({
     //   }
     // }
 
-    return { onMouseMove, onMouseOut }
+    return { chartEl, onMouseMove, onMouseOut }
   }
 })
 </script>

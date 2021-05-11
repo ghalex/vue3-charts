@@ -6,7 +6,8 @@
           <Chart :size="{ width, height: 400 }" :data="data" :axis="axis" :margin="margin" :direction="direction">
             <template #layers>
               <Grid strokeDasharray="2,2" />
-              <Group>
+              <HoverBar />
+              <Group :maxWidth="50">
                 <Bar :dataKeys="['name', 'avg']" :barStyle="{ fill: '#0096c7' }" />
                 <Bar :dataKeys="['name', 'pl']" :barStyle="{ fill: '#FC96c7' }" />
               </Group>
@@ -45,7 +46,7 @@
             </template>
             <template #widgets>
               <Tooltip
-                borderColor="#48CAE4"
+                hideLine
                 :config="{
                   name: { hide: true },
                   inc: { color: '#48cae4' },
@@ -89,14 +90,14 @@
             <Grid strokeDasharray="2,2" />
             <!-- <Line :dataKeys="['name', 'pl']" type="monotone" /> -->
             <Line :dataKeys="['name', 'pl']" :lineStyle="{ strokeWidth: 2, stroke: 'red', strokeDasharray: '2,3' }" />
-            <Group :stacked="true">
-              <Area :dataKeys="['name', 'pl']" :areaStyle="{ fill: 'red' }" />
-              <Area :dataKeys="['name', 'avg']" :areaStyle="{ fill: 'blue' }" />
-            </Group>
+            <!-- <Group :stacked="true">
+              <Area :dataKeys="['name', 'pl']" :areaStyle="{ fill: 'red' }" type="monotone" /> -->
+            <Area :dataKeys="['name', 'pl']" :areaStyle="{ fill: 'blue' }" type="normal" />
+            <!-- </Group> -->
             <Marker :value="0" label="0$" color="red" strokeDasharray="0" />
           </template>
           <template #widgets>
-            <Tooltip color="red" />
+            <Tooltip color="red" hideLine />
           </template>
         </Chart>
         <div>
@@ -106,7 +107,7 @@
     </div>
     <div>
       <div class="ml-2">
-        <Treemap :dataKeys="['name', 'avg']" :data="data" dataKey="pl" />
+        <Treemap :dataKeys="['name', 'pl']" :data="data" />
       </div>
     </div>
   </div>

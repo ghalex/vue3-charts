@@ -10,20 +10,22 @@
         </div>
       </slot>
     </div>
-    <div
-      v-if="direction === 'horizontal'"
-      class="tooltip-line-vertical"
-      :style="{
-        height: canvas.height - 20 + 'px'
-      }"
-    />
-    <div
-      v-else
-      class="tooltip-line-horizontal"
-      :style="{
-        width: canvas.width - 40 + 'px'
-      }"
-    />
+    <div v-if="!hideLine">
+      <div
+        v-if="direction === 'horizontal'"
+        class="tooltip-line-vertical"
+        :style="{
+          height: canvas.height + 'px'
+        }"
+      />
+      <div
+        v-else
+        class="tooltip-line-horizontal"
+        :style="{
+          width: canvas.width - 40 + 'px'
+        }"
+      />
+    </div>
   </div>
 </template>
 
@@ -45,6 +47,10 @@ export default defineComponent({
     color: {
       type: String,
       default: '#7876ec'
+    },
+    hideLine: {
+      type: Boolean,
+      default: false
     },
     config: {
       type: Object,

@@ -44,6 +44,12 @@ export default class Chart {
     this.updates = ref(0)
   }
 
+  get bandScale() {
+    if (this.scales.primary.type === 'band') return this.scales.primary
+    if (this.scales.secondary.type === 'band') return this.scales.secondary
+    return null
+  }
+
   get canvas(): Canvas {
     const { margin, size } = this.config
     const axisSpace = { x: 40, y: 20 }

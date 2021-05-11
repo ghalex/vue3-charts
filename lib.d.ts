@@ -20,6 +20,7 @@ export const Line: DefineComponent<{}, {}, any>
 export const Responsive: DefineComponent<{}, {}, any>
 export const Marker: DefineComponent<{}, {}, any>
 export const Tooltip: DefineComponent<{}, {}, any>
+export const HoverBar: DefineComponent<{}, {}, any>
 
 declare const useChart: () => ChartModel
 declare const useMouse: () => MouseReturn

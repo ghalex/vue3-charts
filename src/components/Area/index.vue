@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, inject, watch, ref } from 'vue'
-import { area, curveLinear, curveStep, curveNatural, curveMonotoneX } from 'd3-shape'
+import { area, curveLinear, curveStep, curveNatural, curveMonotoneX, curveMonotoneY } from 'd3-shape'
 import Layer from '../Layer/index.vue'
 import { useBars, useChart, usePoints } from '@/hooks'
 import { kebabize, mapKeys } from '@/utils'
@@ -35,18 +35,23 @@ export default defineComponent({
     const { bars } = useBars(props.dataKeys, { stacked, type: 'area', maxWidth: -1 })
     const d = ref<string | null>('')
 
-    const lineType = {
-      normal: curveLinear,
-      natural: curveNatural,
-      step: curveStep,
-      monotone: curveMonotoneX
+    const lineType = (type: any) => {
+      console.log(type, chart.config.direction)
+      const map: any = {
+        normal: curveLinear,
+        natural: curveNatural,
+        step: curveStep,
+        monotone: chart.config.direction === 'horizontal' ? curveMonotoneX : curveMonotoneY
+      }
+
+      return map[type]
     }
 
     const buildArea = () => {
       const { secondary } = chart.scales
       if (stacked) {
         return area<any>()
-          .curve(lineType[props.type])
+          .curve(lineType(props.type))
           .x0((p) => p.x + p.width / 2)
           .y0((p) => p.y)
           .x1((p) => p.x + p.width / 2)
@@ -55,7 +60,7 @@ export default defineComponent({
 
       if (chart.config.direction === 'vertical') {
         return area<any>()
-          .curve(lineType[props.type])
+          .curve(lineType(props.type))
           .y0((p) => p.y)
           .y1((p) => p.y)
           .x0((p) => p.x)
@@ -63,7 +68,7 @@ export default defineComponent({
       }
 
       return area<any>()
-        .curve(lineType[props.type])
+        .curve(lineType(props.type))
         .x0((p) => p.x)
         .x1((p) => p.x)
         .y0((p) => p.y)

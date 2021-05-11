@@ -60,8 +60,13 @@ export default defineComponent({
       const { primary, secondary } = chart.scales
       const current = chart.config.direction === 'horizontal' ? primary : secondary
 
-      const ticks = current.ticks()
-      yLines.value = current.map(ticks)
+      if (current.type === 'band') {
+        const vals = current.map(chart.getData(chart.getKeys(0))).map((x) => x + current.bandwidth() / 2)
+        yLines.value = vals
+      } else {
+        const ticks = current.ticks()
+        yLines.value = current.map(ticks)
+      }
     }
 
     watch(chart.updates, () => {
