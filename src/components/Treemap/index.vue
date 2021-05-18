@@ -12,17 +12,8 @@
           @mouseleave="onMouseOut"
         >
           <slot :r="r" :selected="selected === i">
-            <rect
-              :x="0"
-              :y="0"
-              :width="r.width"
-              :height="r.height"
-              :stroke="r.color"
-              :stroke-width="strokeWidth"
-              :fill="r.color"
-              :fill-opacity="0.9"
-            />
-            <slot :data="r.data" :selected="selected === i" name="text">
+            <rect v-bind="toKebabCase(getStyle(r))" :x="0" :y="0" :width="r.width" :height="r.height" />
+            <slot :r="r" :selected="selected === i" name="text">
               <text :x="0 + 10" :y="0 + 20" :font-size="`15px`" :fill="`white`" font-weight="bold">
                 {{ r.data.name }}
               </text>
@@ -42,6 +33,7 @@ import { stratify, treemap } from 'd3-hierarchy'
 import { interpolateHcl } from 'd3-interpolate'
 import { Margin, Size } from '@/types'
 import { extent } from 'd3-array'
+import { kebabize, mapKeys } from '@/utils'
 
 export default defineComponent({
   name: 'Treemap',
@@ -57,7 +49,7 @@ export default defineComponent({
     },
     padding: {
       type: Number,
-      default: 5
+      default: 8
     },
     data: {
       type: Array as () => any[],
@@ -71,9 +63,9 @@ export default defineComponent({
       type: Function,
       default: () => interpolateHcl('#60c96e', '#6b46c1')
     },
-    strokeWidth: {
-      type: Number,
-      default: 1
+    rcStyle: {
+      type: Function,
+      required: false
     }
   },
   setup(props) {
@@ -152,6 +144,25 @@ export default defineComponent({
       return tree
     }
 
+    const toKebabCase = (data: any) => mapKeys(kebabize, data)
+    const getStyle = (r: any) => {
+      const style = {
+        stroke: r.color,
+        strokeWidth: 5,
+        fill: r.color,
+        fillOpacity: 0.9
+      }
+
+      if (props.rcStyle && typeof props.rcStyle === 'function') {
+        return {
+          ...style,
+          ...props.rcStyle(r)
+        }
+      }
+
+      return style
+    }
+
     function onMouseOver(i: any) {
       console.log('hover', i)
       selected.value = i
@@ -176,7 +187,7 @@ export default defineComponent({
       { immediate: true }
     )
 
-    return { el, rectangles, selected, onMouseOver, onMouseOut }
+    return { el, rectangles, selected, getStyle, toKebabCase, onMouseOver, onMouseOut }
   }
 })
 </script>

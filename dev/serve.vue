@@ -109,14 +109,26 @@
       <div class="ml-2">
         <Responsive class="w-full">
           <template #main="{ width }">
-            <Treemap :size="{ width, height: 380 }" :dataKeys="['key', 'value']" :data="data4">
-              <template #text="{ data }">
-                <text :x="0 + 10" :y="0 + 20" :font-size="`15px`" :fill="`white`" font-weight="bold">
-                  {{ data.name }}
-                </text>
-                <text :x="0 + 10" :y="0 + 40" :font-size="`15px`" :fill="`white`" font-weight="bold">
-                  {{ data.value }}
-                </text>
+            <Treemap
+              :size="{ width, height: 380 }"
+              :dataKeys="['key', 'value']"
+              :data="data4"
+              :rcStyle="
+                (r) => ({
+                  fill: r.color
+                })
+              "
+            >
+              <template #text="{ r }">
+                <g v-if="r.width > 100">
+                  <text :x="0 + 10" :y="0 + 20" :font-size="`15px`" :fill="`white`" font-weight="bold">
+                    {{ r.data.name }}
+                  </text>
+                  <text :x="0 + 10" :y="0 + 40" :font-size="`15px`" :fill="`white`" font-weight="bold">
+                    {{ r.data.value }}
+                  </text>
+                </g>
+                <g v-else />
               </template>
             </Treemap>
           </template>
