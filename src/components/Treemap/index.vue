@@ -180,13 +180,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style lang="postcss" scoped>
-.treemap svg {
-  border: 1px solid red;
-}
-
-.rectangle.selected > rect {
-  opacity: 0.9;
-}
-</style>
