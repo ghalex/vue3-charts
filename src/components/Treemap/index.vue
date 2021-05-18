@@ -1,23 +1,17 @@
 <template>
   <div class="treemap" :style="{ display: 'flex', position: 'relative' }">
-    <svg
-      :width="size.width"
-      :height="size.height"
-      :viewBox="`0 0 ${size.width} ${size.height}`"
-      ref="el"
-      @mousemove="onMouseMove"
-      @mouseout="onMouseOut"
-    >
+    <svg :width="size.width" :height="size.height" :viewBox="`0 0 ${size.width} ${size.height}`" ref="el">
       <g class="layer-rectangles">
         <g
           v-for="(r, i) in rectangles"
-          :key="i"
           class="rectangle"
-          @mouseover="() => onMouseOver(r)"
-          @mouseout="onMouseOut"
+          :key="i"
+          :class="{ selected: selected === i }"
           :transform="`translate(${r.x0}, ${r.y0})`"
+          @mouseover="() => onMouseOver(i)"
+          @mouseleave="onMouseOut"
         >
-          <slot :r="r">
+          <slot :r="r" :selected="selected === i">
             <rect
               :x="0"
               :y="0"
@@ -28,7 +22,7 @@
               :fill="r.color"
               :fill-opacity="0.9"
             />
-            <slot :data="r.data" name="text">
+            <slot :data="r.data" :selected="selected === i" name="text">
               <text :x="0 + 10" :y="0 + 20" :font-size="`15px`" :fill="`white`" font-weight="bold">
                 {{ r.data.name }}
               </text>
@@ -43,7 +37,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed, watch } from 'vue'
-import { scaleSequential } from 'd3-scale'
+import { scaleLinear, scaleSequential } from 'd3-scale'
 import { stratify, treemap } from 'd3-hierarchy'
 import { interpolateHcl } from 'd3-interpolate'
 import { Margin, Size } from '@/types'
@@ -93,12 +87,25 @@ export default defineComponent({
       height: props.size.height - props.margin.bottom
     })
 
-    const rectangles = computed(() => {
-      const values = extent(data.value.map((d) => d[props.dataKeys[1]]))
-      const colorScale = scaleSequential()
-        .domain(values as [number, number])
+    const rectangles = ref<any>([])
+
+    function getScales() {
+      const values = extent(data.value.map((d) => d[props.dataKeys[1]])) as [number, number]
+
+      const x = scaleLinear()
+        .domain(values)
+        .range([0, 100])
+        .nice()
+
+      const y = scaleSequential()
+        .domain(values)
         .interpolator(props.colorFn())
 
+      return { x, y }
+    }
+
+    function buildRectangles() {
+      const { y } = getScales()
       const res = buildTree(data.value)
         .leaves()
         .map((d: any) => {
@@ -110,14 +117,15 @@ export default defineComponent({
             width: d.x1 - d.x0,
             height: d.y1 - d.y0,
             data: d.data,
-            color: colorScale(d.value) //props.color
+            color: y(d.value) //props.color
           }
         })
 
       return res
-    })
+    }
 
     function buildTree(data: any) {
+      const { x } = getScales()
       const createTreeMap = treemap()
         .size([canvas.value.width - canvas.value.x, canvas.value.height - canvas.value.y])
         .padding(props.padding)
@@ -138,14 +146,15 @@ export default defineComponent({
         )
       )
 
-      tree.sum((d: any) => d.value)
+      tree.sum((d: any) => x(d.value))
       createTreeMap(tree)
 
       return tree
     }
 
-    function onMouseOver(r: any) {
-      selected.value = r
+    function onMouseOver(i: any) {
+      console.log('hover', i)
+      selected.value = i
     }
 
     function onMouseOut() {
@@ -162,17 +171,22 @@ export default defineComponent({
           width: props.size.width - props.margin.right,
           height: props.size.height - props.margin.bottom
         }
+        rectangles.value = buildRectangles()
       },
       { immediate: true }
     )
 
-    return { el, rectangles, onMouseOver, onMouseOut }
+    return { el, rectangles, selected, onMouseOver, onMouseOut }
   }
 })
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .treemap svg {
   border: 1px solid red;
+}
+
+.rectangle.selected > rect {
+  opacity: 0.9;
 }
 </style>

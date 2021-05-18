@@ -107,7 +107,20 @@
     </div>
     <div>
       <div class="ml-2">
-        <Treemap :dataKeys="['name', 'pl']" :data="data" />
+        <Responsive class="w-full">
+          <template #main="{ width }">
+            <Treemap :size="{ width, height: 380 }" :dataKeys="['key', 'value']" :data="data4">
+              <template #text="{ data }">
+                <text :x="0 + 10" :y="0 + 20" :font-size="`15px`" :fill="`white`" font-weight="bold">
+                  {{ data.name }}
+                </text>
+                <text :x="0 + 10" :y="0 + 40" :font-size="`15px`" :fill="`white`" font-weight="bold">
+                  {{ data.value }}
+                </text>
+              </template>
+            </Treemap>
+          </template>
+        </Responsive>
       </div>
     </div>
   </div>
@@ -117,12 +130,14 @@
 import { defineComponent, ref } from 'vue'
 import * as mockup from '@/mockup'
 import * as r from 'ramda'
+
 export default defineComponent({
   name: 'App',
   setup() {
     const data = ref<any>(mockup.plByMonth)
     const data2 = ref(r.sortBy(r.prop('nbOfTrades'), mockup.trades))
     const data3 = ref<any>(mockup.plMonthYear)
+    const data4 = ref(mockup.tags)
 
     const direction = ref('horizontal')
     const margin = ref({
@@ -174,7 +189,7 @@ export default defineComponent({
       console.log('click me')
     }
 
-    return { data, data2, data3, axis, margin, direction, add, updateConfig, test, console }
+    return { data, data2, data3, data4, axis, margin, direction, add, updateConfig, test, console }
   }
 })
 </script>

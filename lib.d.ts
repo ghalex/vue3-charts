@@ -32,4 +32,3 @@ declare const usePoints: (dataKeys: [string, string], props?: { stacked: boolean
 declare const useResize: (el: Ref) => ResizeReturn
 
 export { useResize, useChart, usePoints, useBars, useMouse }
-export * from './src/types'

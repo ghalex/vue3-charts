@@ -96,7 +96,7 @@ This project is still in early development. New charts will be added regularly.
 - [x] Bar Chart
 - [x] Stacked Bar Chart
 - [ ] Scatter Plot
-- [ ] Treemap
+- [x] Treemap
 
 ## License
 

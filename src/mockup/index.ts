@@ -23,3 +23,10 @@ export const trades = [
   { nbOfTrades: 15, pl: 120 },
   { nbOfTrades: 8, pl: 110 }
 ]
+
+export const tags = [
+  { key: 'Swing', value: 563.05 },
+  { key: 'GapUp', value: 39.97000000000003 },
+  { key: 'EarningWinner', value: 10.759999999999764 },
+  { key: '50Ema', value: -103.70000000000005 }
+]
