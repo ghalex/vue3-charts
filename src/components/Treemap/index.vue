@@ -100,8 +100,9 @@ export default defineComponent({
       const { y } = getScales()
       const res = buildTree(data.value)
         .leaves()
-        .map((d: any) => {
+        .map((d: any, idx: number) => {
           return {
+            idx,
             x0: canvas.value.x + d.x0,
             x1: canvas.value.x + d.x1,
             y0: canvas.value.y + d.y0,
