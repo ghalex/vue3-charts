@@ -1,4 +1,3 @@
-import * as r from 'ramda'
 import { Ref, ref, watch } from 'vue'
 import { Rectangle } from '@/types'
 import useChart from './useChart'

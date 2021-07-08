@@ -1,7 +1,6 @@
 import { Canvas, ChartAxis, Data, Direction } from '@/types'
 import { getCol } from '@/utils'
 import { Series } from 'd3-shape'
-import * as r from 'ramda'
 import Scale from './Scale'
 
 export default class Scales {

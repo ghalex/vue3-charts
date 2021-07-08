@@ -1,34 +1,30 @@
 {
   "name": "vue3-charts",
-  "version": "1.1.17",
+  "version": "1.1.18",
   "description": "",
-  "main": "dist/lib.ssr.js",
-  "browser": "dist/lib.esm.js",
-  "module": "dist/lib.esm.js",
-  "unpkg": "dist/lib.min.js",
-  "types": "lib.d.ts",
+  "main": "dist/vue3-charts.js",
+  "module": "dist/vue3-charts.esm.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/*",
-    "lib.d.ts",
-    "src/**/*.vue"
+    "src/**/*"
   ],
-  "sideEffects": false,
   "scripts": {
     "serve": "vue-cli-service serve dev/serve.ts",
-    "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
-    "build:ssr": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
-    "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
-    "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife"
+    "build": "rollup -c",
+    "lib": "vue-cli-service build --target lib --name vue3-charts ./src/index.ts",
+    "lint": "vue-cli-service lint",
+    "types": "tsc --emitDeclarationOnly",
+    "themes": "cp -R ./src/themes ./dist"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-typescript": "^7.12.7",
-    "@rollup/plugin-alias": "^3.1.1",
-    "@rollup/plugin-babel": "^5.2.2",
-    "@rollup/plugin-commonjs": "^17.0.0",
-    "@rollup/plugin-node-resolve": "^11.0.1",
-    "@rollup/plugin-replace": "^2.3.4",
+    "@rollup/plugin-alias": "^3.1.2",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
     "@types/d3-array": "^2.9.0",
     "@types/d3-axis": "^2.0.0",
     "@types/d3-format": "^2.0.0",
@@ -53,13 +49,14 @@
     "minimist": "^1.2.5",
     "postcss": "^8.2.3",
     "rollup": "^2.36.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.0",
-    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.30.0",
     "rollup-plugin-vue": "^6.0.0",
-    "typescript": "^3.8.3"
+    "typescript": "^4.3.5"
   },
   "peerDependencies": {
-    "vue": "^3.0.11"
+    "vue": "^3.1.4"
   },
   "engines": {
     "node": ">=12"

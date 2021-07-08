@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 import { scaleLinear, scaleSequential } from 'd3-scale'
 import { stratify, treemap } from 'd3-hierarchy'
 import { interpolateHcl } from 'd3-interpolate'

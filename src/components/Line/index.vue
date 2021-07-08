@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, watch, ref, onMounted, inject } from 'vue'
+import { computed, defineComponent, watch, ref, inject } from 'vue'
 import { line, curveLinear, curveStepAfter, curveNatural, curveMonotoneX, curveMonotoneY } from 'd3-shape'
 import { Point } from '@/types'
 import { is } from 'ramda'

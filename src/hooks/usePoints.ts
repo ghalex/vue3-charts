@@ -1,4 +1,3 @@
-import * as r from 'ramda'
 import { ref, Ref, watch } from 'vue'
 import { Point } from '@/types'
 import { Series } from 'd3-shape'
