@@ -6,7 +6,14 @@
 
 <script lang="ts">
 import { computed, defineComponent, inject, watch, ref } from 'vue'
-import { area, curveLinear, curveStep, curveNatural, curveMonotoneX, curveMonotoneY } from 'd3-shape'
+import {
+  area,
+  curveLinear,
+  curveStep,
+  curveNatural,
+  curveMonotoneX,
+  curveMonotoneY
+} from 'd3-shape'
 import Layer from '../Layer/index.vue'
 import { useBars, useChart, usePoints } from '@/hooks'
 import { kebabize, mapKeys } from '@/utils'
@@ -31,8 +38,15 @@ export default defineComponent({
   setup(props) {
     const chart = useChart()
     const { stacked } = inject('layerProps', { stacked: false })
-    const { points } = usePoints(props.dataKeys, { stacked: false, type: 'area' })
-    const { bars } = useBars(props.dataKeys, { stacked, type: 'area', maxWidth: -1 })
+    const { points } = usePoints(props.dataKeys, {
+      stacked: false,
+      type: 'area'
+    })
+    const { bars } = useBars(props.dataKeys, {
+      stacked,
+      type: 'area',
+      maxWidth: -1
+    })
     const d = ref<string | null>('')
 
     const lineType = (type: any) => {
@@ -41,7 +55,10 @@ export default defineComponent({
         normal: curveLinear,
         natural: curveNatural,
         step: curveStep,
-        monotone: chart.config.direction === 'horizontal' ? curveMonotoneX : curveMonotoneY
+        monotone:
+          chart.config.direction === 'horizontal'
+            ? curveMonotoneX
+            : curveMonotoneY
       }
 
       return map[type]
@@ -52,27 +69,27 @@ export default defineComponent({
       if (stacked) {
         return area<any>()
           .curve(lineType(props.type))
-          .x0((p) => p.x + p.width / 2)
-          .y0((p) => p.y)
-          .x1((p) => p.x + p.width / 2)
-          .y1((p) => p.y + p.height)
+          .x0(p => p.x + p.width / 2)
+          .y0(p => p.y)
+          .x1(p => p.x + p.width / 2)
+          .y1(p => p.y + p.height)
       }
 
       if (chart.config.direction === 'vertical') {
         return area<any>()
           .curve(lineType(props.type))
-          .y0((p) => p.y)
-          .y1((p) => p.y)
-          .x0((p) => p.x)
-          .x1((_) => secondary.scale(0))
+          .y0(p => p.y)
+          .y1(p => p.y)
+          .x0(p => p.x)
+          .x1(_ => secondary.scale(0))
       }
 
       return area<any>()
         .curve(lineType(props.type))
-        .x0((p) => p.x)
-        .x1((p) => p.x)
-        .y0((p) => p.y)
-        .y1((_) => secondary.scale(0))
+        .x0(p => p.x)
+        .x1(p => p.x)
+        .y0(p => p.y)
+        .y1(_ => secondary.scale(0))
     }
 
     const getStyle = computed(() => {

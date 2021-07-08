@@ -34,6 +34,8 @@
     "@types/d3-selection": "^3.0.0",
     "@types/d3-shape": "^3.0.1",
     "@types/ramda": "^0.27.43",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
     "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-plugin-typescript": "^4.5.13",
     "@vue/cli-service": "^4.5.13",
