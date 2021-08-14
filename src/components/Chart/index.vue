@@ -11,8 +11,16 @@
         <slot name="layers" />
       </g>
       <g class="axis">
-        <axis position="bottom" :isPrimary="direction === 'horizontal'" />
-        <axis position="left" :isPrimary="direction === 'vertical'" />
+        <axis
+          v-if="!axis?.primary?.hide"
+          position="bottom"
+          :isPrimary="direction === 'horizontal'"
+        />
+        <axis
+          v-if="!axis?.secondary?.hide"
+          position="left"
+          :isPrimary="direction === 'vertical'"
+        />
       </g>
     </svg>
     <div class="widgets">
@@ -25,7 +33,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, provide, watch, reactive, ref } from 'vue'
+import {
+  defineComponent,
+  onMounted,
+  onUnmounted,
+  provide,
+  watch,
+  reactive,
+  ref
+} from 'vue'
 import { ChartAxis, ChartConfig, Data, Direction, Margin, Size } from '@/types'
 import { Chart } from '@/models'
 import { pointer } from 'd3-selection'
@@ -37,17 +53,17 @@ export default defineComponent({
   components: { Axis },
   props: {
     data: {
-      type: Object as () => Data[],
-      default: []
+      type: Array as () => Data[],
+      default: () => []
     },
     margin: {
       type: Object as () => Margin,
-      default: {
+      default: () => ({
         top: 0,
         right: 0,
         bottom: 0,
         left: 0
-      },
+      }),
       required: false
     },
     size: {
@@ -66,7 +82,7 @@ export default defineComponent({
     },
     config: {
       type: Object as () => Partial<ChartConfig>,
-      default: {}
+      default: () => ({})
     }
   },
   setup(props) {
@@ -101,13 +117,14 @@ export default defineComponent({
     watch(
       () => [props.direction, props.size, props.margin, props.axis],
       () => {
-        if (chart)
+        if (chart) {
           chart.changeConfig({
             direction: props.direction,
             size: props.size,
             margin: props.margin,
             axis: props.axis
           })
+        }
       },
       { immediate: true }
     )
@@ -137,7 +154,10 @@ export default defineComponent({
           const delta = mouse.position.x - chart.canvas.x
           mouse.index = Math.round((delta + band / 2) / band) - 1
         } else {
-          mouse.index = bisectCenter(vals, primary.scale.invert(mouse.position.x))
+          mouse.index = bisectCenter(
+            vals,
+            primary.scale.invert(mouse.position.x)
+          )
         }
       } else {
         if (primary.type === 'band') {
@@ -145,7 +165,10 @@ export default defineComponent({
           const delta = mouse.position.y - chart.canvas.y
           mouse.index = Math.round((delta + band / 2) / band) - 1
         } else {
-          mouse.index = bisectCenter(vals, primary.scale.invert(mouse.position.y))
+          mouse.index = bisectCenter(
+            vals,
+            primary.scale.invert(mouse.position.y)
+          )
         }
       }
     }

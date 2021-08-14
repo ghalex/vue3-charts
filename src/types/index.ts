@@ -51,9 +51,10 @@ export type ScaleType = 'band' | 'linear'
 export interface AxisConfig {
   domain: Domain
   type: ScaleType
-  format?: (val: string) => string
+  format?: (_: string) => string
   ticks?: number
   tickValues?: any[]
+  hide?: boolean
 }
 
 export interface ChartAxis {

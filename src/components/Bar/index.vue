@@ -4,7 +4,9 @@
     <rect
       v-for="(bar, i) in bars"
       class="chart-bar"
-      v-bind="toKebabCase(getStyle({ ...bar.props, active: i === mouse.index }))"
+      v-bind="
+        toKebabCase(getStyle({ ...bar.props, active: i === mouse.index }))
+      "
       :key="i"
       :x="bar.x"
       :y="bar.y"
@@ -30,9 +32,9 @@ export default defineComponent({
   props: {
     barStyle: {
       type: [Function, Object],
-      default: {
+      default: () => ({
         fill: 'blue'
-      }
+      })
     },
     maxWidth: {
       type: Number,
@@ -41,12 +43,24 @@ export default defineComponent({
     dataKeys: {
       type: Object as () => [string, string],
       required: true
+    },
+    gap: {
+      type: Number,
+      default: 5
     }
   },
   setup(props) {
     const mouse = useMouse()
-    const { stacked, maxWidth } = inject('layerProps', { stacked: false, maxWidth: -1 })
-    const { bars } = useBars(props.dataKeys, { maxWidth: Math.max(props.maxWidth, maxWidth), stacked, type: 'bar' })
+    const { stacked, maxWidth } = inject('layerProps', {
+      stacked: false,
+      maxWidth: -1
+    })
+    const { bars } = useBars(props.dataKeys, {
+      maxWidth: Math.max(props.maxWidth, maxWidth),
+      stacked,
+      gap: props.gap,
+      type: 'bar'
+    })
     const getStyle = computed(() => {
       if (is(Function, props.barStyle)) {
         return props.barStyle

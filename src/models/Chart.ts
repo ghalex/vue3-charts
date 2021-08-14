@@ -53,6 +53,15 @@ export default class Chart {
   get canvas(): Canvas {
     const { margin, size } = this.config
     const axisSpace = { x: 40, y: 20 }
+
+    if (this.config.axis.primary.hide) {
+      axisSpace.y = 0
+    }
+
+    if (this.config.axis.secondary.hide) {
+      axisSpace.x = 0
+    }
+
     return {
       x: margin.left + axisSpace.x,
       y: margin.top,
