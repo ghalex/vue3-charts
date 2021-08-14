@@ -33,6 +33,10 @@ export default defineComponent({
     type: {
       type: String as () => 'normal' | 'step' | 'natural' | 'monotone',
       default: () => 'normal'
+    },
+    gap: {
+      type: Number,
+      default: 0
     }
   },
   setup(props) {
@@ -45,6 +49,7 @@ export default defineComponent({
     const { bars } = useBars(props.dataKeys, {
       stacked,
       type: 'area',
+      gap: props.gap,
       maxWidth: -1
     })
     const d = ref<string | null>('')

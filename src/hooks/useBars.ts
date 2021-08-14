@@ -7,11 +7,10 @@ export interface BarsReturn {
   bars: Ref<Rectangle[]>
 }
 
-export default (dataKeys: [string, string], props = { maxWidth: -1, stacked: false, type: 'bar' }): BarsReturn => {
+export default (dataKeys: [string, string], props = { maxWidth: -1, gap: 5, stacked: false, type: 'bar' }): BarsReturn => {
   const bars = ref<Rectangle[]>([])
   const chart = useChart()
-  const gap = 5
-  const { stacked, type } = props
+  const { stacked, type, gap } = props
 
   function scales() {
     const { primary, secondary } = chart.scales
@@ -60,7 +59,7 @@ export default (dataKeys: [string, string], props = { maxWidth: -1, stacked: fal
     const diff = getDiffWidth()
 
     return values.map((val) => {
-      let rect: Rectangle = { x: 0, y: 0, width: 0, height: 0, props: { values: [...val], data: val.data } }
+      const rect: Rectangle = { x: 0, y: 0, width: 0, height: 0, props: { values: [...val], data: val.data } }
       const xVal = bandScale.scale(val.data[key])
       const [yVal0, yVal1] = linearScale.map(val)
 
