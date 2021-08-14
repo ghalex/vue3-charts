@@ -1,6 +1,6 @@
 <template>
-  <div class="tooltip" :style="style" v-if="show">
-    <div class="tooltip-content" :style="styleContent" ref="el">
+  <div class="v-tooltip" :style="style" v-if="show">
+    <div class="v-tooltip-content" :style="styleContent" ref="el">
       <slot :payload="items">
         <div :style="{ borderColor: color }">
           <div v-for="(item, i) in items" :key="i" :style="{ color: item.color }">
@@ -13,14 +13,14 @@
     <div v-if="!hideLine">
       <div
         v-if="direction === 'horizontal'"
-        class="tooltip-line-vertical"
+        class="v-tooltip-line-vertical"
         :style="{
           height: canvas.height + 'px'
         }"
       />
       <div
         v-else
-        class="tooltip-line-horizontal"
+        class="v-tooltip-line-horizontal"
         :style="{
           width: canvas.width - 40 + 'px'
         }"
@@ -54,7 +54,7 @@ export default defineComponent({
     },
     config: {
       type: Object,
-      default: {}
+      default: () => ({})
     }
   },
   setup(props) {
@@ -130,18 +130,18 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.tooltip {
+.v-tooltip {
   position: absolute;
   pointer-events: none;
 }
 
-.tooltip-content {
+.v-tooltip-content {
   position: absolute;
   white-space: nowrap;
   pointer-events: none;
 }
 
-.tooltip-content > div {
+.v-tooltip-content > div {
   margin-left: 5px;
   margin-right: 5px;
   border: 2px solid;
@@ -152,12 +152,12 @@ export default defineComponent({
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
-.tooltip-right {
+.v-tooltip-right {
   transform: translateX(-100%);
   margin-left: 0;
 }
 
-.tooltip-line-vertical {
+.v-tooltip-line-vertical {
   top: 0px;
   position: absolute;
   width: 1px;
@@ -166,7 +166,7 @@ export default defineComponent({
   opacity: 0.3;
 }
 
-.tooltip-line-horizontal {
+.v-tooltip-line-horizontal {
   left: 0px;
   position: absolute;
   height: 1px;

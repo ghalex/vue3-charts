@@ -12,12 +12,12 @@
       </g>
       <g class="axis">
         <axis
-          v-if="!axis.primary.hide"
+          v-if="!axis?.primary?.hide"
           position="bottom"
           :isPrimary="direction === 'horizontal'"
         />
         <axis
-          v-if="!axis.secondary.hide"
+          v-if="!axis?.secondary?.hide"
           position="left"
           :isPrimary="direction === 'vertical'"
         />
