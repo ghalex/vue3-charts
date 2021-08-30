@@ -8,6 +8,7 @@
 // import { format } from 'd3-format'
 import type { Axis } from 'd3-axis'
 import type { PropType } from 'vue'
+import type { Canvas } from '@/types'
 
 import { computed, defineComponent, ref, watch } from 'vue'
 import { select } from 'd3-selection'
@@ -34,9 +35,7 @@ export default defineComponent({
       return props.position === 'bottom' ? axisBottom : axisLeft
     })
 
-    const canvas = computed(() => {
-      return chart.canvas
-    })
+    const canvas = ref<Canvas>(chart.canvas)
 
     const defaultConfig = { ticks: 5 }
     function drawAxis() {
@@ -83,6 +82,7 @@ export default defineComponent({
     )
 
     watch(chart.updates, () => {
+      canvas.value = chart.canvas
       drawAxis()
     })
 

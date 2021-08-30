@@ -23,6 +23,10 @@ const defaultConfig: ChartConfig = {
       domain: ['dataMin', 'dataMax'],
       type: 'linear'
     }
+  },
+  axisSpace: {
+    x: 40,
+    y: 20
   }
 }
 
@@ -52,7 +56,7 @@ export default class Chart {
 
   get canvas(): Canvas {
     const { margin, size } = this.config
-    const axisSpace = { x: 40, y: 20 }
+    const axisSpace = this.config.axisSpace
 
     if (this.config.axis.primary.hide) {
       axisSpace.y = 0

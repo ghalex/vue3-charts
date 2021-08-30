@@ -70,6 +70,7 @@ export interface ChartConfig {
   margin: Margin
   direction: Direction
   axis: ChartAxis
+  axisSpace: { x: number, y: number }
 }
 
 export interface Payload {
