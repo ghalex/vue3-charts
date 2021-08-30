@@ -1,3 +1,5 @@
+import type { Axis } from 'd3-axis'
+
 export interface Point {
   x: number
   y: number
@@ -55,6 +57,7 @@ export interface AxisConfig {
   ticks?: number
   tickValues?: any[]
   hide?: boolean
+  useConfig?: (ax: Axis<any>) => void
 }
 
 export interface ChartAxis {
