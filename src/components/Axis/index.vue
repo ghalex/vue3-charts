@@ -6,6 +6,10 @@
 <script lang="ts">
 // import * as r from 'ramda'
 // import { format } from 'd3-format'
+import type { Axis } from 'd3-axis'
+import type { PropType } from 'vue'
+import type { Canvas } from '@/types'
+
 import { computed, defineComponent, ref, watch } from 'vue'
 import { select } from 'd3-selection'
 import { axisBottom, axisLeft } from 'd3-axis'
@@ -15,7 +19,7 @@ export default defineComponent({
   name: 'Axis',
   props: {
     position: {
-      type: String as () => 'bottom' | 'left',
+      type: String as PropType<'bottom' | 'left'>,
       default: 'bottom'
     },
     isPrimary: {
@@ -24,24 +28,27 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const el = ref(null)
+    const el = ref<SVGGElement>()
     const chart = useChart()
 
     const axis = computed(() => {
       return props.position === 'bottom' ? axisBottom : axisLeft
     })
 
-    const canvas = computed(() => {
-      return chart.canvas
-    })
+    const canvas = ref<Canvas>(chart.canvas)
 
+    const defaultConfig = { ticks: 5 }
     function drawAxis() {
       if (chart.data.length > 0) {
         const { primary, secondary } = chart.scales
         const current = props.isPrimary ? primary : secondary
-        const config = props.isPrimary ? primary.config : secondary.config
+        const config = Object.assign(
+          {},
+          props.isPrimary ? primary.config : secondary.config,
+          defaultConfig
+        )
 
-        const ax: any = axis.value(current.scale).ticks(5)
+        const ax: Axis<any> = axis.value(current.scale)
 
         if (config.format) {
           ax.tickFormat(config.format)
@@ -55,7 +62,12 @@ export default defineComponent({
           ax.tickValues(config.tickValues)
         }
 
-        select(el.value).call(ax)
+        if (config.useConfig) {
+          config.useConfig(ax)
+        }
+
+        select(el.value!).call(ax)
+
         return ax
       }
 
@@ -70,6 +82,7 @@ export default defineComponent({
     )
 
     watch(chart.updates, () => {
+      canvas.value = chart.canvas
       drawAxis()
     })
 

@@ -14,11 +14,13 @@
         <axis
           v-if="!axis?.primary?.hide"
           position="bottom"
+          ref="axBottomEl"
           :isPrimary="direction === 'horizontal'"
         />
         <axis
           v-if="!axis?.secondary?.hide"
           position="left"
+          ref="axLeftEl"
           :isPrimary="direction === 'vertical'"
         />
       </g>
@@ -86,8 +88,13 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const chart = new Chart(props.data, props.config)
     const chartEl = ref(null)
+    const axLeftEl = ref<{ $el: SVGGElement }>()
+    const axBottomEl = ref<{ $el: SVGGElement }>()
+    const axisSpace = reactive<ChartConfig['axisSpace']>({ x: 40, y: 20 })
+
+    const chart = new Chart(props.data, props.config)
+
     const mouse = reactive({
       index: -1,
       position: { x: 0, y: 0 },
@@ -115,10 +122,11 @@ export default defineComponent({
     )
 
     watch(
-      () => [props.direction, props.size, props.margin, props.axis],
+      () => [{ ...axisSpace }, props.direction, props.size, props.margin, props.axis],
       () => {
         if (chart) {
           chart.changeConfig({
+            axisSpace: { ...axisSpace },
             direction: props.direction,
             size: props.size,
             margin: props.margin,
@@ -129,9 +137,23 @@ export default defineComponent({
       { immediate: true }
     )
 
-    onMounted(() => {})
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        if (entry.target === axBottomEl.value?.$el) {
+          axisSpace.y = entry.contentRect.height
+        } else if (entry.target === axLeftEl.value?.$el) {
+          axisSpace.x = entry.contentRect.width
+        }
+      }
+    })
+
+    onMounted(() => {
+      resizeObserver.observe(axBottomEl.value!.$el)
+      resizeObserver.observe(axLeftEl.value!.$el)
+    })
 
     onUnmounted(() => {
+      resizeObserver.disconnect()
       console.log('unmounted')
     })
 
@@ -180,7 +202,7 @@ export default defineComponent({
     //   }
     // }
 
-    return { chartEl, onMouseMove, onMouseOut }
+    return { axBottomEl, axLeftEl, chartEl, onMouseMove, onMouseOut }
   }
 })
 </script>
