@@ -69,29 +69,39 @@ export default defineComponent({
     })
 
     const style = computed(() => {
-      if (direction.value !== 'horizontal') {
+      if (direction.value === 'vertical') {
         return {
           top: position.value.y - 0.5 + 'px',
           left: canvas.value.x + 'px'
         }
-      }
-
-      return {
-        top: canvas.value.y + 'px',
-        left: position.value.x - 0.5 + 'px'
+      } else if (direction.value === 'horizontal') {
+        return {
+          top: canvas.value.y + 'px',
+          left: position.value.x - 0.5 + 'px'
+        }
+      } else {
+        return {
+          top: canvas.value.y + 'px',
+          left: canvas.value.x + 'px'
+        }
       }
     })
     const styleContent = computed(() => {
-      if (direction.value !== 'horizontal') {
+      if (direction.value === 'vertical') {
         return {
           top: 5 + 'px',
           left: position.value.x - 30 + 'px'
         }
-      }
-
-      return {
-        top: position.value.y + 'px',
-        transform: `translateX(${isRight.value ? '-100%' : 0})`
+      } else if (direction.value === 'horizontal') {
+        return {
+          top: position.value.y + 'px',
+          transform: `translateX(${isRight.value ? '-100%' : 0})`
+        }
+      } else {
+        return {
+          top: position.value.y + 'px',
+          left: position.value.x + 'px'
+        }
       }
     })
 

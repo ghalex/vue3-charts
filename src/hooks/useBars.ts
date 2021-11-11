@@ -69,7 +69,7 @@ export default (dataKeys: [string, string], props = { maxWidth: -1, gap: 5, stac
 
         rect.x = diff + xVal + index * barSize + gap / 2
         rect.width = barSize
-      } else {
+      } else if (chart.config.direction === 'vertical') {
         rect.x = Math.min(yVal0, yVal1)
         rect.width = Math.abs(yVal0 - yVal1)
 

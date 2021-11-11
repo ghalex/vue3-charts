@@ -24,7 +24,7 @@ export default class Scales {
     if (direction === 'horizontal') {
       this.primary.updateRange([canvas.x, canvas.width])
       this.secondary.updateRange([canvas.height, canvas.y])
-    } else {
+    } else if (direction === 'vertical') {
       this.primary.updateRange([canvas.y, canvas.height])
       this.secondary.updateRange([canvas.x, canvas.width])
     }

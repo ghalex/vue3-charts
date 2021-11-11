@@ -139,6 +139,27 @@
           <button>Add Data</button>
         </div>
       </div>
+      <div class="ml-2">
+        <Chart
+          direction="circular"
+          :data="data"
+          :config="{ controlHover: false }"
+          :margin="margin"
+          :axis="{ primary: { hide: true }, secondary: { hide: true }}"
+          :size="{ width: 400, height: 400 }"
+        >
+          <template #layers>
+            <Pie :dataKeys="['name', 'avg']" />
+            <!-- </Group> -->
+          </template>
+          <template #widgets>
+            <Tooltip color="red" hideLine />
+          </template>
+        </Chart>
+        <div>
+          <button>Add Data</button>
+        </div>
+      </div>
     </div>
     <div>
       <div class="ml-2">
