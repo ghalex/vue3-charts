@@ -1,7 +1,7 @@
 <template>
   <Layer :dataKeys="dataKeys" type="pie">
     <text v-if="arcs.length === 0">No Data</text>
-    <g :transform="transform" id="chart-group">
+    <g :transform="transform">
       <path v-for="(arc, i) in arcs" :key="i" :id="`arc-${i}`" class="chart-pie"
         v-bind="toKebabCase(getStyle())" :fill="getColor(i)" :d="arcGen(arc)"
         @mousemove="showTooltip($event, i)" @mouseleave="hideTooltip()"
@@ -18,7 +18,7 @@ import { Arc } from '@/types'
 import { kebabize, mapKeys } from '@/utils'
 import { pie, arc } from 'd3-shape'
 import { scaleOrdinal } from 'd3-scale'
-import { BaseType, pointer, select } from 'd3-selection'
+import { pointer } from 'd3-selection'
 
 export default defineComponent({
   name: 'Pie',
@@ -67,18 +67,10 @@ export default defineComponent({
       return colors(index.toString())
     }
 
-    let node: BaseType
-    function getNode() {
-      if (!node) {
-        node = select('#chart-group').node()
-      }
-      return node
-    }
-
     function showTooltip(event: MouseEvent, index: number) {
       mouse.hover = true
       mouse.index = index - chart.data.length
-      const [x, y] = pointer(event, getNode())
+      const [x, y] = pointer(event)
       mouse.position = { x: x + style.outerRadius, y: y + style.outerRadius }
     }
 
