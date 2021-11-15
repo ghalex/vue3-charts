@@ -148,8 +148,12 @@ export default defineComponent({
     })
 
     onMounted(() => {
-      resizeObserver.observe(axBottomEl.value!.$el)
-      resizeObserver.observe(axLeftEl.value!.$el)
+      if (axBottomEl.value) {
+        resizeObserver.observe(axBottomEl.value.$el)
+      }
+      if (axLeftEl.value) {
+        resizeObserver.observe(axLeftEl.value.$el)
+      }
     })
 
     onUnmounted(() => {
@@ -158,11 +162,17 @@ export default defineComponent({
     })
 
     function onMouseOut() {
+      if (props.config.controlHover === false) {
+        return
+      }
       mouse.index = -1
       mouse.hover = false
     }
 
     function onMouseMove(e: MouseEvent) {
+      if (props.config.controlHover === false) {
+        return
+      }
       mouse.hover = true
       mouse.position = { x: pointer(e)[0], y: pointer(e)[1] }
 
@@ -181,7 +191,7 @@ export default defineComponent({
             primary.scale.invert(mouse.position.x)
           )
         }
-      } else {
+      } else if (chart.config.direction === 'vertical') {
         if (primary.type === 'band') {
           const band = primary.bandwidth()
           const delta = mouse.position.y - chart.canvas.y

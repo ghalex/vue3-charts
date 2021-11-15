@@ -1,4 +1,7 @@
 import type { Axis } from 'd3-axis'
+import { PieArcDatum } from 'd3-shape'
+
+export type Arc = PieArcDatum<number | { valueOf(): number }>
 
 export interface Point {
   x: number
@@ -30,7 +33,7 @@ export interface Data {
   [key: string]: string | number
 }
 
-export type LayerType = 'bar' | 'line' | 'area' | 'points' | 'custom'
+export type LayerType = 'bar' | 'line' | 'area' | 'pie' | 'points' | 'custom'
 
 export interface Layer {
   id: string
@@ -47,7 +50,7 @@ export interface Canvas {
 }
 
 export type Domain = [string | number, string | number]
-export type Direction = 'horizontal' | 'vertical'
+export type Direction = 'horizontal' | 'vertical' | 'circular'
 export type ScaleType = 'band' | 'linear'
 
 export interface AxisConfig {
@@ -71,6 +74,7 @@ export interface ChartConfig {
   direction: Direction
   axis: ChartAxis
   axisSpace: { x: number, y: number }
+  controlHover?: boolean
 }
 
 export interface Payload {

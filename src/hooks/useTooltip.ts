@@ -28,10 +28,15 @@ export default (): Return => {
           x,
           y: mouse.position.y
         }
-      } else {
+      } else if (chart.config.direction === 'vertical') {
         position.value = {
           x: mouse.position.x,
           y: x
+        }
+      } else {
+        position.value = {
+          x: mouse.position.x,
+          y: mouse.position.y
         }
       }
     }

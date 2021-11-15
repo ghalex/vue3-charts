@@ -25,7 +25,7 @@ export default (dataKeys: [string, string], props = { stacked: false, type: 'lin
           }
         })
         .filter((p) => !isNaN(p.x) && !isNaN(p.y))
-    } else {
+    } else if (chart.config.direction === 'vertical') {
       return values
         .map((val) => {
           return {
@@ -36,6 +36,7 @@ export default (dataKeys: [string, string], props = { stacked: false, type: 'lin
         })
         .filter((p) => !isNaN(p.x) && !isNaN(p.y))
     }
+    return []
   }
 
   function update() {
