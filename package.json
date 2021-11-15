@@ -1,6 +1,6 @@
 {
   "name": "vue3-charts",
-  "version": "1.1.22",
+  "version": "1.1.23",
   "description": "",
   "main": "dist/vue3-charts.js",
   "module": "dist/vue3-charts.esm.js",
