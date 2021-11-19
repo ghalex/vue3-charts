@@ -25,7 +25,7 @@ import { kebabize, mapKeys } from '@/utils'
 import { pie, arc } from 'd3-shape'
 import { scaleOrdinal } from 'd3-scale'
 import { pointer } from 'd3-selection'
-import { ascending, descending, Primitive } from 'd3-array'
+import { ascending, descending } from 'd3-array'
 
 export default defineComponent({
   name: 'PieLayer',
