@@ -20,11 +20,12 @@
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useMouse, useChart } from '@/hooks'
 import Layer from '../Layer/index.vue'
-import { Arc } from '@/types'
+import { Arc, PieSort } from '@/types'
 import { kebabize, mapKeys } from '@/utils'
 import { pie, arc } from 'd3-shape'
 import { scaleOrdinal } from 'd3-scale'
 import { pointer } from 'd3-selection'
+import { ascending, descending, Primitive } from 'd3-array'
 
 export default defineComponent({
   name: 'PieLayer',
@@ -37,6 +38,15 @@ export default defineComponent({
     dataKeys: {
       type: Object as () => [string, string],
       required: true
+    },
+    sort: {
+      type: PieSort,
+      default: 'desc',
+      required: false
+    },
+    sortFunc: {
+      type: Function,
+      required: false
     }
   },
   setup(props) {
@@ -70,10 +80,19 @@ export default defineComponent({
 
     const transform = ref(`translate(${size.value + chart.canvas.x}, ${size.value + chart.canvas.y})`)
 
+    let pieSort: any
+    switch (props.sort) {
+      case 'desc': pieSort = descending; break
+      case 'asc': pieSort = ascending; break
+      case 'none': pieSort = null; break
+      case 'custom': pieSort = props.sortFunc ?? null; break
+      default: pieSort = null
+    }
+
     function updatePie() {
       // const key = chart.getKeys(1)
       const data = chart.getData([props.dataKeys[1]])
-      arcs.value = pie()(data)
+      arcs.value = pie().sort(pieSort)(data)
     }
 
     function getColor(index: number) {
