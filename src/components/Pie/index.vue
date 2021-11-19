@@ -2,8 +2,14 @@
   <Layer :dataKeys="dataKeys" type="pie">
     <text v-if="arcs.length === 0">No Data</text>
     <g :transform="transform">
-      <path v-for="(arc, i) in arcs" :key="i" :id="`arc-${i}`" class="chart-pie"
-        v-bind="toKebabCase(getStyle())" :fill="getColor(i)" :d="arcGen(arc)"
+      <path
+        v-for="(arc, i) in arcs"
+        :key="i"
+        :id="`arc-${i}`"
+        class="chart-pie"
+        v-bind="toKebabCase(getStyle())"
+        :fill="getColor(i)"
+        :d="arcGen()(arc)"
         @mousemove="showTooltip($event, i)" @mouseleave="hideTooltip()"
       />
     </g>
@@ -21,7 +27,7 @@ import { scaleOrdinal } from 'd3-scale'
 import { pointer } from 'd3-selection'
 
 export default defineComponent({
-  name: 'Pie',
+  name: 'PieLayer',
   components: { Layer },
   props: {
     pieStyle: {
@@ -36,12 +42,15 @@ export default defineComponent({
   setup(props) {
     const chart = useChart()
     const mouse = useMouse()
+    const size = ref(Math.min(
+      chart.canvas.width - chart.canvas.x,
+      chart.canvas.height - chart.canvas.y) / 2
+    )
 
     const getStyle = computed(() => {
       return () => ({
         colors: ['#4daf4a', '#377eb8', '#ff7f00', '#984ea3', '#e41a1c'],
-        innerRadius: 1,
-        outerRadius: Math.min(chart.config.size.width, chart.config.size.height) / 2,
+        innerRadius: 2,
         cornerRadius: 0,
         padAngle: 0.01,
         ...props.pieStyle
@@ -51,13 +60,15 @@ export default defineComponent({
     const style = getStyle.value()
     const arcs = ref<Arc[]>([])
     const colors = scaleOrdinal(getStyle.value().colors)
-    const arcGen = arc()
-      .outerRadius(style.outerRadius)
-      .innerRadius(style.innerRadius)
-      .cornerRadius(style.cornerRadius)
-      .padAngle(style.padAngle)
+    const arcGen = () => {
+      return arc()
+        .outerRadius(size.value)
+        .innerRadius(style.innerRadius)
+        .cornerRadius(style.cornerRadius)
+        .padAngle(style.padAngle)
+    }
 
-    const transform = `translate(${style.outerRadius}, ${style.outerRadius})`
+    const transform = ref(`translate(${size.value + chart.canvas.x}, ${size.value + chart.canvas.y})`)
 
     function updatePie() {
       arcs.value = pie()(chart.getData(props.dataKeys))
@@ -71,7 +82,7 @@ export default defineComponent({
       mouse.hover = true
       mouse.index = index - chart.data.length
       const [x, y] = pointer(event)
-      mouse.position = { x: x + style.outerRadius, y: y + style.outerRadius }
+      mouse.position = { x: x + size.value, y: y + size.value }
     }
 
     function hideTooltip() {
@@ -83,7 +94,16 @@ export default defineComponent({
       mapKeys(kebabize, data)
     }
 
-    watch(chart.updates, updatePie)
+    watch(chart.updates, () => {
+      size.value = Math.min(
+        chart.canvas.width - chart.canvas.x,
+        (chart.canvas.height - chart.canvas.y) / 2
+      )
+
+      transform.value = `translate(${size.value + chart.canvas.x}, ${size.value + chart.canvas.y})`
+
+      updatePie()
+    })
 
     return {
       arcs,
