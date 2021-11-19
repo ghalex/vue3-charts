@@ -236,9 +236,9 @@ export default defineComponent({
 
     const direction = ref('horizontal')
     const margin = ref({
-      left: 50,
+      left: 0,
       top: 0,
-      right: 20,
+      right: 0,
       bottom: 0
     })
 

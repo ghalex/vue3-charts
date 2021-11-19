@@ -45,7 +45,7 @@ export default (): Return => {
     const d = chart.data[mouse.index]
 
     if (d) {
-      payload.value = d
+      payload.value = { ...d, idx: mouse.index }
     }
   })
 

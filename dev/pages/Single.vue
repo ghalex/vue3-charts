@@ -12,11 +12,18 @@
             :size="{ width, height: 400 }"
           >
             <template #layers>
-              <Pie :dataKeys="['name', 'avg']" :pie-style="{ innerRadius: 50, padAngle: 0.05 }" />
+              <Pie :dataKeys="['name', 'avg']"  />
               <!-- </Group> -->
             </template>
             <template #widgets>
-              <Tooltip color="red" hideLine />
+              <Tooltip
+                :config="{
+                  name: { hide: false },
+                  pl: { hide: true },
+                  inc: { hide: true },
+                  avg: { label: 'averange', color: getTooltipColor }
+                }"
+                hideLine />
             </template>
           </Chart>
       </template>
@@ -27,6 +34,7 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/runtime-core'
 import * as mockup from '@/mockup'
+import { scaleOrdinal } from 'd3-scale'
 
 export default defineComponent({
   setup() {
@@ -38,7 +46,15 @@ export default defineComponent({
       bottom: 10
     })
 
-    return { data, margin }
+    const colors = scaleOrdinal()
+      .range(['#4daf4a', '#377eb8', '#ff7f00', '#984ea3', '#e41a1c'])
+      .domain(Array.from(Array(3).keys()).map(x => x.toString()))
+
+    function getTooltipColor({ idx }: {idx: number}) {
+      return colors(idx.toString())
+    }
+
+    return { data, margin, getTooltipColor }
   }
 })
 </script>

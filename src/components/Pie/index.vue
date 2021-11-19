@@ -71,7 +71,9 @@ export default defineComponent({
     const transform = ref(`translate(${size.value + chart.canvas.x}, ${size.value + chart.canvas.y})`)
 
     function updatePie() {
-      arcs.value = pie()(chart.getData(props.dataKeys))
+      // const key = chart.getKeys(1)
+      const data = chart.getData([props.dataKeys[1]])
+      arcs.value = pie()(data)
     }
 
     function getColor(index: number) {
@@ -80,7 +82,7 @@ export default defineComponent({
 
     function showTooltip(event: MouseEvent, index: number) {
       mouse.hover = true
-      mouse.index = index - chart.data.length
+      mouse.index = index// - chart.data.length
       const [x, y] = pointer(event)
       mouse.position = { x: x + size.value, y: y + size.value }
     }

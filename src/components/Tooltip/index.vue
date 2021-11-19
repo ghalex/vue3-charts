@@ -4,8 +4,7 @@
       <slot :payload="items">
         <div :style="{ borderColor: color }">
           <div v-for="(item, i) in items" :key="i" :style="{ color: item.color }">
-            <b>{{ item.label }}</b
-            >: {{ item.valueFormatted }}
+            <b>{{ item.label }}</b>: {{ item.valueFormatted }}
           </div>
         </div>
       </slot>
@@ -32,7 +31,7 @@
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from 'vue'
 import { format } from 'd3-format'
-import { is } from 'ramda'
+import { is, omit } from 'ramda'
 import { useChart, useTooltip } from '@/hooks'
 import { Canvas } from '@/types'
 
@@ -110,7 +109,7 @@ export default defineComponent({
     }
 
     const items = computed(() => {
-      return Object.keys(payload.value)
+      return Object.keys(omit(['idx'], payload.value))
         .map((key) => {
           const config = {
             ...{ label: key, format: props.format, color: props.color, hide: false },
@@ -122,7 +121,7 @@ export default defineComponent({
             label: config.label,
             value: payload.value[key],
             valueFormatted: formatValue(payload.value[key], config.format),
-            color: config.color,
+            color: is(Function, config.color) ? config.color(payload.value) : config.color,
             hide: config.hide
           }
         })
