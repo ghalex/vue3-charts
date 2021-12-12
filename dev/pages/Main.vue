@@ -149,7 +149,7 @@
           :size="{ width: 400, height: 400 }"
         >
           <template #layers>
-            <Pie :dataKeys="['name', 'avg']" />
+            <Pie :dataKeys="['name', 'avg']" sort="custom" :sort-func="randomSort" />
             <!-- </Group> -->
           </template>
           <template #widgets>
@@ -285,6 +285,10 @@ export default defineComponent({
       console.log('click me')
     }
 
+    function randomSort(a: number, b: number) {
+      return a === null || b === null ? NaN : Math.random() * a - b
+    }
+
     return {
       data,
       data2,
@@ -296,7 +300,8 @@ export default defineComponent({
       add,
       updateConfig,
       test,
-      console
+      console,
+      randomSort
     }
   }
 })

@@ -3,6 +3,9 @@ import { PieArcDatum } from 'd3-shape'
 
 export type Arc = PieArcDatum<number | { valueOf(): number }>
 
+export type PieSortType = 'desc' | 'asc' | 'none' | 'custom'
+export const PieSort = String as () => PieSortType
+
 export interface Point {
   x: number
   y: number
