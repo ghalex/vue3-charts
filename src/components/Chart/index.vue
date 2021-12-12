@@ -28,9 +28,6 @@
     <div class="widgets">
       <slot name="widgets" />
     </div>
-    <!-- <div class="zb-chart-toolbar">
-      <button @click="onTest">Test</button>
-    </div> -->
   </div>
 </template>
 
