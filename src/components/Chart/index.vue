@@ -93,11 +93,11 @@ export default defineComponent({
 
     const chart = new Chart(props.data, props.config)
     const hideX = computed(() => {
-      return props.axis?.primary?.hide
+      return props.axis && props.axis.primary && props.axis.primary.hide
     })
 
     const hideY = computed(() => {
-      return props.axis?.secondary?.hide
+      return props.axis && props.axis.secondary && props.axis.secondary.hide
     })
 
     const mouse = reactive({
@@ -144,9 +144,9 @@ export default defineComponent({
 
     const resizeObserver = new ResizeObserver(entries => {
       for (const entry of entries) {
-        if (entry.target === axBottomEl.value?.$el) {
+        if (axBottomEl.value && entry.target === axBottomEl.value.$el) {
           axisSpace.y = entry.contentRect.height
-        } else if (entry.target === axLeftEl.value?.$el) {
+        } else if (axLeftEl.value && entry.target === axLeftEl.value.$el) {
           axisSpace.x = entry.contentRect.width
         }
       }
