@@ -12,13 +12,13 @@
       </g>
       <g class="axis">
         <axis
-          v-if="!axis?.primary?.hide"
+          v-if="!hideX"
           position="bottom"
           ref="axBottomEl"
           :isPrimary="direction === 'horizontal'"
         />
         <axis
-          v-if="!axis?.secondary?.hide"
+          v-if="!hideY"
           position="left"
           ref="axLeftEl"
           :isPrimary="direction === 'vertical'"
@@ -39,7 +39,8 @@ import {
   provide,
   watch,
   reactive,
-  ref
+  ref,
+  computed
 } from 'vue'
 import { ChartAxis, ChartConfig, Data, Direction, Margin, Size } from '@/types'
 import { Chart } from '@/models'
@@ -91,6 +92,13 @@ export default defineComponent({
     const axisSpace = reactive<ChartConfig['axisSpace']>({ x: 40, y: 20 })
 
     const chart = new Chart(props.data, props.config)
+    const hideX = computed(() => {
+      return props.axis?.primary?.hide
+    })
+
+    const hideY = computed(() => {
+      return props.axis?.secondary?.hide
+    })
 
     const mouse = reactive({
       index: -1,
@@ -209,7 +217,7 @@ export default defineComponent({
     //   }
     // }
 
-    return { axBottomEl, axLeftEl, chartEl, onMouseMove, onMouseOut }
+    return { axBottomEl, axLeftEl, chartEl, hideX, hideY, onMouseMove, onMouseOut }
   }
 })
 </script>
