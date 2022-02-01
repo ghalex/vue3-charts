@@ -38,7 +38,7 @@ import { scaleOrdinal } from 'd3-scale'
 
 export default defineComponent({
   setup() {
-    const data = ref<any>(mockup.plByMonth)
+    const data = ref<any>(mockup.notUniqueData)
     const margin = ref({
       left: 150,
       top: 10,

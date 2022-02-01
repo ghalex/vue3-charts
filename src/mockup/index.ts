@@ -30,3 +30,16 @@ export const tags = [
   { key: 'EarningWinner', value: 10.759999999999764 },
   { key: '50Ema', value: -103.70000000000005 }
 ]
+
+export const notUniqueData = [
+  { name: 'John', avg: 30 },
+  { name: 'San', avg: 20 },
+  { name: 'Oliver', avg: 20 },
+  { name: 'Kate', avg: 10 },
+  { name: 'Ton', avg: 10 },
+  { name: 'Khan', avg: 10 },
+  { name: 'Talli', avg: 30 },
+  { name: 'Pan', avg: 30 },
+  { name: 'Kate', avg: 30 },
+  { name: 'Tiny', avg: 30 }
+]
