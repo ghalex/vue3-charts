@@ -12,10 +12,19 @@
       :y="bar.y"
       :width="bar.width > 0 ? bar.width : 0"
       :height="bar.height > 0 ? bar.height : 0"
+      @click="() => onBarClick(bar, i)"
     />
-    <!-- :fill="getFill(bar.props)"
-      :stroke-width="strokeWidth"
-      :stroke="stroke" -->
+    <rect
+      v-if="selectedBar"
+      class="chart-bar"
+      v-bind="
+        toKebabCase(getStyleSelected({ ...selectedBar.props }))
+      "
+      :x="selectedBar.x"
+      :y="selectedBar.y"
+      :width="selectedBar.width > 0 ? selectedBar.width : 0"
+      :height="selectedBar.height > 0 ? selectedBar.height : 0"
+    />
   </Layer>
 </template>
 
@@ -30,10 +39,20 @@ export default defineComponent({
   name: 'Bar',
   components: { Layer },
   props: {
+    selectedBar: {
+      type: Object,
+      default: () => null
+    },
     barStyle: {
       type: [Function, Object],
       default: () => ({
         fill: 'blue'
+      })
+    },
+    barStyleSelected: {
+      type: [Function, Object],
+      default: () => ({
+        fill: 'darkblue'
       })
     },
     maxWidth: {
@@ -49,7 +68,7 @@ export default defineComponent({
       default: 5
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const mouse = useMouse()
     const { stacked, maxWidth } = inject('layerProps', {
       stacked: false,
@@ -61,6 +80,7 @@ export default defineComponent({
       gap: props.gap,
       type: 'bar'
     })
+
     const getStyle = computed(() => {
       if (is(Function, props.barStyle)) {
         return props.barStyle
@@ -69,8 +89,21 @@ export default defineComponent({
       return () => props.barStyle
     })
 
+    const getStyleSelected = computed(() => {
+      if (is(Function, props.barStyleSelected)) {
+        return props.barStyleSelected
+      }
+
+      return () => props.barStyleSelected
+    })
+
     const toKebabCase = (data: any) => mapKeys(kebabize, data)
-    return { getStyle, toKebabCase, bars, mouse }
+
+    function onBarClick(bar: any, idx: number) {
+      emit('barClick', { ...bar, idx })
+    }
+
+    return { getStyle, getStyleSelected, toKebabCase, bars, mouse, onBarClick }
   }
 })
 </script>

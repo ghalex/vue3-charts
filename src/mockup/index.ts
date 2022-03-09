@@ -32,14 +32,14 @@ export const tags = [
 ]
 
 export const notUniqueData = [
-  { name: 'John', avg: 30 },
+  { name: 'John', avg: 130 },
   { name: 'San', avg: 20 },
-  { name: 'Oliver', avg: 20 },
-  { name: 'Kate', avg: 10 },
-  { name: 'Ton', avg: 10 },
-  { name: 'Khan', avg: 10 },
-  { name: 'Talli', avg: 30 },
+  { name: 'Oliver', avg: 80 },
+  { name: 'Kate', avg: 40 },
+  { name: 'Ton', avg: 20 },
+  { name: 'Khan', avg: 190 },
+  { name: 'Talli', avg: 74 },
   { name: 'Pan', avg: 30 },
-  { name: 'Kate', avg: 30 },
-  { name: 'Tiny', avg: 30 }
+  // { name: 'Kate', avg: 40 },
+  { name: 'Tiny', avg: 230 }
 ]

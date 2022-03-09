@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <!-- <div>
     <Responsive class="w-full">
       <template #main="{ width }">
         <Chart
@@ -13,7 +13,6 @@
           >
             <template #layers>
               <Pie :dataKeys="['name', 'avg']"  />
-              <!-- </Group> -->
             </template>
             <template #widgets>
               <Tooltip
@@ -28,6 +27,30 @@
           </Chart>
       </template>
     </Responsive>
+  </div> -->
+  <div class="flex">
+    <Chart
+      :size="{ width: 800, height: 400 }"
+      :data="data"
+      :axis="axis"
+      :margin="margin"
+      :direction="direction"
+    >
+      <template #layers>
+        <Grid strokeDasharray="2,2" :center="false" />
+        <HoverBar />
+        <Bar
+          :dataKeys="['name', 'avg']"
+          :barStyle="{ fill: '#FC96c7' }"
+          :selectedBar="selectedBar"
+          @bar-click="onBarClick"
+        />
+      </template>
+    </Chart>
+    <div v-if="selectedBar">
+      <div>Selected bar index: {{selectedBar.idx}}</div>
+      <div>Selected bar props: {{selectedBar.props}}</div>
+    </div>
   </div>
 </template>
 
@@ -38,9 +61,9 @@ import { scaleOrdinal } from 'd3-scale'
 
 export default defineComponent({
   setup() {
-    const data = ref<any>(mockup.notUniqueData)
+    const data = ref<any>(mockup.plByMonth)
     const margin = ref({
-      left: 150,
+      left: 10,
       top: 10,
       right: 10,
       bottom: 10
@@ -54,7 +77,12 @@ export default defineComponent({
       return colors(idx.toString())
     }
 
-    return { data, margin, getTooltipColor }
+    const selectedBar = ref(null)
+    function onBarClick(bar: any) {
+      selectedBar.value = bar
+    }
+
+    return { data, margin, selectedBar, onBarClick, getTooltipColor }
   }
 })
 </script>
