@@ -15,6 +15,7 @@
           v-if="!hideX"
           position="bottom"
           ref="axBottomEl"
+          :rotate="rotateX"
           :isPrimary="direction === 'horizontal'"
         />
         <axis
@@ -92,6 +93,7 @@ export default defineComponent({
     const axisSpace = reactive<ChartConfig['axisSpace']>({ x: 40, y: 20 })
 
     const chart = new Chart(props.data, props.config)
+    const rotateX = computed(() => props.axis && props.axis.primary && props.axis.primary.rotate)
     const hideX = computed(() => {
       return props.axis && props.axis.primary && props.axis.primary.hide
     })
@@ -217,7 +219,7 @@ export default defineComponent({
     //   }
     // }
 
-    return { axBottomEl, axLeftEl, chartEl, hideX, hideY, onMouseMove, onMouseOut }
+    return { axBottomEl, axLeftEl, chartEl, hideX, hideY, rotateX, onMouseMove, onMouseOut }
   }
 })
 </script>

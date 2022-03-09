@@ -1,5 +1,5 @@
 <template>
-  <g v-if="position === 'bottom'" :class="`layer-axis-x`" ref="el" :transform="`translate(0, ${canvas.height})`" />
+  <g v-if="position === 'bottom'" :class="`layer-axis-x`" ref="el" :transform="`translate(0, ${canvas.height})` " />
   <g v-else :class="`layer-axis-y`" ref="el" :transform="`translate(${canvas.x}, 0)`" />
 </template>
 
@@ -22,6 +22,10 @@ export default defineComponent({
       type: String as PropType<'bottom' | 'left'>,
       default: 'bottom'
     },
+    rotate: {
+      type: Boolean,
+      default: false
+    },
     isPrimary: {
       type: Boolean,
       default: false
@@ -38,6 +42,7 @@ export default defineComponent({
     const canvas = ref<Canvas>(chart.canvas)
 
     const defaultConfig = { ticks: 5 }
+
     function drawAxis() {
       if (chart.data.length > 0) {
         const { primary, secondary } = chart.scales
@@ -66,7 +71,16 @@ export default defineComponent({
           config.useConfig(ax)
         }
 
-        select(el.value!).call(ax)
+        const res = select(el.value!).call(ax)
+
+        if (props.position === 'bottom' && props.rotate) {
+          res.selectAll('text')
+            .attr('y', 0)
+            .attr('x', 9)
+            .attr('dy', '.35em')
+            .attr('transform', 'rotate(90)')
+            .style('text-anchor', 'start')
+        }
 
         return ax
       }

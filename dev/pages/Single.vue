@@ -32,7 +32,7 @@
     <Chart
       :size="{ width: 800, height: 400 }"
       :data="data"
-      :axis="axis"
+      :axis="{ primary: { rotate: false }, secondary: { hide: true }}"
       :margin="margin"
       :direction="direction"
     >
