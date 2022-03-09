@@ -110,7 +110,7 @@ export default defineComponent({
             width: d.x1 - d.x0,
             height: d.y1 - d.y0,
             data: d.data,
-            color: y(d.value) //props.color
+            color: y(d.value) // props.color
           }
         })
 
@@ -165,7 +165,7 @@ export default defineComponent({
     }
 
     function onMouseOver(i: any) {
-      console.log('hover', i)
+      // console.log('hover', i)
       selected.value = i
     }
 

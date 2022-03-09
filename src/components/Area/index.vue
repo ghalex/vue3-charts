@@ -55,7 +55,7 @@ export default defineComponent({
     const d = ref<string | null>('')
 
     const lineType = (type: any) => {
-      console.log(type, chart.config.direction)
+      // console.log(type, chart.config.direction)
       const map: any = {
         normal: curveLinear,
         natural: curveNatural,

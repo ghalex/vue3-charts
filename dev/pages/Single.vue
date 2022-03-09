@@ -42,6 +42,7 @@
         <Bar
           :dataKeys="['name', 'avg']"
           :barStyle="{ fill: '#FC96c7' }"
+          :barStyleSelected="{ fill: '#b1517f' }"
           :selectedBar="selectedBar"
           @bar-click="onBarClick"
         />
@@ -57,7 +58,6 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/runtime-core'
 import * as mockup from '@/mockup'
-import { scaleOrdinal } from 'd3-scale'
 
 export default defineComponent({
   setup() {
@@ -69,20 +69,12 @@ export default defineComponent({
       bottom: 10
     })
 
-    const colors = scaleOrdinal()
-      .range(['#4daf4a', '#377eb8', '#ff7f00', '#984ea3', '#e41a1c'])
-      .domain(Array.from(Array(3).keys()).map(x => x.toString()))
-
-    function getTooltipColor({ idx }: {idx: number}) {
-      return colors(idx.toString())
-    }
-
     const selectedBar = ref(null)
     function onBarClick(bar: any) {
       selectedBar.value = bar
     }
 
-    return { data, margin, selectedBar, onBarClick, getTooltipColor }
+    return { data, margin, selectedBar, onBarClick }
   }
 })
 </script>
