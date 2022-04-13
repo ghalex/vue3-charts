@@ -4,8 +4,8 @@
       :width="size.width"
       :height="size.height"
       :viewBox="`0 0 ${size.width} ${size.height}`"
-      @mousemove="onMouseMove"
-      @mouseleave="onMouseOut"
+      @pointermove="onMouseMove"
+      @pointerleave="onMouseOut"
     >
       <g class="layers">
         <slot name="layers" />
