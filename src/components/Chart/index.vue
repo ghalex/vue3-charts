@@ -165,7 +165,6 @@ export default defineComponent({
 
     onUnmounted(() => {
       resizeObserver.disconnect()
-      console.log('unmounted')
     })
 
     function onMouseOut() {
