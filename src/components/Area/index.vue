@@ -86,7 +86,7 @@ export default defineComponent({
           .y0(p => p.y)
           .y1(p => p.y)
           .x0(p => p.x)
-          .x1(_ => secondary.scale(0))
+          .x1(() => secondary.scale(0))
       }
 
       return area<any>()
@@ -94,7 +94,7 @@ export default defineComponent({
         .x0(p => p.x)
         .x1(p => p.x)
         .y0(p => p.y)
-        .y1(_ => secondary.scale(0))
+        .y1(() => secondary.scale(0))
     }
 
     const getStyle = computed(() => {

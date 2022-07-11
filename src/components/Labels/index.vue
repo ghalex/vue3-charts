@@ -5,9 +5,9 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, watch, ref, onMounted, inject } from 'vue'
+import { computed, defineComponent } from 'vue'
 import { is } from 'ramda'
-import { useChart, usePoints } from '@/hooks'
+import { usePoints } from '@/hooks'
 import Layer from '../Layer/index.vue'
 import { kebabize, mapKeys } from '@/utils'
 
@@ -26,7 +26,6 @@ export default defineComponent({
   },
   setup(props) {
     const toKebabCase = (data: any) => mapKeys(kebabize, data)
-    const chart = useChart()
     const { points } = usePoints(props.dataKeys, { stacked: false, type: 'custom' })
 
     const getStyle = computed(() => {

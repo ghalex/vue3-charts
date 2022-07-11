@@ -5,6 +5,7 @@
     "strict": true,
     "declaration": true,
     "declarationDir": "dist/types",
+    "outDir": "dist",
     "noUnusedLocals": false,
     "noUnusedParameters": true,
     "importHelpers": true,
