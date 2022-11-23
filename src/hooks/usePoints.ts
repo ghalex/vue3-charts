@@ -16,7 +16,7 @@ export default (dataKeys: [string, string], props = { stacked: false, type: 'lin
     const { primary, secondary } = chart.scales
 
     if (chart.config.direction === 'horizontal') {
-      return values
+      const res = values
         .map((val) => {
           return {
             x: primary.mapOne(val.data[key]),
@@ -25,6 +25,9 @@ export default (dataKeys: [string, string], props = { stacked: false, type: 'lin
           }
         })
         .filter((p) => !isNaN(p.x) && !isNaN(p.y))
+
+      console.log(res)
+      return res
     } else if (chart.config.direction === 'vertical') {
       return values
         .map((val) => {
@@ -54,6 +57,7 @@ export default (dataKeys: [string, string], props = { stacked: false, type: 'lin
     chart.updates,
     () => {
       update()
+      console.log('update')
     },
     { immediate: true }
   )

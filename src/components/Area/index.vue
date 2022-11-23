@@ -19,7 +19,7 @@ import { useBars, useChart, usePoints } from '@/hooks'
 import { kebabize, mapKeys } from '@/utils'
 
 export default defineComponent({
-  name: 'Area',
+  name: 'AreaComponent',
   components: { Layer },
   props: {
     areaStyle: {
@@ -70,30 +70,31 @@ export default defineComponent({
     }
 
     const buildArea = () => {
+      console.log(points.value)
       const { secondary } = chart.scales
       if (stacked) {
         return area<any>()
           .curve(lineType(props.type))
-          .x0(p => p.x + p.width / 2)
-          .y0(p => p.y)
-          .x1(p => p.x + p.width / 2)
-          .y1(p => p.y + p.height)
+          .x0((p) => p.x + p.width / 2)
+          .y0((p) => p.y)
+          .x1((p) => p.x + p.width / 2)
+          .y1((p) => p.y + p.height)
       }
 
       if (chart.config.direction === 'vertical') {
         return area<any>()
           .curve(lineType(props.type))
-          .y0(p => p.y)
-          .y1(p => p.y)
-          .x0(p => p.x)
+          .y0((p) => p.y)
+          .y1((p) => p.y)
+          .x0((p) => p.x)
           .x1(() => secondary.scale(0))
       }
 
       return area<any>()
         .curve(lineType(props.type))
-        .x0(p => p.x)
-        .x1(p => p.x)
-        .y0(p => p.y)
+        .x0((p) => p.x)
+        .x1((p) => p.x)
+        .y0((p) => p.y)
         .y1(() => secondary.scale(0))
     }
 
@@ -108,7 +109,7 @@ export default defineComponent({
 
     const toKebabCase = (data: any) => mapKeys(kebabize, data)
 
-    watch(chart.updates, () => {
+    watch(points, () => {
       d.value = stacked ? buildArea()(bars.value) : buildArea()(points.value)
     })
 

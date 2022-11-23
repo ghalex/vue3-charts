@@ -27,7 +27,7 @@ import Layer from '../Layer/index.vue'
 import { kebabize, mapKeys } from '@/utils'
 
 export default defineComponent({
-  name: 'Line',
+  name: 'LineComponent',
   components: { Layer },
   props: {
     lineStyle: {

@@ -1,58 +1,44 @@
 <template>
-  <!-- <div>
-    <Responsive class="w-full">
-      <template #main="{ width }">
-        <Chart
-            class="chart"
-            direction="circular"
-            :data="data"
-            :config="{ controlHover: false }"
-            :margin="margin"
-            :axis="{ primary: { hide: true }, secondary: { hide: true }}"
-            :size="{ width, height: 400 }"
-          >
-            <template #layers>
-              <Pie :dataKeys="['name', 'avg']"  />
-            </template>
-            <template #widgets>
-              <Tooltip
-                :config="{
-                  name: { hide: false },
-                  pl: { hide: true },
-                  inc: { hide: true },
-                  avg: { label: 'averange', color: getTooltipColor }
-                }"
-                hideLine />
-            </template>
-          </Chart>
-      </template>
-    </Responsive>
-  </div> -->
-  <div class="flex">
-    <Chart
-      :size="{ width: 800, height: 400 }"
-      :data="data"
-      :axis="{ primary: { rotate: false }, secondary: { hide: true }}"
-      :margin="margin"
-      :direction="direction"
-    >
-      <template #layers>
-        <Grid strokeDasharray="2,2" :center="false" />
-        <HoverBar />
-        <Bar
-          :dataKeys="['name', 'avg']"
-          :barStyle="{ fill: '#FC96c7' }"
-          :barStyleSelected="{ fill: '#b1517f' }"
-          :selectedBar="selectedBar"
-          @bar-click="onBarClick"
-        />
-      </template>
-    </Chart>
-    <div v-if="selectedBar">
-      <div>Selected bar index: {{selectedBar.idx}}</div>
-      <div>Selected bar props: {{selectedBar.props}}</div>
-    </div>
-  </div>
+  <Chart
+    :size="{ width: 800, height: 620 }"
+    :data="data"
+    :margin="margin"
+    :direction="direction"
+    :axis="axis"
+  >
+    <template #layers>
+      <Grid strokeDasharray="2,2" />
+      <Area
+        :dataKeys="['name', 'pl']"
+        type="normal"
+        :areaStyle="{ fill: 'red' }"
+      />
+      <Line
+        :dataKeys="['name', 'pl']"
+        type="normal"
+        :lineStyle="{
+          stroke: '#9f7aea'
+        }"
+      />
+      <defs>
+        <linearGradient id="grad" gradientTransform="rotate(90)">
+          <stop offset="0%" stop-color="#be90ff" stop-opacity="1" />
+          <stop offset="100%" stop-color="white" stop-opacity="0.4" />
+        </linearGradient>
+      </defs>
+    </template>
+
+    <template #widgets>
+      <Tooltip
+        borderColor="#48CAE4"
+        :config="{
+          pl: { color: '#9f7aea' },
+          avg: { hide: true },
+          inc: { hide: true }
+        }"
+      />
+    </template>
+  </Chart>
 </template>
 
 <script lang="ts">
@@ -62,6 +48,7 @@ import * as mockup from '@/mockup'
 export default defineComponent({
   setup() {
     const data = ref<any>(mockup.plByMonth)
+    const direction = ref('horizontal')
     const margin = ref({
       left: 10,
       top: 10,
@@ -69,12 +56,18 @@ export default defineComponent({
       bottom: 10
     })
 
-    const selectedBar = ref(null)
-    function onBarClick(bar: any) {
-      selectedBar.value = bar
-    }
+    const axis = ref({
+      primary: {
+        type: 'band'
+      },
+      secondary: {
+        domain: ['dataMin', 'dataMax + 100'],
+        type: 'linear',
+        ticks: 8
+      }
+    })
 
-    return { data, margin, selectedBar, onBarClick }
+    return { data, margin, axis, direction }
   }
 })
 </script>
