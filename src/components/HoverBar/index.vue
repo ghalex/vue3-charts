@@ -52,7 +52,7 @@ export default defineComponent({
             bar.value = {
               x: x - width / 2,
               y: 0,
-              width: width,
+              width,
               height: canvas.value.height
             }
           } else {

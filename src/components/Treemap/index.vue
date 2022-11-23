@@ -45,7 +45,7 @@ export default defineComponent({
     },
     margin: {
       type: Object as () => Margin,
-      default: { top: 0, right: 0, bottom: 0, left: 0 }
+      default: () => ({ top: 0, right: 0, bottom: 0, left: 0 })
     },
     padding: {
       type: Number,
@@ -53,7 +53,7 @@ export default defineComponent({
     },
     data: {
       type: Array as () => any[],
-      default: []
+      default: () => ([])
     },
     dataKeys: {
       type: Object as () => [string, string],
