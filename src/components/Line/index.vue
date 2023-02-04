@@ -7,7 +7,7 @@
       stroke-linecap="round" -->
     <g v-if="!hideDot">
       <circle
-        v-bind="toKebabCase(getDotStyle({ active: i === mouse.index }))"
+        v-bind="toKebabCase(getDotStyle({ active: i === mouse.index, index: i }))"
         v-for="(c, i) in points"
         :key="i"
         :cx="c.x"
