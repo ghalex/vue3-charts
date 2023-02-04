@@ -70,7 +70,6 @@ export default defineComponent({
     }
 
     const buildArea = () => {
-      console.log(points.value)
       const { secondary } = chart.scales
       if (stacked) {
         return area<any>()
