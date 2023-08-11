@@ -86,7 +86,16 @@ export default defineComponent({
       default: () => ({})
     }
   },
-  setup(props) {
+  setup(props:
+    {
+      data: Data[];
+      axis: ChartAxis;
+      config: Partial<ChartConfig>;
+      direction: Direction;
+      size: Size;
+      margin: Margin;
+    }
+  ) {
     const chartEl = ref(null)
     const axLeftEl = ref<{ $el: SVGGElement }>()
     const axBottomEl = ref<{ $el: SVGGElement }>()
