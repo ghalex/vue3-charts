@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
+Development needs Node 22 or newer (jsdom 30 and vitest 5 refuse older versions; CI runs Node 24).
+
 ```bash
 npm ci                   # install from package-lock.json (what CI does)
 npm run dev              # Vite playground at index.html -> dev/serve.ts, routes / and /single
