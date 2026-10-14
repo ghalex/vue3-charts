@@ -12,7 +12,7 @@ import Layer from '../Layer/index.vue'
 import { kebabize, mapKeys } from '@/utils'
 
 export default defineComponent({
-  name: 'Line',
+  name: 'Labels',
   components: { Layer },
   props: {
     textStyle: {

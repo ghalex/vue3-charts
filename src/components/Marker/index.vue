@@ -13,7 +13,7 @@
     />
   </g>
   <g class="layer-marker" v-else>
-    <text :x="y + 10" :y="canvas.y + 5" text-anchor="start" :fill="color" style="writing-mode: tb;">{{ label }}</text>
+    <text :x="y + 10" :y="canvas.y + 5" text-anchor="start" :fill="color" style="writing-mode: tb">{{ label }}</text>
     <line
       :x1="y"
       :y1="canvas.y"
@@ -32,7 +32,7 @@ import { useChart } from '@/hooks'
 import { ref, defineComponent, watch } from 'vue'
 
 export default defineComponent({
-  name: 'Grid',
+  name: 'ChartMarker',
   props: {
     value: {
       type: Number

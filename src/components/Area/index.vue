@@ -6,14 +6,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, inject, watch, ref } from 'vue'
-import {
-  area,
-  curveLinear,
-  curveStep,
-  curveNatural,
-  curveMonotoneX,
-  curveMonotoneY
-} from 'd3-shape'
+import { area, curveLinear, curveStep, curveNatural, curveMonotoneX, curveMonotoneY } from 'd3-shape'
 import Layer from '../Layer/index.vue'
 import { useBars, useChart, usePoints } from '@/hooks'
 import { kebabize, mapKeys } from '@/utils'
@@ -60,17 +53,13 @@ export default defineComponent({
         normal: curveLinear,
         natural: curveNatural,
         step: curveStep,
-        monotone:
-          chart.config.direction === 'horizontal'
-            ? curveMonotoneX
-            : curveMonotoneY
+        monotone: chart.config.direction === 'horizontal' ? curveMonotoneX : curveMonotoneY
       }
 
       return map[type]
     }
 
     const buildArea = () => {
-      console.log(points.value)
       const { secondary } = chart.scales
       if (stacked) {
         return area<any>()
