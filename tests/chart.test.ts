@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { Chart } from '@/models'
-import { Data, Layer } from '@/types'
+import { ChartLayer, Data } from '@/types'
 
 const data: Data[] = [
   { name: 'Jan', avg: 0, pl: 10 },
@@ -8,7 +8,7 @@ const data: Data[] = [
   { name: 'Mar', avg: 30, pl: 40 }
 ]
 
-const layer = (id: string, dataKeys: [string, string], props: Record<string, unknown> = {}): Layer => ({
+const layer = (id: string, dataKeys: [string, string], props: Record<string, unknown> = {}): ChartLayer => ({
   id,
   type: 'bar',
   dataKeys,

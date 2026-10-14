@@ -53,7 +53,8 @@ export interface LayerProps {
   maxWidth?: number
 }
 
-export interface Layer {
+/** A series registered with the chart model: what `<Layer>` passes to `chart.addLayer`. */
+export interface ChartLayer {
   id: string
   dataKeys: [string, string]
   type: LayerType

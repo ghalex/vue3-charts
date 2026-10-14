@@ -2,7 +2,7 @@ import { ref, Ref } from 'vue'
 import { Scales } from '.'
 import { getCol, mergeConfig } from '@/utils'
 import { stack, stackOrderNone } from 'd3-shape'
-import { AxisConfig, Canvas, ChartConfig, ChartOptions, Data, Layer, LayerType } from '@/types'
+import { AxisConfig, Canvas, ChartConfig, ChartLayer, ChartOptions, Data, LayerType } from '@/types'
 
 const defaultConfig: ChartConfig = {
   size: { width: 500, height: 400 },
@@ -35,7 +35,7 @@ const defaultConfig: ChartConfig = {
  */
 export default class Chart {
   data: Data[]
-  layers: Layer[]
+  layers: ChartLayer[]
   config: ChartConfig
   scales: Scales
   updates: Ref<number>
@@ -92,7 +92,7 @@ export default class Chart {
     this.update()
   }
 
-  public addLayer(layer: Layer) {
+  public addLayer(layer: ChartLayer) {
     this.layers.push(layer)
     this.update()
   }
