@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0 (2026-10-14)
+
+- Export the public types (`AxisConfig`, `ChartAxis`, `ChartAxisOptions`, `ChartOptions`, `Data`, `Margin`, `Size`,
+  `Direction`, `StyleProp`, ...) from the package entry, so `import type { AxisConfig } from 'vue3-charts'` works (#41).
+
 ## 2.0.1 (2026-10-14)
 
 - Versioning rules documented in CLAUDE.md; no library changes.
