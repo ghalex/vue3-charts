@@ -26,7 +26,9 @@ Run `npm run format` before committing; CI fails on unformatted files. ESLint ha
 
 ## CI and publishing (important)
 
-`.github/workflows/ci.yml` runs on every pull request and every push to `main`: `lint` (eslint + prettier check), `typecheck` and `build` as separate jobs. On a push to `main` only, a `publish` job that `needs` all three builds again and publishes to npm with `JS-DevTools/npm-publish`. That action only publishes when `package.json` `version` is higher than what is on npm, so a release is "bump `version`, push to main". Do not bump the version unless a release is intended.
+`.github/workflows/ci.yml` runs on every pull request and every push to `main`: `lint` (eslint + prettier check), `typecheck` and `build` as separate jobs. On a push to `main` only, a `publish` job that `needs` all three builds again and runs `npm publish` when `package.json` `version` differs from what is on npm, so a release is "bump `version`, push to main". Do not bump the version unless a release is intended.
+
+Publishing uses npm trusted publishing (GitHub OIDC, `id-token: write`), not a token secret. If publish fails with `E404 ... PUT https://registry.npmjs.org/vue3-charts`, the trusted publisher on npmjs.com (package Settings, Trusted Publisher: GitHub Actions, repo `ghalex/vue3-charts`, workflow `ci.yml`) is missing or misconfigured. The old `NPM_TOKEN` secret is a revoked classic token and is unused.
 
 `package-lock.json` is committed and CI installs with `npm ci`, so a dependency change must be made with `npm install <pkg>` locally and the updated lockfile committed alongside `package.json`.
 

@@ -57,14 +57,27 @@ jobs:
     needs: [lint, typecheck, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # npm trusted publishing (OIDC): no NPM_TOKEN secret. The package's
+    # "Trusted Publisher" on npmjs.com must point at this repo + ci.yml.
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm install -g npm@latest # trusted publishing needs npm >= 11.5.1
       - run: npm ci
       - run: npm run build
-      - uses: JS-DevTools/npm-publish@v3
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+      - name: Publish if version is new
+        run: |
+          local=$(node -p "require('./package.json').version")
+          remote=$(npm view vue3-charts version 2>/dev/null || echo none)
+          if [ "$local" = "$remote" ]; then
+            echo "vue3-charts@$local is already on npm, skipping publish"
+          else
+            npm publish --provenance --access public
+          fi
