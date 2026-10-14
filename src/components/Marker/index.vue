@@ -29,6 +29,7 @@
 
 <script lang="ts">
 import { useChart } from '@/hooks'
+import { Canvas, Direction } from '@/types'
 import { ref, defineComponent, watch } from 'vue'
 
 export default defineComponent({
@@ -61,8 +62,8 @@ export default defineComponent({
   setup(props) {
     const chart = useChart()
     const y = ref(0)
-    const direction = ref('horizontal')
-    const canvas = ref({})
+    const direction = ref<Direction>('horizontal')
+    const canvas = ref<Canvas>(chart.canvas)
 
     watch(
       chart.updates,

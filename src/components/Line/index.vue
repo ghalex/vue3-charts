@@ -51,7 +51,7 @@ export default defineComponent({
     const { stacked } = inject('layerProps', { stacked: false })
     const mouse = useMouse()
     const chart = useChart()
-    const d = ref<string | null>('')
+    const d = ref('')
     const { points } = usePoints(props.dataKeys, { stacked, type: 'line' })
 
     const lineType = {
@@ -68,10 +68,11 @@ export default defineComponent({
         type = curveMonotoneY
       }
 
-      d.value = line<Point>()
-        .x((p) => p.x)
-        .y((p) => p.y)
-        .curve(type)(points.value)
+      d.value =
+        line<Point>()
+          .x((p) => p.x)
+          .y((p) => p.y)
+          .curve(type)(points.value) ?? ''
     }
 
     function computeDotStyle(active: boolean) {

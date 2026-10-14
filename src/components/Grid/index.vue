@@ -48,7 +48,7 @@ export default defineComponent({
   setup(props) {
     const chart = useChart()
     const data = ref<Data[]>([])
-    const canvas = ref<Canvas | null>(null)
+    const canvas = ref<Canvas>(chart.canvas)
     const xLines = ref<number[]>([])
     const yLines = ref<number[]>([])
 

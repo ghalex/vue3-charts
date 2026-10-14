@@ -34,7 +34,7 @@
                   strokeWidth: 2
                 }"
                 :dotStyle="
-                  ({ active }) => ({
+                  ({ active }: { active: boolean }) => ({
                     stroke: 'red',
                     strokeWidth: 2,
                     fill: 'white',
@@ -157,7 +157,7 @@
               :dataKeys="['key', 'value']"
               :data="data4"
               :rcStyle="
-                (r) => ({
+                (r: { color: string }) => ({
                   fill: r.color
                 })
               "

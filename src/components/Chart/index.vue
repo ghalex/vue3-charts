@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, provide, watch, reactive, ref, computed } from 'vue'
-import { ChartAxis, ChartConfig, Data, Direction, Margin, Size } from '@/types'
+import { ChartAxisOptions, ChartConfig, ChartOptions, Data, Direction, Margin, Size } from '@/types'
 import { Chart } from '@/models'
 import { pointer } from 'd3-selection'
 import { bisectCenter } from 'd3-array'
@@ -64,11 +64,11 @@ export default defineComponent({
       required: false
     },
     axis: {
-      type: Object as () => ChartAxis,
+      type: Object as () => ChartAxisOptions,
       required: false
     },
     config: {
-      type: Object as () => Partial<ChartConfig>,
+      type: Object as () => ChartOptions,
       default: () => ({})
     }
   },

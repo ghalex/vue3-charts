@@ -45,7 +45,7 @@ export default defineComponent({
       gap: props.gap,
       maxWidth: -1
     })
-    const d = ref<string | null>('')
+    const d = ref('')
 
     const lineType = (type: any) => {
       // console.log(type, chart.config.direction)
@@ -99,7 +99,7 @@ export default defineComponent({
     const toKebabCase = (data: any) => mapKeys(kebabize, data)
 
     watch(points, () => {
-      d.value = stacked ? buildArea()(bars.value) : buildArea()(points.value)
+      d.value = (stacked ? buildArea()(bars.value) : buildArea()(points.value)) ?? ''
     })
 
     return { d, getStyle, toKebabCase }

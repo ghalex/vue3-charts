@@ -3,7 +3,7 @@ import { ref, Ref } from 'vue'
 import { Scales } from '.'
 import { getCol } from '@/utils'
 import { stack, stackOrderNone } from 'd3-shape'
-import { AxisConfig, Canvas, ChartConfig, Data, Layer, LayerType } from '@/types'
+import { AxisConfig, Canvas, ChartConfig, ChartOptions, Data, Layer, LayerType } from '@/types'
 
 const defaultConfig: ChartConfig = {
   size: { width: 500, height: 400 },
@@ -37,11 +37,11 @@ export default class Chart {
   scales: Scales
   updates: Ref<number>
 
-  constructor(data: Data[], config: Partial<ChartConfig>) {
+  constructor(data: Data[], config: ChartOptions) {
     this.data = data
     this.layers = []
     this.config = r.mergeDeepLeft(
-      r.pickBy((p) => p !== undefined, config) as Partial<ChartConfig>,
+      r.pickBy((p) => p !== undefined, config) as ChartOptions,
       defaultConfig
     ) as ChartConfig
     this.scales = new Scales(this.config.axis)
@@ -85,11 +85,8 @@ export default class Chart {
     this.update('data')
   }
 
-  public changeConfig(config: Partial<ChartConfig>) {
-    this.config = r.mergeDeepLeft(
-      r.pickBy((p) => p !== undefined, config) as Partial<ChartConfig>,
-      this.config
-    ) as ChartConfig
+  public changeConfig(config: ChartOptions) {
+    this.config = r.mergeDeepLeft(r.pickBy((p) => p !== undefined, config) as ChartOptions, this.config) as ChartConfig
     this.scales.changeConfig(this.config.axis)
 
     this.update('config')

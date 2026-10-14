@@ -72,6 +72,12 @@ export interface ChartAxis {
   secondary: AxisConfig
 }
 
+/** What users pass in: every field optional, merged over the defaults. */
+export interface ChartAxisOptions {
+  primary?: Partial<AxisConfig>
+  secondary?: Partial<AxisConfig>
+}
+
 export interface ChartConfig {
   size: Size
   margin: Margin
@@ -80,6 +86,8 @@ export interface ChartConfig {
   axisSpace: { x: number; y: number }
   controlHover?: boolean
 }
+
+export type ChartOptions = Partial<Omit<ChartConfig, 'axis'>> & { axis?: ChartAxisOptions }
 
 export interface Payload {
   color: string
