@@ -1,5 +1,4 @@
 import { ref, watch, computed, Ref } from 'vue'
-// import * as r from 'ramda'
 import useChart from './useChart'
 import useMouse from './useMouse'
 
@@ -22,7 +21,7 @@ export default (): Return => {
     const vals = chart.getData(keys) as number[]
     const [x] = primary.map([vals[mouse.index]])
 
-    if (x) {
+    if (x !== undefined && !isNaN(x)) {
       if (chart.config.direction === 'horizontal') {
         position.value = {
           x,
@@ -41,7 +40,6 @@ export default (): Return => {
       }
     }
 
-    // const dKeys = chart.getKeys(1)
     const d = chart.data[mouse.index]
 
     if (d) {

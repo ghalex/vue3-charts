@@ -34,6 +34,7 @@ import { kebabize, mapKeys } from '@/utils'
 export default defineComponent({
   name: 'Bar',
   components: { Layer },
+  emits: ['barClick'],
   props: {
     selectedBar: {
       type: Object,

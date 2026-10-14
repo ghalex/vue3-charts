@@ -1,10 +1,6 @@
 <template>
   <Layer :dataKeys="dataKeys" type="line">
     <path class="chart-line" v-bind="toKebabCase(getStyle())" :d="d" fill="none" />
-    <!-- :stroke="stroke"
-      :stroke-width="strokeWidth"
-      stroke-linejoin="round"
-      stroke-linecap="round" -->
     <g v-if="!hideDot">
       <circle
         v-bind="toKebabCase(getDotStyle({ active: i === mouse.index, index: i }))"
@@ -31,11 +27,11 @@ export default defineComponent({
   components: { Layer },
   props: {
     lineStyle: {
-      type: Object,
+      type: [Function, Object],
       required: false
     },
     dotStyle: {
-      type: Object,
+      type: [Function, Object],
       required: false
     },
     hideDot: {
@@ -105,7 +101,7 @@ export default defineComponent({
 
     const getDotStyle = computed(() => {
       if (is(Function, props.dotStyle)) {
-        return props.dotStyle
+        return props.dotStyle as (p: { active: boolean; index: number }) => any
       }
 
       return ({ active }: { active: boolean }) => computeDotStyle(active)

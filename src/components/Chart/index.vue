@@ -79,14 +79,12 @@ export default defineComponent({
     const axisSpace = reactive<ChartConfig['axisSpace']>({ x: 40, y: 20 })
 
     const chart = new Chart(props.data, props.config)
-    const rotateX = computed(() => props.axis && props.axis.primary && props.axis.primary.rotate)
-    const hideX = computed(() => {
-      return props.axis && props.axis.primary && props.axis.primary.hide
-    })
-
-    const hideY = computed(() => {
-      return props.axis && props.axis.secondary && props.axis.secondary.hide
-    })
+    // The primary axis is drawn at the bottom for horizontal (and circular) charts and at the left for vertical ones.
+    const bottomAxis = computed(() => (props.direction === 'vertical' ? props.axis?.secondary : props.axis?.primary))
+    const leftAxis = computed(() => (props.direction === 'vertical' ? props.axis?.primary : props.axis?.secondary))
+    const rotateX = computed(() => bottomAxis.value?.rotate ?? false)
+    const hideX = computed(() => bottomAxis.value?.hide ?? false)
+    const hideY = computed(() => leftAxis.value?.hide ?? false)
 
     const mouse = reactive({
       index: -1,
@@ -190,13 +188,6 @@ export default defineComponent({
         }
       }
     }
-
-    // function onTest() {
-    //   if (chart) {
-    //     const ticks = chart.scales.primary.ticks()
-    //     console.log(ticks)
-    //   }
-    // }
 
     return { axBottomEl, axLeftEl, chartEl, hideX, hideY, rotateX, onMouseMove, onMouseOut }
   }

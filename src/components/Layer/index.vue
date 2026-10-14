@@ -9,6 +9,8 @@ import { defineComponent, inject, onMounted, onUnmounted } from 'vue'
 import { useChart } from '@/hooks'
 import { LayerType } from '@/types'
 
+let nextLayerId = 0
+
 export default defineComponent({
   name: 'Layer',
   props: {
@@ -23,7 +25,7 @@ export default defineComponent({
   },
   setup(props) {
     const chart = useChart()
-    const id = new Date().getTime().toString()
+    const id = `layer-${nextLayerId++}`
     const extraProps = inject('layerProps', {})
 
     onMounted(() => {

@@ -15,14 +15,14 @@
         v-if="direction === 'horizontal'"
         class="v-tooltip-line-vertical"
         :style="{
-          height: canvas.height + 'px'
+          height: canvas.height - canvas.y + 'px'
         }"
       />
       <div
         v-else
         class="v-tooltip-line-horizontal"
         :style="{
-          width: canvas.width - 40 + 'px'
+          width: canvas.width - canvas.x + 'px'
         }"
       />
     </div>

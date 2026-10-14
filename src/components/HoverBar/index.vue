@@ -47,19 +47,19 @@ export default defineComponent({
         const [x] = chart.bandScale.map([vals[mouse.index]])
         const width = chart.bandScale.bandwidth()
 
-        if (x) {
+        if (x !== undefined && !isNaN(x)) {
           if (chart.config.direction === 'horizontal') {
             bar.value = {
               x: x - width / 2,
-              y: 0,
+              y: canvas.value.y,
               width,
-              height: canvas.value.height
+              height: canvas.value.height - canvas.value.y
             }
           } else {
             bar.value = {
-              x: 40,
+              x: canvas.value.x,
               y: x - width / 2,
-              width: canvas.value.width - 40,
+              width: canvas.value.width - canvas.value.x,
               height: width
             }
           }

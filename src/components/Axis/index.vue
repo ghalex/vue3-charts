@@ -4,8 +4,6 @@
 </template>
 
 <script lang="ts">
-// import * as r from 'ramda'
-// import { format } from 'd3-format'
 import type { Axis } from 'd3-axis'
 import type { PropType } from 'vue'
 import type { Canvas } from '@/types'
@@ -41,13 +39,11 @@ export default defineComponent({
 
     const canvas = ref<Canvas>(chart.canvas)
 
-    const defaultConfig = { ticks: 5 }
-
     function drawAxis() {
       if (chart.data.length > 0) {
         const { primary, secondary } = chart.scales
         const current = props.isPrimary ? primary : secondary
-        const config = Object.assign({}, props.isPrimary ? primary.config : secondary.config, defaultConfig)
+        const config = props.isPrimary ? primary.config : secondary.config
 
         const ax: Axis<any> = axis.value(current.scale)
 
@@ -55,9 +51,7 @@ export default defineComponent({
           ax.tickFormat(config.format)
         }
 
-        if (config.ticks !== undefined) {
-          ax.ticks(config.ticks)
-        }
+        ax.ticks(config.ticks ?? 5)
 
         if (config.tickValues !== undefined) {
           ax.tickValues(config.tickValues)

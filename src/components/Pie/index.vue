@@ -7,9 +7,9 @@
         :key="i"
         :id="`arc-${i}`"
         class="chart-pie"
-        v-bind="toKebabCase(getStyle())"
+        v-bind="toKebabCase(pathStyle)"
         :fill="getColor(i)"
-        :d="arcGen()(arc)"
+        :d="arcGen(arc)"
         @mousemove="showTooltip($event, i)"
         @mouseleave="hideTooltip()"
       />
@@ -33,7 +33,7 @@ export default defineComponent({
   components: { Layer },
   props: {
     pieStyle: {
-      type: Object,
+      type: [Function, Object],
       required: false
     },
     dataKeys: {
@@ -53,62 +53,72 @@ export default defineComponent({
   setup(props) {
     const chart = useChart()
     const mouse = useMouse()
-    const size = ref(Math.min(chart.canvas.width - chart.canvas.x, chart.canvas.height - chart.canvas.y) / 2)
+    const arcs = ref<Arc[]>([])
+    const size = ref(0)
+    const transform = ref('')
 
-    const getStyle = computed(() => {
-      return () => ({
+    const style = computed(() => {
+      const custom = typeof props.pieStyle === 'function' ? props.pieStyle() : props.pieStyle
+      return {
         colors: ['#4daf4a', '#377eb8', '#ff7f00', '#984ea3', '#e41a1c'],
         innerRadius: 2,
         cornerRadius: 0,
         padAngle: 0.01,
-        ...props.pieStyle
-      })
+        ...custom
+      }
     })
 
-    const style = getStyle.value()
-    const arcs = ref<Arc[]>([])
-    const colors = scaleOrdinal(getStyle.value().colors)
-    const arcGen = () => {
-      return arc()
-        .outerRadius(size.value)
-        .innerRadius(style.innerRadius)
-        .cornerRadius(style.cornerRadius)
-        .padAngle(style.padAngle)
+    // Everything except `colors` is spread onto the <path>; the arc generator consumes the rest.
+    const pathStyle = computed(() => {
+      const { colors: _colors, innerRadius: _ir, cornerRadius: _cr, padAngle: _pa, ...rest } = style.value
+      return rest
+    })
+
+    const colors = computed(() => scaleOrdinal<string, string>(style.value.colors))
+
+    const pieSort = computed<((a: number, b: number) => number) | null>(() => {
+      switch (props.sort) {
+        case 'desc':
+          return descending
+        case 'asc':
+          return ascending
+        case 'custom':
+          return (props.sortFunc as (a: number, b: number) => number) ?? null
+        default:
+          return null
+      }
+    })
+
+    function arcGen(a: Arc) {
+      return (
+        arc()
+          .outerRadius(size.value)
+          .innerRadius(style.value.innerRadius)
+          .cornerRadius(style.value.cornerRadius)
+          .padAngle(style.value.padAngle)(a as any) ?? ''
+      )
     }
 
-    const transform = ref(`translate(${size.value + chart.canvas.x}, ${size.value + chart.canvas.y})`)
-
-    let pieSort: any
-    switch (props.sort) {
-      case 'desc':
-        pieSort = descending
-        break
-      case 'asc':
-        pieSort = ascending
-        break
-      case 'none':
-        pieSort = null
-        break
-      case 'custom':
-        pieSort = props.sortFunc ?? null
-        break
-      default:
-        pieSort = null
+    function updateLayout() {
+      const { canvas } = chart
+      size.value = Math.min(canvas.width - canvas.x, canvas.height - canvas.y) / 2
+      transform.value = `translate(${size.value + canvas.x}, ${size.value + canvas.y})`
     }
 
     function updatePie() {
-      // const key = chart.getKeys(1)
       const data = chart.getData([props.dataKeys[1]])
-      arcs.value = pie().sort(pieSort)(data)
+      const generator = pie<number>()
+      const sorter = pieSort.value
+      arcs.value = (sorter ? generator.sort(sorter) : generator.sort(null))(data)
     }
 
     function getColor(index: number) {
-      return colors(index.toString())
+      return colors.value(index.toString())
     }
 
     function showTooltip(event: MouseEvent, index: number) {
       mouse.hover = true
-      mouse.index = index // - chart.data.length
+      mouse.index = index
       const [x, y] = pointer(event)
       mouse.position = { x: x + size.value, y: y + size.value }
     }
@@ -118,22 +128,22 @@ export default defineComponent({
       mouse.index = -1
     }
 
-    function toKebabCase(data: any) {
-      mapKeys(kebabize, data)
-    }
+    const toKebabCase = (data: any) => mapKeys(kebabize, data)
 
-    watch(chart.updates, () => {
-      size.value = Math.min(chart.canvas.width - chart.canvas.x, (chart.canvas.height - chart.canvas.y) / 2)
-
-      transform.value = `translate(${size.value + chart.canvas.x}, ${size.value + chart.canvas.y})`
-
-      updatePie()
-    })
+    watch(
+      chart.updates,
+      () => {
+        updateLayout()
+        updatePie()
+      },
+      { immediate: true }
+    )
+    watch(pieSort, updatePie)
 
     return {
       arcs,
       arcGen,
-      getStyle,
+      pathStyle,
       transform,
       getColor,
       hideTooltip,

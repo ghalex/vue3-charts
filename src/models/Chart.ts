@@ -3,7 +3,7 @@ import { ref, Ref } from 'vue'
 import { Scales } from '.'
 import { getCol } from '@/utils'
 import { stack, stackOrderNone } from 'd3-shape'
-import { Canvas, ChartConfig, Data, Layer, LayerType } from '@/types'
+import { AxisConfig, Canvas, ChartConfig, Data, Layer, LayerType } from '@/types'
 
 const defaultConfig: ChartConfig = {
   size: { width: 500, height: 400 },
@@ -54,23 +54,25 @@ export default class Chart {
     return null
   }
 
+  /** The axis config drawn at the bottom / left of the chart for the current direction. */
+  get bottomAxis(): AxisConfig {
+    return this.config.direction === 'vertical' ? this.config.axis.secondary : this.config.axis.primary
+  }
+
+  get leftAxis(): AxisConfig {
+    return this.config.direction === 'vertical' ? this.config.axis.primary : this.config.axis.secondary
+  }
+
   get canvas(): Canvas {
-    const { margin, size } = this.config
-    const axisSpace = this.config.axisSpace
-
-    if (this.config.axis.primary.hide) {
-      axisSpace.y = 0
-    }
-
-    if (this.config.axis.secondary.hide) {
-      axisSpace.x = 0
-    }
+    const { margin, size, axisSpace } = this.config
+    const spaceX = this.leftAxis.hide ? 0 : axisSpace.x
+    const spaceY = this.bottomAxis.hide ? 0 : axisSpace.y
 
     return {
-      x: margin.left + axisSpace.x,
+      x: margin.left + spaceX,
       y: margin.top,
       width: size.width - margin.right,
-      height: size.height - margin.bottom - axisSpace.y
+      height: size.height - margin.bottom - spaceY
     }
   }
 
@@ -150,6 +152,5 @@ export default class Chart {
     this.scales.updateDomain(this.data, stackedData, this.getKeys())
 
     this.updates.value += 1
-    // console.log('update from:', from)
   }
 }
