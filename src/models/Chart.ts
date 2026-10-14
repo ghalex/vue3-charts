@@ -41,9 +41,9 @@ export default class Chart {
     this.data = data
     this.layers = []
     this.config = r.mergeDeepLeft(
-      r.pickBy((p) => p !== undefined, config),
+      r.pickBy((p) => p !== undefined, config) as Partial<ChartConfig>,
       defaultConfig
-    ) as any
+    ) as ChartConfig
     this.scales = new Scales(this.config.axis)
     this.updates = ref(0)
   }
@@ -75,9 +75,7 @@ export default class Chart {
   }
 
   public getStackedData(keys: string[]) {
-    return stack()
-      .keys(keys)
-      .order(stackOrderNone)(this.data as any)
+    return stack().keys(keys).order(stackOrderNone)(this.data as any)
   }
 
   public changeData(data: Data[]) {
@@ -87,9 +85,9 @@ export default class Chart {
 
   public changeConfig(config: Partial<ChartConfig>) {
     this.config = r.mergeDeepLeft(
-      r.pickBy((p) => p !== undefined, config),
+      r.pickBy((p) => p !== undefined, config) as Partial<ChartConfig>,
       this.config
-    ) as any
+    ) as ChartConfig
     this.scales.changeConfig(this.config.axis)
 
     this.update('config')

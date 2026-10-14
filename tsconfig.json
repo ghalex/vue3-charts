@@ -3,6 +3,7 @@
     "target": "es6",
     "module": "es2015",
     "strict": true,
+    "skipLibCheck": true,
     "declaration": true,
     "declarationDir": "dist/types",
     "outDir": "dist",
@@ -21,5 +22,5 @@
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
-  "exclude": ["node_modules", "dist", "dev" ]
+  "exclude": ["node_modules", "dist", "dev"]
 }

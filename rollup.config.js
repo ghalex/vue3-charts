@@ -36,11 +36,13 @@ export default {
     {
       format: 'cjs',
       file: packageJson.main,
+      exports: 'named',
       sourcemap: true
     },
     {
       format: 'esm',
       file: packageJson.module,
+      exports: 'named',
       sourcemap: true
     }
   ],
@@ -55,7 +57,8 @@ export default {
     }),
     peerDepsExternal(),
     resolve(),
-    typescript(),
+    // picomatch >= 4 no longer matches rpt2's default `**/*.ts+(|x)` extglob, so be explicit
+    typescript({ include: ['**/*.ts', '**/*.tsx'] }),
     vue(),
     postcss({ include: /(?<!&module=.*)\.css$/ }),
     commonjs(),
