@@ -18,12 +18,7 @@
           :rotate="rotateX"
           :isPrimary="direction === 'horizontal'"
         />
-        <axis
-          v-if="!hideY"
-          position="left"
-          ref="axLeftEl"
-          :isPrimary="direction === 'vertical'"
-        />
+        <axis v-if="!hideY" position="left" ref="axLeftEl" :isPrimary="direction === 'vertical'" />
       </g>
     </svg>
     <div class="widgets">
@@ -33,16 +28,7 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  onMounted,
-  onUnmounted,
-  provide,
-  watch,
-  reactive,
-  ref,
-  computed
-} from 'vue'
+import { defineComponent, onMounted, onUnmounted, provide, watch, reactive, ref, computed } from 'vue'
 import { ChartAxis, ChartConfig, Data, Direction, Margin, Size } from '@/types'
 import { Chart } from '@/models'
 import { pointer } from 'd3-selection'
@@ -144,7 +130,7 @@ export default defineComponent({
       { immediate: true }
     )
 
-    const resizeObserver = new ResizeObserver(entries => {
+    const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         if (axBottomEl.value && entry.target === axBottomEl.value.$el) {
           axisSpace.y = entry.contentRect.height
@@ -192,10 +178,7 @@ export default defineComponent({
           const delta = mouse.position.x - chart.canvas.x
           mouse.index = Math.round((delta + band / 2) / band) - 1
         } else {
-          mouse.index = bisectCenter(
-            vals,
-            primary.scale.invert(mouse.position.x)
-          )
+          mouse.index = bisectCenter(vals, primary.scale.invert(mouse.position.x))
         }
       } else if (chart.config.direction === 'vertical') {
         if (primary.type === 'band') {
@@ -203,10 +186,7 @@ export default defineComponent({
           const delta = mouse.position.y - chart.canvas.y
           mouse.index = Math.round((delta + band / 2) / band) - 1
         } else {
-          mouse.index = bisectCenter(
-            vals,
-            primary.scale.invert(mouse.position.y)
-          )
+          mouse.index = bisectCenter(vals, primary.scale.invert(mouse.position.y))
         }
       }
     }

@@ -4,9 +4,7 @@
     <rect
       v-for="(bar, i) in bars"
       class="chart-bar"
-      v-bind="
-        toKebabCase(getStyle({ ...bar.props, active: i === mouse.index }))
-      "
+      v-bind="toKebabCase(getStyle({ ...bar.props, active: i === mouse.index }))"
       :key="i"
       :x="bar.x"
       :y="bar.y"
@@ -17,9 +15,7 @@
     <rect
       v-if="selectedBar"
       class="chart-bar"
-      v-bind="
-        toKebabCase(getStyleSelected({ ...selectedBar.props }))
-      "
+      v-bind="toKebabCase(getStyleSelected({ ...selectedBar.props }))"
       :x="selectedBar.x"
       :y="selectedBar.y"
       :width="selectedBar.width > 0 ? selectedBar.width : 0"

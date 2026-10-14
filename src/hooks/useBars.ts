@@ -7,7 +7,10 @@ export interface BarsReturn {
   bars: Ref<Rectangle[]>
 }
 
-export default (dataKeys: [string, string], props = { maxWidth: -1, gap: 5, stacked: false, type: 'bar' }): BarsReturn => {
+export default (
+  dataKeys: [string, string],
+  props = { maxWidth: -1, gap: 5, stacked: false, type: 'bar' }
+): BarsReturn => {
   const bars = ref<Rectangle[]>([])
   const chart = useChart()
   const { stacked, type, gap } = props

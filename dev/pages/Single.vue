@@ -1,18 +1,8 @@
 <template>
-  <Chart
-    :size="{ width: 800, height: 620 }"
-    :data="data"
-    :margin="margin"
-    :direction="direction"
-    :axis="axis"
-  >
+  <Chart :size="{ width: 800, height: 620 }" :data="data" :margin="margin" :direction="direction" :axis="axis">
     <template #layers>
       <Grid strokeDasharray="2,2" />
-      <Area
-        :dataKeys="['name', 'pl']"
-        type="normal"
-        :areaStyle="{ fill: 'red' }"
-      />
+      <Area :dataKeys="['name', 'pl']" type="normal" :areaStyle="{ fill: 'red' }" />
       <Line
         :dataKeys="['name', 'pl']"
         type="normal"

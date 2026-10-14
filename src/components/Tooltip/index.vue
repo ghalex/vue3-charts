@@ -4,7 +4,8 @@
       <slot :payload="items">
         <div :style="{ borderColor: color }">
           <div v-for="(item, i) in items" :key="i" :style="{ color: item.color }">
-            <b>{{ item.label }}</b>: {{ item.valueFormatted }}
+            <b>{{ item.label }}</b
+            >: {{ item.valueFormatted }}
           </div>
         </div>
       </slot>
@@ -158,7 +159,9 @@ export default defineComponent({
   padding: 8px;
   text-align: left;
   border-radius: 4px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 .v-tooltip-right {

@@ -53,7 +53,7 @@ export default defineComponent({
     },
     data: {
       type: Array as () => any[],
-      default: () => ([])
+      default: () => []
     },
     dataKeys: {
       type: Object as () => [string, string],
@@ -84,14 +84,9 @@ export default defineComponent({
     function getScales() {
       const values = extent(data.value.map((d) => d[props.dataKeys[1]])) as [number, number]
 
-      const x = scaleLinear()
-        .domain(values)
-        .range([0, 100])
-        .nice()
+      const x = scaleLinear().domain(values).range([0, 100]).nice()
 
-      const y = scaleSequential()
-        .domain(values)
-        .interpolator(props.colorFn())
+      const y = scaleSequential().domain(values).interpolator(props.colorFn())
 
       return { x, y }
     }

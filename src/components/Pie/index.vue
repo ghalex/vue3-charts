@@ -10,7 +10,8 @@
         v-bind="toKebabCase(getStyle())"
         :fill="getColor(i)"
         :d="arcGen()(arc)"
-        @mousemove="showTooltip($event, i)" @mouseleave="hideTooltip()"
+        @mousemove="showTooltip($event, i)"
+        @mouseleave="hideTooltip()"
       />
     </g>
   </Layer>
@@ -52,10 +53,7 @@ export default defineComponent({
   setup(props) {
     const chart = useChart()
     const mouse = useMouse()
-    const size = ref(Math.min(
-      chart.canvas.width - chart.canvas.x,
-      chart.canvas.height - chart.canvas.y) / 2
-    )
+    const size = ref(Math.min(chart.canvas.width - chart.canvas.x, chart.canvas.height - chart.canvas.y) / 2)
 
     const getStyle = computed(() => {
       return () => ({
@@ -82,11 +80,20 @@ export default defineComponent({
 
     let pieSort: any
     switch (props.sort) {
-      case 'desc': pieSort = descending; break
-      case 'asc': pieSort = ascending; break
-      case 'none': pieSort = null; break
-      case 'custom': pieSort = props.sortFunc ?? null; break
-      default: pieSort = null
+      case 'desc':
+        pieSort = descending
+        break
+      case 'asc':
+        pieSort = ascending
+        break
+      case 'none':
+        pieSort = null
+        break
+      case 'custom':
+        pieSort = props.sortFunc ?? null
+        break
+      default:
+        pieSort = null
     }
 
     function updatePie() {
@@ -101,7 +108,7 @@ export default defineComponent({
 
     function showTooltip(event: MouseEvent, index: number) {
       mouse.hover = true
-      mouse.index = index// - chart.data.length
+      mouse.index = index // - chart.data.length
       const [x, y] = pointer(event)
       mouse.position = { x: x + size.value, y: y + size.value }
     }
@@ -116,10 +123,7 @@ export default defineComponent({
     }
 
     watch(chart.updates, () => {
-      size.value = Math.min(
-        chart.canvas.width - chart.canvas.x,
-        (chart.canvas.height - chart.canvas.y) / 2
-      )
+      size.value = Math.min(chart.canvas.width - chart.canvas.x, (chart.canvas.height - chart.canvas.y) / 2)
 
       transform.value = `translate(${size.value + chart.canvas.x}, ${size.value + chart.canvas.y})`
 

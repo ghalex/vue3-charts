@@ -63,7 +63,7 @@ export interface AxisConfig {
   ticks?: number
   tickValues?: any[]
   hide?: boolean
-  rotate?:boolean
+  rotate?: boolean
   useConfig?: (ax: Axis<any>) => void
 }
 
@@ -77,7 +77,7 @@ export interface ChartConfig {
   margin: Margin
   direction: Direction
   axis: ChartAxis
-  axisSpace: { x: number, y: number }
+  axisSpace: { x: number; y: number }
   controlHover?: boolean
 }
 

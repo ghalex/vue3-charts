@@ -3,25 +3,13 @@
     <div class="flex">
       <Responsive class="w-full">
         <template #main="{ width }">
-          <Chart
-            :size="{ width, height: 400 }"
-            :data="data"
-            :axis="axis"
-            :margin="margin"
-            :direction="direction"
-          >
+          <Chart :size="{ width, height: 400 }" :data="data" :axis="axis" :margin="margin" :direction="direction">
             <template #layers>
               <Grid strokeDasharray="2,2" :center="false" />
               <HoverBar />
               <Group :maxWidth="50">
-                <Bar
-                  :dataKeys="['name', 'avg']"
-                  :barStyle="{ fill: '#0096c7' }"
-                />
-                <Bar
-                  :dataKeys="['name', 'pl']"
-                  :barStyle="{ fill: '#FC96c7' }"
-                />
+                <Bar :dataKeys="['name', 'avg']" :barStyle="{ fill: '#0096c7' }" />
+                <Bar :dataKeys="['name', 'pl']" :barStyle="{ fill: '#FC96c7' }" />
               </Group>
               <!-- <Group :stacked="true" :maxWidth="50">
                 <Bar
@@ -54,13 +42,7 @@
                   })
                 "
               />
-              <Marker
-                :value="1500"
-                label="Avg."
-                color="#e63946"
-                strokeWidth="2"
-                strokeDasharray="6 6"
-              />
+              <Marker :value="1500" label="Avg." color="#e63946" strokeWidth="2" strokeDasharray="6 6" />
             </template>
             <template #widgets>
               <Tooltip
@@ -92,13 +74,7 @@
           <template #layers>
             <Grid strokeDasharray="2,2" />
             <Line :dataKeys="['nbOfTrades', 'pl']" type="monotone" />
-            <Marker
-              :value="100"
-              label="Avg."
-              color="blue"
-              strokeWidth="2"
-              strokeDasharray="6 6"
-            />
+            <Marker :value="100" label="Avg." color="blue" strokeWidth="2" strokeDasharray="6 6" />
           </template>
           <template #widgets>
             <Tooltip />
@@ -123,11 +99,7 @@
             />
             <!-- <Group :stacked="true">
               <Area :dataKeys="['name', 'pl']" :areaStyle="{ fill: 'red' }" type="monotone" /> -->
-            <Area
-              :dataKeys="['name', 'pl']"
-              :areaStyle="{ fill: 'blue' }"
-              type="normal"
-            />
+            <Area :dataKeys="['name', 'pl']" :areaStyle="{ fill: 'blue' }" type="normal" />
             <!-- </Group> -->
             <Marker :value="0" label="0$" color="red" strokeDasharray="0" />
           </template>
@@ -145,7 +117,7 @@
           :data="data"
           :config="{ controlHover: false }"
           :margin="margin"
-          :axis="{ primary: { hide: true }, secondary: { hide: true }}"
+          :axis="{ primary: { hide: true }, secondary: { hide: true } }"
           :size="{ width: 400, height: 400 }"
         >
           <template #layers>
@@ -163,7 +135,7 @@
           :data="data3"
           :config="{ controlHover: false }"
           :margin="margin"
-          :axis="{ primary: { hide: true }, secondary: { hide: true }}"
+          :axis="{ primary: { hide: true }, secondary: { hide: true } }"
           :size="{ width: 400, height: 400 }"
         >
           <template #layers>
@@ -185,29 +157,17 @@
               :dataKeys="['key', 'value']"
               :data="data4"
               :rcStyle="
-                r => ({
+                (r) => ({
                   fill: r.color
                 })
               "
             >
               <template #text="{ r }">
                 <g v-if="r.width > 100">
-                  <text
-                    :x="0 + 10"
-                    :y="0 + 20"
-                    :font-size="`15px`"
-                    :fill="`white`"
-                    font-weight="bold"
-                  >
+                  <text :x="0 + 10" :y="0 + 20" :font-size="`15px`" :fill="`white`" font-weight="bold">
                     {{ r.data.name }}
                   </text>
-                  <text
-                    :x="0 + 10"
-                    :y="0 + 40"
-                    :font-size="`15px`"
-                    :fill="`white`"
-                    font-weight="bold"
-                  >
+                  <text :x="0 + 10" :y="0 + 40" :font-size="`15px`" :fill="`white`" font-weight="bold">
                     {{ r.data.value }}
                   </text>
                 </g>
@@ -277,8 +237,7 @@ export default defineComponent({
     }
 
     function updateConfig() {
-      direction.value =
-        direction.value === 'horizontal' ? 'vertical' : 'horizontal'
+      direction.value = direction.value === 'horizontal' ? 'vertical' : 'horizontal'
     }
 
     function test() {
