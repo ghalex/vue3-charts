@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.1.1 (2026-10-14)
 
 - `Chart` no longer crashes during server-side rendering (`ResizeObserver is not defined`); the observer is created
   on mount. Nuxt users no longer need `<ClientOnly>` (#48).
