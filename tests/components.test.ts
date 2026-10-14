@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent, h, nextTick } from 'vue'
 import { Bar, Chart, Group, Line, Pie } from '@/components'
@@ -146,5 +146,54 @@ describe('Pie', () => {
 
     await wrapper.setProps({ innerRadius: 0 })
     expect(wrapper.find('path.chart-pie').attributes('d')).not.toBe(before)
+  })
+})
+
+describe('Chart axis measurement', () => {
+  it('applies the measured axis size on the next frame, not inside the ResizeObserver callback', async () => {
+    let callback: ResizeObserverCallback | undefined
+    const frames: FrameRequestCallback[] = []
+
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(cb: ResizeObserverCallback) {
+          callback = cb
+        }
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+      }
+    )
+    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => frames.push(cb))
+    vi.stubGlobal('cancelAnimationFrame', () => {})
+
+    try {
+      const wrapper = mount(Chart, {
+        props: { data, size: { width: 400, height: 300 } },
+        slots: { layers: () => h(ChartProbe) }
+      })
+      await nextTick()
+      const chart = findChart(wrapper)
+      const leftAxis = wrapper.find('g.axis > g:last-child').element
+      const before = chart.canvas.x
+
+      expect(callback).toBeDefined()
+      callback!(
+        [{ target: leftAxis, contentRect: { width: 77, height: 0 } } as unknown as ResizeObserverEntry],
+        {} as ResizeObserver
+      )
+      await nextTick()
+
+      // Re-rendering the observed axis from inside the callback is what triggers "ResizeObserver loop limit exceeded".
+      expect(chart.canvas.x).toBe(before)
+      expect(frames).toHaveLength(1)
+
+      frames[0](0)
+      await nextTick()
+      expect(chart.canvas.x).toBe(77)
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 })

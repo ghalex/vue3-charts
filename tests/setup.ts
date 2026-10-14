@@ -1,4 +1,4 @@
-// jsdom has no ResizeObserver; Chart and useResize construct one at setup time.
+// jsdom has no ResizeObserver; Chart and useResize construct one on mount.
 class ResizeObserverStub {
   observe() {}
   unobserve() {}

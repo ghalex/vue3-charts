@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- `Chart` no longer crashes during server-side rendering (`ResizeObserver is not defined`); the observer is created
+  on mount. Nuxt users no longer need `<ClientOnly>` (#48).
+- Axis measurements are applied on the next animation frame instead of inside the `ResizeObserver` callback, which
+  removes the "ResizeObserver loop limit exceeded" error (#53).
+
 ## 2.1.0 (2026-10-14)
 
 - Export the public types (`AxisConfig`, `ChartAxis`, `ChartAxisOptions`, `ChartOptions`, `Data`, `Margin`, `Size`,

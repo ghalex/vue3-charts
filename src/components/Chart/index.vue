@@ -122,17 +122,34 @@ export default defineComponent({
       { immediate: true }
     )
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (axBottomEl.value && entry.target === axBottomEl.value.$el) {
-          axisSpace.y = entry.contentRect.height
-        } else if (axLeftEl.value && entry.target === axLeftEl.value.$el) {
-          axisSpace.x = entry.contentRect.width
-        }
-      }
-    })
+    // The observer is created in onMounted, not here: setup() also runs on the server (Nuxt SSR), where
+    // ResizeObserver does not exist.
+    let resizeObserver: ResizeObserver | null = null
+    let resizeFrame: number | null = null
+    const measured: ChartConfig['axisSpace'] = { ...axisSpace }
+
+    function applyAxisSpace() {
+      resizeFrame = null
+      axisSpace.x = measured.x
+      axisSpace.y = measured.y
+    }
 
     onMounted(() => {
+      resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (axBottomEl.value && entry.target === axBottomEl.value.$el) {
+            measured.y = entry.contentRect.height
+          } else if (axLeftEl.value && entry.target === axLeftEl.value.$el) {
+            measured.x = entry.contentRect.width
+          }
+        }
+        // Writing axisSpace re-renders the axes being observed. Doing that from inside the callback resizes an
+        // observed element in the same frame, which browsers report as "ResizeObserver loop limit exceeded"
+        // (and Nuxt's dev overlay shows as a fatal error). Apply the measurement on the next frame instead.
+        if (resizeFrame === null) {
+          resizeFrame = requestAnimationFrame(applyAxisSpace)
+        }
+      })
       if (axBottomEl.value) {
         resizeObserver.observe(axBottomEl.value.$el)
       }
@@ -142,7 +159,10 @@ export default defineComponent({
     })
 
     onUnmounted(() => {
-      resizeObserver.disconnect()
+      if (resizeFrame !== null) {
+        cancelAnimationFrame(resizeFrame)
+      }
+      resizeObserver?.disconnect()
     })
 
     function onMouseOut() {
