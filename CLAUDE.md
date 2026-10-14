@@ -10,23 +10,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm ci                   # install from package-lock.json (what CI does)
-npm run serve            # dev playground (vue-cli) at dev/serve.ts, routes / and /single
-npm run check            # everything CI runs, in CI's order: lint, format:check, typecheck, build
-npm run lint             # eslint via vue-cli-service (standard + vue/essential + prettier)
+npm run dev              # Vite playground at index.html -> dev/serve.ts, routes / and /single
+npm run check            # everything CI runs, in CI's order: lint, format:check, typecheck, test, build
+npm run lint             # eslint (flat config in eslint.config.mjs: js + typescript-eslint + vue/essential + prettier)
 npm run format           # prettier --write .   (format:check is the CI variant)
-npm run typecheck        # tsc --noEmit
-npm run build            # rollup -> dist/vue3-charts.js (cjs), dist/vue3-charts.esm.js, dist/*.d.ts
+npm run typecheck        # vue-tsc --noEmit over src/, dev/ and tests/ (templates are type-checked too)
+npm test                 # vitest run (tests/**/*.test.ts, jsdom); `npm run test:watch` for watch mode
+npm run build            # vite build -> dist/vue3-charts.js (cjs), dist/vue3-charts.esm.js, dist/**/*.d.ts
 ```
 
-There is no test suite. Verify changes visually in the playground: `dev/pages/Main.vue` exercises nearly every component and prop (grouped/stacked bars, line, area, pie, treemap, markers, tooltip, axis formatting, direction toggle).
+Tests live in `tests/` and cover the `Chart`/`Scale` models, `utils`, and component regressions mounted with
+`@vue/test-utils` (`tests/setup.ts` stubs `ResizeObserver`, which jsdom lacks). Add a test for every bug fix. Visual
+checks still happen in the playground: `dev/pages/Main.vue` exercises nearly every component and prop (grouped/stacked
+bars, line, area, pie, treemap, markers, tooltip, axis formatting, direction toggle).
 
-`npm run lib` is a legacy vue-cli library build; `npm run build` (rollup) is the real one.
-
-Run `npm run format` before committing; CI fails on unformatted files. ESLint handles correctness only (`eslint-config-prettier` turns off its formatting rules), Prettier owns formatting.
+Run `npm run format` before committing; CI fails on unformatted files. ESLint handles correctness only
+(`eslint-config-prettier` turns off its formatting rules), Prettier owns formatting.
 
 ## CI and publishing (important)
 
-`.github/workflows/ci.yml` runs on every pull request and every push to `main`: `lint` (eslint + prettier check), `typecheck` and `build` as separate jobs. On a push to `main` only, a `publish` job that `needs` all three builds again and runs `npm publish` when `package.json` `version` differs from what is on npm, so a release is "bump `version`, push to main". Do not bump the version unless a release is intended.
+`.github/workflows/ci.yml` runs on every pull request and every push to `main`: `lint` (eslint + prettier check), `typecheck`, `test` and `build` as separate jobs. On a push to `main` only, a `publish` job that `needs` all four builds again and runs `npm publish` when `package.json` `version` differs from what is on npm, so a release is "bump `version`, push to main". Do not bump the version unless a release is intended.
 
 Publishing uses npm trusted publishing (GitHub OIDC, `id-token: write`), not a token secret. If publish fails with `E404 ... PUT https://registry.npmjs.org/vue3-charts`, the trusted publisher on npmjs.com (package Settings, Trusted Publisher: GitHub Actions, repo `ghalex/vue3-charts`, workflow `ci.yml`) is missing or misconfigured. The old `NPM_TOKEN` secret is a revoked classic token and is unused.
 
@@ -82,9 +85,9 @@ Styling props (`barStyle`, `lineStyle`, `dotStyle`, `areaStyle`, `pieStyle`, `rc
 
 ## Conventions
 
-- `@/` resolves to `src/` everywhere (tsconfig `paths`, rollup alias, vue-cli). The rollup build runs `tsc-alias` afterwards so emitted `.d.ts` files do not contain `@/` imports; keep that step if touching `rollup.config.js`.
-- `rollup-plugin-typescript2` is given an explicit `include` in `rollup.config.js` because its default `**/*.ts+(|x)` extglob no longer matches under picomatch 4; without it no `.ts` file is transpiled and the build fails with "Unexpected token" on `src/index.ts`.
-- Rollup stays on major 2: `rollup-plugin-vue` (the only maintained-enough SFC plugin for plain rollup) does not support rollup 3/4. Moving to rollup 4 means moving to Vite.
+- `@/` resolves to `src/` everywhere (tsconfig `paths`, `resolve.alias` in `vite.config.mts`). `vite-plugin-dts` rewrites it to relative paths in the emitted `.d.ts` files.
+- The build is Vite library mode (`vite.config.mts`): `es` + `cjs` outputs, every entry of `dependencies` and `peerDependencies` is external, component CSS is injected at runtime by `vite-plugin-css-injected-by-js` (consumers never import a stylesheet), `public/` is not copied (playground assets only). The config is `.mts` because the package is CommonJS (`dist/vue3-charts.js` must stay `.js`), so do not add `"type": "module"` to `package.json`.
+- `package.json` has an `exports` map and `sideEffects: false`; only `dist` is published.
 - Component `name`s must not collide with SVG/HTML element names (`vue/no-reserved-component-names`): the marker is `ChartMarker`, not `Marker`.
-- Components use `defineComponent` with the Options-style `setup()`; no `<script setup>`.
-- `dev/` is excluded from `tsconfig` and from the published package. Mock datasets for the playground live in `src/mockup/index.ts`.
+- Components use `defineComponent` with the Options-style `setup()`; no `<script setup>`. `Group` is renderless (returns the slot) because any non-SVG element inside `<svg>` is created in the SVG namespace and nothing inside it renders.
+- `dev/` and `tests/` are type-checked but not published. Mock datasets for the playground live in `src/mockup/index.ts`.
