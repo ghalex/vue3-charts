@@ -1,19 +1,21 @@
 import { Ref, ref, watch } from 'vue'
-import { Rectangle } from '@/types'
+import { Data, LayerProps, LayerType, Rectangle } from '@/types'
 import useChart from './useChart'
 import { Series } from 'd3-shape'
+
+export interface BarsOptions extends LayerProps {
+  gap?: number
+  type?: LayerType
+}
 
 export interface BarsReturn {
   bars: Ref<Rectangle[]>
 }
 
-export default (
-  dataKeys: [string, string],
-  props = { maxWidth: -1, gap: 5, stacked: false, type: 'bar' }
-): BarsReturn => {
+export default (dataKeys: [string, string], options: BarsOptions = {}): BarsReturn => {
   const bars = ref<Rectangle[]>([])
   const chart = useChart()
-  const { stacked, type, gap } = props
+  const { stacked = false, type = 'bar', gap = 5, maxWidth = -1 } = options
 
   function scales() {
     const { primary, secondary } = chart.scales
@@ -28,7 +30,7 @@ export default (
       return 0
     }
 
-    const barLayers = chart.getLayers(type as any)
+    const barLayers = chart.getLayers(type)
     const idx = barLayers.findIndex((l) => l.dataKeys.join(',') === dataKeys.join(','))
 
     return idx > -1 ? idx : 0
@@ -36,12 +38,11 @@ export default (
 
   function getBarWidth() {
     const { bandScale } = scales()
-    const maxWidth =
-      props.maxWidth > -1 ? Math.min(bandScale.bandwidth() - gap, props.maxWidth) : bandScale.bandwidth() - gap
+    const available = bandScale.bandwidth() - gap
+    const width = maxWidth > -1 ? Math.min(available, maxWidth) : available
+    const barLayers = chart.getLayers(type)
 
-    const barLayers = chart.getLayers(type as any)
-
-    return barLayers.length > 0 && !stacked ? maxWidth / barLayers.length : maxWidth
+    return barLayers.length > 0 && !stacked ? width / barLayers.length : width
   }
 
   function getDiffWidth() {
@@ -51,11 +52,11 @@ export default (
 
     const { bandScale } = scales()
     const max = bandScale.bandwidth() - gap
-    const total = chart.getLayers(type as any).length * getBarWidth()
+    const total = chart.getLayers(type).length * getBarWidth()
     return (max - total) / 2
   }
 
-  function getBars(key: string, values: Series<{ [key: string]: number }, string>) {
+  function getBars(key: string, values: Series<Data, string>) {
     const { bandScale, linearScale } = scales()
     const index = getIndex()
     const barSize = getBarWidth()
@@ -63,8 +64,8 @@ export default (
 
     return values.map((val) => {
       const rect: Rectangle = { x: 0, y: 0, width: 0, height: 0, props: { values: [...val], data: val.data } }
-      const xVal = bandScale.scale(val.data[key])
-      const [yVal0, yVal1] = linearScale.map(val)
+      const xVal = bandScale.at(val.data[key])
+      const [yVal0, yVal1] = linearScale.map([...val])
 
       if (chart.config.direction === 'horizontal') {
         rect.y = Math.min(yVal0, yVal1)
@@ -81,8 +82,6 @@ export default (
       }
       return rect
     })
-
-    // console.log(values)
   }
 
   function update() {
@@ -96,9 +95,7 @@ export default (
     }
   }
 
-  watch(chart.updates, () => {
-    update()
-  })
+  watch(chart.updates, update)
 
   return {
     bars

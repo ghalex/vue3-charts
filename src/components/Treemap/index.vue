@@ -12,7 +12,7 @@
           @mouseleave="onMouseOut"
         >
           <slot :r="r" :selected="selected === i">
-            <rect v-bind="toKebabCase(getStyle(r))" :x="0" :y="0" :width="r.width" :height="r.height" />
+            <rect v-bind="toSvgAttrs(getStyle(r))" :x="0" :y="0" :width="r.width" :height="r.height" />
             <slot :r="r" :selected="selected === i" name="text">
               <text :x="0 + 10" :y="0 + 20" :font-size="`15px`" :fill="`white`" font-weight="bold">
                 {{ r.data.name }}
@@ -27,13 +27,25 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue'
+import { defineComponent, PropType, ref, watch } from 'vue'
 import { scaleLinear, scaleSequential } from 'd3-scale'
 import { stratify, treemap } from 'd3-hierarchy'
 import { interpolateHcl } from 'd3-interpolate'
-import { Margin, Size } from '@/types'
+import { Canvas, Margin, Size, StyleProp } from '@/types'
 import { extent } from 'd3-array'
-import { kebabize, mapKeys } from '@/utils'
+import { resolveStyle, toSvgAttrs } from '@/utils'
+
+export interface TreeRect {
+  idx: number
+  x0: number
+  x1: number
+  y0: number
+  y1: number
+  width: number
+  height: number
+  data: any
+  color: string
+}
 
 export default defineComponent({
   name: 'Treemap',
@@ -64,29 +76,30 @@ export default defineComponent({
       default: () => interpolateHcl('#60c96e', '#6b46c1')
     },
     rcStyle: {
-      type: Function,
+      type: [Function, Object] as PropType<StyleProp<any>>,
       required: false
     }
   },
   setup(props) {
     const el = ref(null)
     const data = ref(props.data)
-    const selected = ref(null)
-    const canvas = ref({
+    const selected = ref<number | null>(null)
+    const getCanvas = (): Canvas => ({
       x: props.margin.left,
       y: props.margin.top,
-      width: props.size.width - props.margin.right,
-      height: props.size.height - props.margin.bottom
+      width: props.size.width - props.margin.left - props.margin.right,
+      height: props.size.height - props.margin.top - props.margin.bottom
     })
+    const canvas = ref<Canvas>(getCanvas())
 
-    const rectangles = ref<any>([])
+    const rectangles = ref<TreeRect[]>([])
 
     function getScales() {
       const values = extent(data.value.map((d) => d[props.dataKeys[1]])) as [number, number]
 
       const x = scaleLinear().domain(values).range([0, 100]).nice()
 
-      const y = scaleSequential().domain(values).interpolator(props.colorFn())
+      const y = scaleSequential<string>().domain(values).interpolator(props.colorFn())
 
       return { x, y }
     }
@@ -95,7 +108,7 @@ export default defineComponent({
       const { y } = getScales()
       const res = buildTree(data.value)
         .leaves()
-        .map((d: any, idx: number) => {
+        .map((d: any, idx: number): TreeRect => {
           return {
             idx,
             x0: canvas.value.x + d.x0,
@@ -114,9 +127,7 @@ export default defineComponent({
 
     function buildTree(data: any) {
       const { x } = getScales()
-      const createTreeMap = treemap()
-        .size([canvas.value.width - canvas.value.x, canvas.value.height - canvas.value.y])
-        .padding(props.padding)
+      const createTreeMap = treemap().size([canvas.value.width, canvas.value.height]).padding(props.padding)
 
       const treeFn = stratify()
         .id((d: any) => d.name)
@@ -140,27 +151,10 @@ export default defineComponent({
       return tree
     }
 
-    const toKebabCase = (data: any) => mapKeys(kebabize, data)
-    const getStyle = (r: any) => {
-      const style = {
-        stroke: r.color,
-        strokeWidth: 5,
-        fill: r.color,
-        fillOpacity: 0.9
-      }
+    const getStyle = (r: any) =>
+      resolveStyle(props.rcStyle, r, { stroke: r.color, strokeWidth: 5, fill: r.color, fillOpacity: 0.9 })
 
-      if (props.rcStyle && typeof props.rcStyle === 'function') {
-        return {
-          ...style,
-          ...props.rcStyle(r)
-        }
-      }
-
-      return style
-    }
-
-    function onMouseOver(i: any) {
-      // console.log('hover', i)
+    function onMouseOver(i: number) {
       selected.value = i
     }
 
@@ -172,18 +166,13 @@ export default defineComponent({
       props,
       () => {
         data.value = props.data
-        canvas.value = {
-          x: props.margin.left,
-          y: props.margin.top,
-          width: props.size.width - props.margin.right,
-          height: props.size.height - props.margin.bottom
-        }
+        canvas.value = getCanvas()
         rectangles.value = buildRectangles()
       },
       { immediate: true }
     )
 
-    return { el, rectangles, selected, getStyle, toKebabCase, onMouseOver, onMouseOut }
+    return { el, rectangles, selected, getStyle, toSvgAttrs, onMouseOver, onMouseOut }
   }
 })
 </script>

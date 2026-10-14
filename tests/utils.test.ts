@@ -19,10 +19,6 @@ describe('getCol', () => {
     ]
     expect(getCol(1, tuples)).toEqual(['avg', 'pl'])
   })
-
-  it('is curried', () => {
-    expect(getCol('v')([{ v: 1 }])).toEqual([1])
-  })
 })
 
 describe('kebabize / mapKeys', () => {

@@ -1,50 +1,46 @@
 import { ref, Ref, watch } from 'vue'
-import { Point } from '@/types'
+import { Data, LayerProps, LayerType, Point } from '@/types'
 import { Series } from 'd3-shape'
 import useChart from './useChart'
+
+export interface PointsOptions extends LayerProps {
+  type?: LayerType
+}
 
 export interface PointsReturn {
   points: Ref<Point[]>
 }
 
-export default (dataKeys: [string, string], props = { stacked: false, type: 'line' }): PointsReturn => {
+export default (dataKeys: [string, string], options: PointsOptions = {}): PointsReturn => {
   const points = ref<Point[]>([])
   const chart = useChart()
-  const { stacked, type } = props
+  const { stacked = false, type = 'line' } = options
 
-  function getPoints(key: string, values: Series<any, string>): Point[] {
+  function getPoints(key: string, values: Series<Data, string>): Point[] {
     const { primary, secondary } = chart.scales
+    const { direction } = chart.config
 
-    if (chart.config.direction === 'horizontal') {
-      const res = values
-        .map((val) => {
-          return {
-            x: primary.mapOne(val.data[key]),
-            y: secondary.mapOne(val[1]),
-            props: { values: [...val], data: val.data }
-          }
-        })
-        .filter((p) => !isNaN(p.x) && !isNaN(p.y))
-
-      return res
-    } else if (chart.config.direction === 'vertical') {
-      return values
-        .map((val) => {
-          return {
-            x: secondary.mapOne(val[1]),
-            y: primary.mapOne(val.data[key]),
-            props: { values: [...val], data: val.data }
-          }
-        })
-        .filter((p) => !isNaN(p.x) && !isNaN(p.y))
+    if (direction !== 'horizontal' && direction !== 'vertical') {
+      return []
     }
-    return []
+
+    return values
+      .map((val) => {
+        const along = primary.mapOne(val.data[key])
+        const across = secondary.mapOne(val[1])
+        return {
+          x: direction === 'horizontal' ? along : across,
+          y: direction === 'horizontal' ? across : along,
+          props: { values: [...val], data: val.data }
+        }
+      })
+      .filter((p) => !isNaN(p.x) && !isNaN(p.y))
   }
 
   function update() {
-    const keys = chart.getStackedKeys(1, type)
+    const keys = stacked ? chart.getStackedKeys(1, type) : [dataKeys[1]]
     const [primaryKey, secondaryKey] = dataKeys
-    const stack = chart.getStackedData(stacked ? keys : [dataKeys[1]])
+    const stack = chart.getStackedData(keys)
     const data = stack.find((s) => s.key === secondaryKey)
 
     if (data) {
@@ -52,13 +48,7 @@ export default (dataKeys: [string, string], props = { stacked: false, type: 'lin
     }
   }
 
-  watch(
-    chart.updates,
-    () => {
-      update()
-    },
-    { immediate: true }
-  )
+  watch(chart.updates, update, { immediate: true })
 
   return {
     points

@@ -11,12 +11,10 @@ import { defineComponent, ref } from 'vue'
 export default defineComponent({
   name: 'Responsive',
   setup() {
-    const el = ref(null)
+    const el = ref<HTMLDivElement | null>(null)
     const { width, height } = useResize(el)
 
     return { el, width, height }
   }
 })
 </script>
-
-<style></style>

@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, inject, onMounted, onUnmounted } from 'vue'
 import { useChart } from '@/hooks'
-import { LayerType } from '@/types'
+import { LayerProps, LayerType } from '@/types'
 
 let nextLayerId = 0
 
@@ -26,7 +26,7 @@ export default defineComponent({
   setup(props) {
     const chart = useChart()
     const id = `layer-${nextLayerId++}`
-    const extraProps = inject('layerProps', {})
+    const extraProps = inject<LayerProps>('layerProps', {})
 
     onMounted(() => {
       chart.addLayer({ id, type: props.type, dataKeys: props.dataKeys, props: extraProps })

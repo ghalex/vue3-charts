@@ -1,15 +1,28 @@
 import type { Axis } from 'd3-axis'
-import { PieArcDatum } from 'd3-shape'
+import type { PieArcDatum } from 'd3-shape'
+import type { DomainValue } from '@/utils/domain'
+
+export type { DomainBounds, DomainValue } from '@/utils/domain'
 
 export type Arc = PieArcDatum<number | { valueOf(): number }>
 
 export type PieSortType = 'desc' | 'asc' | 'none' | 'custom'
 export const PieSort = String as () => PieSortType
 
+export interface Data {
+  [key: string]: string | number
+}
+
+/** What series components attach to each drawn point / bar: the stacked `[y0, y1]` pair and the source row. */
+export interface SeriesProps {
+  values: number[]
+  data: Data
+}
+
 export interface Point {
   x: number
   y: number
-  props: any
+  props: SeriesProps
 }
 
 export interface Rectangle {
@@ -17,7 +30,7 @@ export interface Rectangle {
   y: number
   width: number
   height: number
-  props: any
+  props: SeriesProps
 }
 
 export interface Margin {
@@ -32,19 +45,22 @@ export interface Size {
   height: number
 }
 
-export interface Data {
-  [key: string]: string | number
-}
-
 export type LayerType = 'bar' | 'line' | 'area' | 'pie' | 'points' | 'custom'
+
+/** Provided by `<Group>` and injected by every layer under it. */
+export interface LayerProps {
+  stacked?: boolean
+  maxWidth?: number
+}
 
 export interface Layer {
   id: string
   dataKeys: [string, string]
   type: LayerType
-  props: any
+  props: LayerProps
 }
 
+/** The drawable area inside margins and axis space. `width` / `height` are sizes, not edges. */
 export interface Canvas {
   x: number
   y: number
@@ -52,14 +68,14 @@ export interface Canvas {
   height: number
 }
 
-export type Domain = [string | number, string | number]
+export type Domain = [DomainValue, DomainValue]
 export type Direction = 'horizontal' | 'vertical' | 'circular'
 export type ScaleType = 'band' | 'linear'
 
 export interface AxisConfig {
   domain: Domain
   type: ScaleType
-  format?: (_: string) => string
+  format?: (_: any) => string
   ticks?: number
   tickValues?: any[]
   hide?: boolean
@@ -88,6 +104,12 @@ export interface ChartConfig {
 }
 
 export type ChartOptions = Partial<Omit<ChartConfig, 'axis'>> & { axis?: ChartAxisOptions }
+
+/** camelCase SVG presentation attributes, e.g. `{ fill: 'red', strokeWidth: 2 }`. */
+export type StyleObject = Record<string, string | number | undefined>
+
+/** Style props accept an object or a function of the datum returning one. */
+export type StyleProp<A = any> = StyleObject | ((args: A) => StyleObject)
 
 export interface Payload {
   color: string

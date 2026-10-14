@@ -1,11 +1,12 @@
 <template>
   <Layer :dataKeys="dataKeys" type="line">
-    <path class="chart-line" v-bind="toKebabCase(getStyle())" :d="d" fill="none" />
+    <path class="chart-line" v-bind="toSvgAttrs(style)" :d="d" fill="none" />
     <g v-if="!hideDot">
       <circle
-        v-bind="toKebabCase(getDotStyle({ active: i === mouse.index, index: i }))"
         v-for="(c, i) in points"
         :key="i"
+        v-bind="toSvgAttrs(dotStyleAt(i))"
+        class="chart-dot"
         :cx="c.x"
         :cy="c.y"
       />
@@ -14,24 +15,26 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, watch, ref, inject } from 'vue'
+import { computed, defineComponent, inject, PropType, ref, watch } from 'vue'
 import { line, curveLinear, curveStepAfter, curveNatural, curveMonotoneX, curveMonotoneY } from 'd3-shape'
-import { Point } from '@/types'
-import { is } from 'ramda'
+import { LayerProps, Point, StyleProp } from '@/types'
 import { useChart, useMouse, usePoints } from '@/hooks'
 import Layer from '../Layer/index.vue'
-import { kebabize, mapKeys } from '@/utils'
+import { resolveStyle, toSvgAttrs } from '@/utils'
+
+export type DotStyleArgs = { active: boolean; index: number }
+export type CurveType = 'normal' | 'step' | 'natural' | 'monotone'
 
 export default defineComponent({
   name: 'LineComponent',
   components: { Layer },
   props: {
     lineStyle: {
-      type: [Function, Object],
+      type: [Function, Object] as PropType<StyleProp<void>>,
       required: false
     },
     dotStyle: {
-      type: [Function, Object],
+      type: [Function, Object] as PropType<StyleProp<DotStyleArgs>>,
       required: false
     },
     hideDot: {
@@ -39,22 +42,22 @@ export default defineComponent({
       default: false
     },
     dataKeys: {
-      type: Object as () => [string, string],
+      type: Object as PropType<[string, string]>,
       required: true
     },
     type: {
-      type: String as () => 'normal' | 'step' | 'natural' | 'monotone',
-      default: () => 'normal'
+      type: String as PropType<CurveType>,
+      default: 'normal'
     }
   },
   setup(props) {
-    const { stacked } = inject('layerProps', { stacked: false })
+    const { stacked = false } = inject<LayerProps>('layerProps', {})
     const mouse = useMouse()
     const chart = useChart()
     const d = ref('')
     const { points } = usePoints(props.dataKeys, { stacked, type: 'line' })
 
-    const lineType = {
+    const curves = {
       normal: curveLinear,
       natural: curveNatural,
       step: curveStepAfter,
@@ -62,57 +65,32 @@ export default defineComponent({
     }
 
     function updateLine() {
-      let type = lineType[props.type]
-
-      if (props.type === 'monotone' && chart.config.direction === 'vertical') {
-        type = curveMonotoneY
-      }
+      const curve =
+        props.type === 'monotone' && chart.config.direction === 'vertical' ? curveMonotoneY : curves[props.type]
 
       d.value =
         line<Point>()
           .x((p) => p.x)
           .y((p) => p.y)
-          .curve(type)(points.value) ?? ''
+          .curve(curve)(points.value) ?? ''
     }
 
-    function computeDotStyle(active: boolean) {
-      const dotStyle = props.dotStyle
-      const style = getStyle.value()
+    const style = computed(() => resolveStyle(props.lineStyle, undefined, { stroke: '#8884d8', strokeWidth: 2 }))
 
-      return {
-        r: active ? 5 : 3,
-        stroke: style.stroke,
-        strokeWidth: style.strokeWidth,
-        fill: 'white',
-        ...dotStyle
-      }
+    function dotStyleAt(index: number) {
+      const active = index === mouse.index
+      return resolveStyle(
+        props.dotStyle,
+        { active, index },
+        { r: active ? 5 : 3, stroke: style.value.stroke, strokeWidth: style.value.strokeWidth, fill: 'white' }
+      )
     }
 
-    const getStyle = computed(() => {
-      if (is(Function, props.lineStyle)) {
-        return props.lineStyle as () => any
-      }
+    watch(points, updateLine)
+    watch(chart.updates, updateLine)
+    watch(() => props.type, updateLine)
 
-      return () => ({
-        stroke: '#8884d8',
-        strokeWidth: 2,
-        ...props.lineStyle
-      })
-    })
-
-    const getDotStyle = computed(() => {
-      if (is(Function, props.dotStyle)) {
-        return props.dotStyle as (p: { active: boolean; index: number }) => any
-      }
-
-      return ({ active }: { active: boolean }) => computeDotStyle(active)
-    })
-
-    watch(points, () => updateLine())
-    watch(chart.updates, () => updateLine())
-
-    const toKebabCase = (data: any) => mapKeys(kebabize, data)
-    return { d, mouse, points, toKebabCase, getStyle, getDotStyle }
+    return { d, mouse, points, style, dotStyleAt, toSvgAttrs }
   }
 })
 </script>

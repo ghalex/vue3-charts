@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`vue3-charts` is a published npm library: an SVG charting library for Vue 3 built on d3 primitives (`d3-scale`, `d3-shape`, `d3-axis`, `d3-hierarchy`) and ramda. Vue is a peer dependency. User-facing docs live in a separate repo at https://vue3charts.org/, not here.
+`vue3-charts` is a published npm library: an SVG charting library for Vue 3 built on d3 primitives (`d3-scale`, `d3-shape`, `d3-axis`, `d3-hierarchy`). No other runtime dependencies; keep it that way. Vue is a peer dependency. User-facing docs live in a separate repo at https://vue3charts.org/, not here.
 
 ## Commands
 
@@ -61,11 +61,13 @@ Each series component (`Bar`, `Line`, `Area`, `Pie`) wraps its SVG in `<Layer ty
 
 `Scales` holds `primary` (default `band`) and `secondary` (default `linear`). `direction` decides which screen axis each maps to: `'horizontal'` puts primary on x, `'vertical'` puts primary on y, `'circular'` is used by `Pie` and ignores axes. All geometry hooks (`usePoints`, `useBars`) branch on `chart.config.direction`, so any new drawing code must handle both orientations.
 
-Numeric `domain` entries are strings evaluated with `eval` with `dataMin` / `dataMax` in scope (e.g. `['dataMin', 'dataMax + 100']`). This is a deliberate public API feature.
+`Scale` wraps the d3 scale in a typed API (`at`, `mapOne`, `map`, `invert`, `domain`, `range`, `ticks`, `bandwidth`, plus `band` / `linear` narrowing getters). Drawing code should go through it rather than `scale.scale`, so the union type does not leak.
+
+Numeric `domain` entries are a number, a function `({ dataMin, dataMax }) => number`, or a string expression such as `'dataMax + 100'` or `'min(0, dataMin)'`. Strings are parsed by `src/utils/domain.ts` (arithmetic, parentheses, `dataMin`/`dataMax`, and `min`/`max`/`abs`/`round`/`floor`/`ceil`), never `eval`; anything else throws a `SyntaxError`.
 
 ### Canvas and axis space
 
-`chart.canvas` is the drawable rect: margins plus `axisSpace` (room reserved for the axes). `Chart` measures the rendered axis `<g>` elements with a `ResizeObserver` and feeds their size back into `axisSpace`, which triggers another `changeConfig` → `update()`. `Axis` renders by calling `d3-axis` on a `d3-selection` of its `<g>`, i.e. it mutates the DOM outside Vue's render.
+`chart.canvas` is the drawable rect inside the margins and the `axisSpace` reserved for visible axes. `width` and `height` are real sizes (the right edge is `x + width`); before 2.0 they were edges, so old snippets that do `canvas.width - canvas.x` are wrong now. `Chart` measures the rendered axis `<g>` elements with a `ResizeObserver` and feeds their size back into `axisSpace`, which triggers another `changeConfig` → `update()`. `Axis` renders by calling `d3-axis` on a `d3-selection` of its `<g>`, i.e. it mutates the DOM outside Vue's render.
 
 ### Slots: `layers` vs `widgets`
 
@@ -77,7 +79,7 @@ Numeric `domain` entries are strings evaluated with `eval` with `dataMin` / `dat
 
 ### Style props convention
 
-Styling props (`barStyle`, `lineStyle`, `dotStyle`, `areaStyle`, `pieStyle`, `rcStyle`) are camelCase objects or functions returning objects. They are spread onto SVG elements after `mapKeys(kebabize, ...)` from `src/utils`, so `strokeWidth` becomes `stroke-width`. Function forms receive the datum props plus `active` (and `index` for line dots), which is how per-bar / per-point styling works.
+Styling props (`barStyle`, `lineStyle`, `dotStyle`, `areaStyle`, `pieStyle`, `rcStyle`, HoverBar `barStyle`) are typed `StyleProp`: a camelCase object or a function returning one. Components resolve them with `resolveStyle(prop, args, defaults)` and spread them with `toSvgAttrs` from `src/utils`, so `strokeWidth` becomes `stroke-width`. Function forms receive the datum props plus `active` (and `index` for line dots), which is how per-bar / per-point styling works.
 
 ### Treemap is standalone
 

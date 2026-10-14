@@ -4,7 +4,7 @@
     <line
       :x1="canvas.x"
       :y1="y"
-      :x2="canvas.width"
+      :x2="canvas.x + canvas.width"
       :y2="y"
       :stroke="color"
       :stroke-opacity="strokeOpacity"
@@ -18,7 +18,7 @@
       :x1="y"
       :y1="canvas.y"
       :x2="y"
-      :y2="canvas.height"
+      :y2="canvas.y + canvas.height"
       :stroke="color"
       :stroke-opacity="strokeOpacity"
       :stroke-width="strokeWidth"
@@ -36,7 +36,8 @@ export default defineComponent({
   name: 'ChartMarker',
   props: {
     value: {
-      type: Number
+      type: Number,
+      required: true
     },
     label: {
       type: String,
@@ -48,7 +49,7 @@ export default defineComponent({
     },
     strokeDasharray: {
       type: String,
-      default: () => '3'
+      default: '3'
     },
     strokeWidth: {
       type: Number,
@@ -65,26 +66,15 @@ export default defineComponent({
     const direction = ref<Direction>('horizontal')
     const canvas = ref<Canvas>(chart.canvas)
 
-    watch(
-      chart.updates,
-      () => {
-        if (props.value !== undefined) {
-          y.value = chart.scales.secondary.scale(props.value)
-        }
+    function update() {
+      y.value = chart.scales.secondary.at(props.value)
+      canvas.value = chart.canvas
+      direction.value = chart.config.direction
+    }
 
-        canvas.value = chart.canvas
-        direction.value = chart.config.direction
-      },
-      { immediate: true }
-    )
+    watch(chart.updates, update, { immediate: true })
+    watch(() => props.value, update)
 
-    watch(
-      () => props.value,
-      () => {
-        y.value = chart.scales.secondary.scale(props.value)
-      },
-      { immediate: true }
-    )
     return { y, canvas, direction }
   }
 })

@@ -73,7 +73,7 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const chartEl = ref(null)
+    const chartEl = ref<HTMLDivElement | null>(null)
     const axLeftEl = ref<{ $el: SVGGElement }>()
     const axBottomEl = ref<{ $el: SVGGElement }>()
     const axisSpace = reactive<ChartConfig['axisSpace']>({ x: 40, y: 20 })
@@ -98,32 +98,26 @@ export default defineComponent({
     // Data change
     watch(
       () => props.data,
-      () => {
-        if (chart) chart.changeData(props.data)
-      },
+      () => chart.changeData(props.data),
       { immediate: true }
     )
 
     // Config change
     watch(
       () => props.config,
-      () => {
-        if (chart) chart.changeConfig(props.config)
-      }
+      () => chart.changeConfig(props.config)
     )
 
     watch(
       () => [{ ...axisSpace }, props.direction, props.size, props.margin, props.axis],
       () => {
-        if (chart) {
-          chart.changeConfig({
-            axisSpace: { ...axisSpace },
-            direction: props.direction,
-            size: props.size,
-            margin: props.margin,
-            axis: props.axis
-          })
-        }
+        chart.changeConfig({
+          axisSpace: { ...axisSpace },
+          direction: props.direction,
+          size: props.size,
+          margin: props.margin,
+          axis: props.axis
+        })
       },
       { immediate: true }
     )
@@ -167,8 +161,7 @@ export default defineComponent({
       mouse.position = { x: pointer(e)[0], y: pointer(e)[1] }
 
       const { primary } = chart.scales
-      const keys = chart.getKeys(0)
-      const vals = chart.getData(keys) as number[]
+      const vals = chart.getData(chart.getKeys(0)) as number[]
 
       if (chart.config.direction === 'horizontal') {
         if (primary.type === 'band') {
@@ -176,7 +169,7 @@ export default defineComponent({
           const delta = mouse.position.x - chart.canvas.x
           mouse.index = Math.round((delta + band / 2) / band) - 1
         } else {
-          mouse.index = bisectCenter(vals, primary.scale.invert(mouse.position.x))
+          mouse.index = bisectCenter(vals, primary.invert(mouse.position.x))
         }
       } else if (chart.config.direction === 'vertical') {
         if (primary.type === 'band') {
@@ -184,7 +177,7 @@ export default defineComponent({
           const delta = mouse.position.y - chart.canvas.y
           mouse.index = Math.round((delta + band / 2) / band) - 1
         } else {
-          mouse.index = bisectCenter(vals, primary.scale.invert(mouse.position.y))
+          mouse.index = bisectCenter(vals, primary.invert(mouse.position.y))
         }
       }
     }

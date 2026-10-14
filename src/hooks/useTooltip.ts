@@ -2,9 +2,13 @@ import { ref, watch, computed, Ref } from 'vue'
 import useChart from './useChart'
 import useMouse from './useMouse'
 
+export interface TooltipPayload {
+  [key: string]: string | number
+}
+
 interface Return {
   position: Ref<{ x: number; y: number }>
-  payload: any
+  payload: Ref<TooltipPayload>
   show: Ref<boolean>
 }
 
@@ -13,30 +17,20 @@ export default (): Return => {
   const chart = useChart()
   const show = computed(() => mouse.hover)
   const position = ref({ x: 0, y: 0 })
-  const payload = ref({})
+  const payload = ref<TooltipPayload>({})
 
   watch(mouse, () => {
     const { primary } = chart.scales
-    const keys = chart.getKeys(0)
-    const vals = chart.getData(keys) as number[]
-    const [x] = primary.map([vals[mouse.index]])
+    const vals = chart.getData(chart.getKeys(0))
+    const x = vals[mouse.index] === undefined ? NaN : primary.mapOne(vals[mouse.index])
 
-    if (x !== undefined && !isNaN(x)) {
+    if (!isNaN(x)) {
       if (chart.config.direction === 'horizontal') {
-        position.value = {
-          x,
-          y: mouse.position.y
-        }
+        position.value = { x, y: mouse.position.y }
       } else if (chart.config.direction === 'vertical') {
-        position.value = {
-          x: mouse.position.x,
-          y: x
-        }
+        position.value = { x: mouse.position.x, y: x }
       } else {
-        position.value = {
-          x: mouse.position.x,
-          y: mouse.position.y
-        }
+        position.value = { x: mouse.position.x, y: mouse.position.y }
       }
     }
 

@@ -24,7 +24,7 @@ const makeChart = (config = {}) => {
 describe('Chart canvas', () => {
   it('reserves axis space on the left and bottom', () => {
     const chart = makeChart({ margin: { top: 5, right: 10, bottom: 15, left: 20 } })
-    expect(chart.canvas).toEqual({ x: 60, y: 5, width: 490, height: 365 })
+    expect(chart.canvas).toEqual({ x: 60, y: 5, width: 430, height: 360 })
   })
 
   it('drops bottom axis space when the primary axis is hidden on a horizontal chart', () => {
@@ -76,21 +76,46 @@ describe('Chart layers and updates', () => {
 describe('Chart scales', () => {
   it('maps the band domain from the primary key and keeps a zero value in the data', () => {
     const chart = makeChart()
-    expect(chart.scales.primary.scale.domain()).toEqual(['Jan', 'Feb', 'Mar'])
+    expect(chart.scales.primary.domain()).toEqual(['Jan', 'Feb', 'Mar'])
     expect(chart.getData(['avg'])).toEqual([0, 20, 30])
   })
 
   it('evaluates numeric domain expressions with dataMin and dataMax', () => {
     const chart = makeChart({ axis: { secondary: { domain: ['dataMin - 10', 'dataMax + 100'] } } })
-    expect(chart.scales.secondary.scale.domain()).toEqual([-10, 130])
+    expect(chart.scales.secondary.domain()).toEqual([-10, 130])
   })
 
   it('puts the band scale on y for vertical charts', () => {
     const chart = makeChart({ direction: 'vertical' })
-    const [start, end] = chart.scales.primary.scale.range()
+    const [start, end] = chart.scales.primary.range()
     expect(start).toBe(chart.canvas.y)
-    expect(end).toBe(chart.canvas.height)
+    expect(end).toBe(chart.canvas.y + chart.canvas.height)
     expect(chart.bandScale).toBe(chart.scales.primary)
+  })
+
+  it('accepts numbers and functions as domain bounds', () => {
+    const chart = makeChart({ axis: { secondary: { domain: [0, ({ dataMax }: { dataMax: number }) => dataMax * 2] } } })
+    expect(chart.scales.secondary.domain()).toEqual([0, 60])
+  })
+
+  it('positions and inverts values through the typed scale API', () => {
+    const chart = makeChart({ margin: { top: 0, right: 0, bottom: 0, left: 0 } })
+    const { primary, secondary } = chart.scales
+    expect(primary.at('Jan')).toBe(chart.canvas.x)
+    expect(primary.mapOne('Jan')).toBe(chart.canvas.x + primary.bandwidth() / 2)
+    expect(primary.at('Nope')).toBeNaN()
+    expect(primary.invert(100)).toBeNaN()
+    expect(secondary.invert(secondary.at(20))).toBeCloseTo(20)
+  })
+
+  it('merges partial config over defaults without touching unrelated keys', () => {
+    const chart = makeChart({ axis: { secondary: { ticks: 7 } }, margin: undefined })
+    expect(chart.config.axis.secondary.type).toBe('linear')
+    expect(chart.config.axis.secondary.ticks).toBe(7)
+    expect(chart.config.margin).toEqual({ top: 0, right: 0, bottom: 0, left: 0 })
+    chart.changeConfig({ axis: { primary: { tickValues: ['Jan'] } } })
+    expect(chart.config.axis.primary.tickValues).toEqual(['Jan'])
+    expect(chart.config.axis.secondary.ticks).toBe(7)
   })
 
   it('keeps user tick config', () => {

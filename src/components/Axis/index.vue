@@ -1,10 +1,15 @@
 <template>
-  <g v-if="position === 'bottom'" :class="`layer-axis-x`" ref="el" :transform="`translate(0, ${canvas.height})`" />
+  <g
+    v-if="position === 'bottom'"
+    :class="`layer-axis-x`"
+    ref="el"
+    :transform="`translate(0, ${canvas.y + canvas.height})`"
+  />
   <g v-else :class="`layer-axis-y`" ref="el" :transform="`translate(${canvas.x}, 0)`" />
 </template>
 
 <script lang="ts">
-import type { Axis } from 'd3-axis'
+import type { Axis, AxisScale } from 'd3-axis'
 import type { PropType } from 'vue'
 import type { Canvas } from '@/types'
 
@@ -45,7 +50,7 @@ export default defineComponent({
         const current = props.isPrimary ? primary : secondary
         const config = props.isPrimary ? primary.config : secondary.config
 
-        const ax: Axis<any> = axis.value(current.scale)
+        const ax: Axis<any> = axis.value(current.scale as AxisScale<any>)
 
         if (config.format) {
           ax.tickFormat(config.format)

@@ -7,7 +7,7 @@
         :key="i"
         :id="`arc-${i}`"
         class="chart-pie"
-        v-bind="toKebabCase(pathStyle)"
+        v-bind="toSvgAttrs(pathStyle)"
         :fill="getColor(i)"
         :d="arcGen(arc)"
         @mousemove="showTooltip($event, i)"
@@ -18,11 +18,11 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, PropType, ref, watch } from 'vue'
 import { useMouse, useChart } from '@/hooks'
 import Layer from '../Layer/index.vue'
-import { Arc, PieSort } from '@/types'
-import { kebabize, mapKeys } from '@/utils'
+import { Arc, PieSort, StyleObject, StyleProp } from '@/types'
+import { toSvgAttrs } from '@/utils'
 import { pie, arc } from 'd3-shape'
 import { scaleOrdinal } from 'd3-scale'
 import { pointer } from 'd3-selection'
@@ -33,7 +33,7 @@ export default defineComponent({
   components: { Layer },
   props: {
     pieStyle: {
-      type: [Function, Object],
+      type: [Function, Object] as PropType<StyleProp<void>>,
       required: false
     },
     dataKeys: {
@@ -60,7 +60,7 @@ export default defineComponent({
     const style = computed(() => {
       const custom = typeof props.pieStyle === 'function' ? props.pieStyle() : props.pieStyle
       return {
-        colors: ['#4daf4a', '#377eb8', '#ff7f00', '#984ea3', '#e41a1c'],
+        colors: ['#4daf4a', '#377eb8', '#ff7f00', '#984ea3', '#e41a1c'] as string[],
         innerRadius: 2,
         cornerRadius: 0,
         padAngle: 0.01,
@@ -71,7 +71,7 @@ export default defineComponent({
     // Everything except `colors` is spread onto the <path>; the arc generator consumes the rest.
     const pathStyle = computed(() => {
       const { colors: _colors, innerRadius: _ir, cornerRadius: _cr, padAngle: _pa, ...rest } = style.value
-      return rest
+      return rest as StyleObject
     })
 
     const colors = computed(() => scaleOrdinal<string, string>(style.value.colors))
@@ -101,12 +101,12 @@ export default defineComponent({
 
     function updateLayout() {
       const { canvas } = chart
-      size.value = Math.min(canvas.width - canvas.x, canvas.height - canvas.y) / 2
-      transform.value = `translate(${size.value + canvas.x}, ${size.value + canvas.y})`
+      size.value = Math.min(canvas.width, canvas.height) / 2
+      transform.value = `translate(${canvas.x + canvas.width / 2}, ${canvas.y + canvas.height / 2})`
     }
 
     function updatePie() {
-      const data = chart.getData([props.dataKeys[1]])
+      const data = chart.getData([props.dataKeys[1]]).map(Number)
       const generator = pie<number>()
       const sorter = pieSort.value
       arcs.value = (sorter ? generator.sort(sorter) : generator.sort(null))(data)
@@ -128,8 +128,6 @@ export default defineComponent({
       mouse.index = -1
     }
 
-    const toKebabCase = (data: any) => mapKeys(kebabize, data)
-
     watch(
       chart.updates,
       () => {
@@ -147,7 +145,7 @@ export default defineComponent({
       transform,
       getColor,
       hideTooltip,
-      toKebabCase,
+      toSvgAttrs,
       showTooltip
     }
   }

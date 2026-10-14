@@ -1,7 +1,6 @@
-import * as r from 'ramda'
 import { ref, Ref } from 'vue'
 import { Scales } from '.'
-import { getCol } from '@/utils'
+import { getCol, mergeConfig } from '@/utils'
 import { stack, stackOrderNone } from 'd3-shape'
 import { AxisConfig, Canvas, ChartConfig, ChartOptions, Data, Layer, LayerType } from '@/types'
 
@@ -30,6 +29,10 @@ const defaultConfig: ChartConfig = {
   }
 }
 
+/**
+ * Non-reactive chart state: data, config, registered layers and scales. Every mutation calls
+ * `update()`, which recomputes the scales and bumps `updates`; drawing code watches that counter.
+ */
 export default class Chart {
   data: Data[]
   layers: Layer[]
@@ -40,10 +43,7 @@ export default class Chart {
   constructor(data: Data[], config: ChartOptions) {
     this.data = data
     this.layers = []
-    this.config = r.mergeDeepLeft(
-      r.pickBy((p) => p !== undefined, config) as ChartOptions,
-      defaultConfig
-    ) as ChartConfig
+    this.config = mergeConfig(defaultConfig, config)
     this.scales = new Scales(this.config.axis)
     this.updates = ref(0)
   }
@@ -63,6 +63,7 @@ export default class Chart {
     return this.config.direction === 'vertical' ? this.config.axis.primary : this.config.axis.secondary
   }
 
+  /** The drawable area: inside the margins, minus the space reserved for visible axes. */
   get canvas(): Canvas {
     const { margin, size, axisSpace } = this.config
     const spaceX = this.leftAxis.hide ? 0 : axisSpace.x
@@ -71,35 +72,34 @@ export default class Chart {
     return {
       x: margin.left + spaceX,
       y: margin.top,
-      width: size.width - margin.right,
-      height: size.height - margin.bottom - spaceY
+      width: size.width - margin.left - spaceX - margin.right,
+      height: size.height - margin.top - margin.bottom - spaceY
     }
   }
 
   public getStackedData(keys: string[]) {
-    return stack().keys(keys).order(stackOrderNone)(this.data as any)
+    return stack<Data>().keys(keys).order(stackOrderNone)(this.data)
   }
 
   public changeData(data: Data[]) {
     this.data = data
-    this.update('data')
+    this.update()
   }
 
   public changeConfig(config: ChartOptions) {
-    this.config = r.mergeDeepLeft(r.pickBy((p) => p !== undefined, config) as ChartOptions, this.config) as ChartConfig
+    this.config = mergeConfig(this.config, config)
     this.scales.changeConfig(this.config.axis)
-
-    this.update('config')
+    this.update()
   }
 
   public addLayer(layer: Layer) {
     this.layers.push(layer)
-    this.update('layers')
+    this.update()
   }
 
   public removeLayer(id: string) {
     this.layers = this.layers.filter((l) => l.id !== id)
-    this.update('layers')
+    this.update()
   }
 
   public getLayers(type?: LayerType) {
@@ -109,41 +109,26 @@ export default class Chart {
     return this.layers
   }
 
-  public getData(keys: string[]): number[] {
-    return keys.reduce((arr, key) => arr.concat(getCol(key, this.data)), [])
+  public getData(keys: string[]): (string | number)[] {
+    return keys.flatMap((key) => getCol<string | number>(key, this.data))
   }
 
-  public getKeys(idx: number = -1, type: string | null = null) {
-    const keys = this.layers
-      .filter((l) => {
-        if (type) return l.type === type
-        return true
-      })
-      .map((l) => l.dataKeys)
-
-    if (idx === -1) {
-      return keys
-    }
-
-    return getCol(idx, keys)
+  /** `dataKeys` of every registered layer (optionally of one type); `idx` picks one column of the tuples. */
+  public getKeys(): [string, string][]
+  public getKeys(idx: number, type?: LayerType | null): string[]
+  public getKeys(idx: number = -1, type: LayerType | null = null) {
+    const keys = this.layers.filter((l) => !type || l.type === type).map((l) => l.dataKeys)
+    return idx === -1 ? keys : getCol<string>(idx, keys)
   }
 
-  public getStackedKeys(idx: number = -1, type: string | null = null) {
-    const keys = this.layers
-      .filter((l) => {
-        if (type) return l.type === type && l.props.stacked
-        return l.props.stacked
-      })
-      .map((l) => l.dataKeys)
-
-    if (idx === -1) {
-      return keys
-    }
-
-    return getCol(idx, keys)
+  public getStackedKeys(): [string, string][]
+  public getStackedKeys(idx: number, type?: LayerType | null): string[]
+  public getStackedKeys(idx: number = -1, type: LayerType | null = null) {
+    const keys = this.layers.filter((l) => (!type || l.type === type) && l.props.stacked).map((l) => l.dataKeys)
+    return idx === -1 ? keys : getCol<string>(idx, keys)
   }
 
-  public update(_: string) {
+  public update() {
     const stackedData = this.getStackedData(this.getStackedKeys(1))
     this.scales.updateRange(this.canvas, this.config.direction)
     this.scales.updateDomain(this.data, stackedData, this.getKeys())

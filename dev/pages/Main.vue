@@ -184,17 +184,20 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import * as mockup from '@/mockup'
-import * as r from 'ramda'
+import type { Direction } from '@/types'
 
 export default defineComponent({
   name: 'App',
   setup() {
     const data = ref<any>(mockup.plByMonth)
-    const data2 = ref(r.sortBy(r.prop('nbOfTrades'), mockup.trades))
+    const data2 = ref([...mockup.trades].sort((a, b) => a.nbOfTrades - b.nbOfTrades))
     const data3 = ref<any>(mockup.plMonthYear)
     const data4 = ref(mockup.tags)
 
-    const direction = ref('horizontal')
+    // `?direction=vertical` lets the playground open in vertical mode (handy for screenshots).
+    const direction = ref<Direction>(
+      new URLSearchParams(window.location.search).get('direction') === 'vertical' ? 'vertical' : 'horizontal'
+    )
     const margin = ref({
       left: 0,
       top: 0,

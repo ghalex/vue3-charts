@@ -21,12 +21,15 @@ export default class Scales {
   }
 
   public updateRange(canvas: Canvas, direction: Direction) {
+    const right = canvas.x + canvas.width
+    const bottom = canvas.y + canvas.height
+
     if (direction === 'horizontal') {
-      this.primary.updateRange([canvas.x, canvas.width])
-      this.secondary.updateRange([canvas.height, canvas.y])
+      this.primary.updateRange([canvas.x, right])
+      this.secondary.updateRange([bottom, canvas.y])
     } else if (direction === 'vertical') {
-      this.primary.updateRange([canvas.y, canvas.height])
-      this.secondary.updateRange([canvas.x, canvas.width])
+      this.primary.updateRange([canvas.y, bottom])
+      this.secondary.updateRange([canvas.x, right])
     }
   }
 

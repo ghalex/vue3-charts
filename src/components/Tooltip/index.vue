@@ -15,14 +15,14 @@
         v-if="direction === 'horizontal'"
         class="v-tooltip-line-vertical"
         :style="{
-          height: canvas.height - canvas.y + 'px'
+          height: canvas.height + 'px'
         }"
       />
       <div
         v-else
         class="v-tooltip-line-horizontal"
         :style="{
-          width: canvas.width - canvas.x + 'px'
+          width: canvas.width + 'px'
         }"
       />
     </div>
@@ -32,7 +32,6 @@
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from 'vue'
 import { format } from 'd3-format'
-import { is, omit } from 'ramda'
 import { useChart, useTooltip } from '@/hooks'
 import { Canvas } from '@/types'
 
@@ -65,7 +64,7 @@ export default defineComponent({
     const { position, payload, show } = useTooltip()
 
     const isRight = computed(() => {
-      return position.value.x >= (canvas.value.width / 4) * 3
+      return position.value.x >= canvas.value.x + (canvas.value.width / 4) * 3
     })
 
     const style = computed(() => {
@@ -105,12 +104,14 @@ export default defineComponent({
       }
     })
 
-    const formatValue = (val: any, formatter: any) => {
-      return is(Function, formatter) ? formatter(val) : is(Number, val) ? format(formatter as string)(val) : val
+    const formatValue = (val: unknown, formatter: string | ((v: unknown) => string)) => {
+      if (typeof formatter === 'function') return formatter(val)
+      return typeof val === 'number' ? format(formatter)(val) : val
     }
 
     const items = computed(() => {
-      return Object.keys(omit(['idx'], payload.value))
+      const { idx: _idx, ...fields } = payload.value
+      return Object.keys(fields)
         .map((key) => {
           const config = {
             ...{ label: key, format: props.format, color: props.color, hide: false },
@@ -122,7 +123,7 @@ export default defineComponent({
             label: config.label,
             value: payload.value[key],
             valueFormatted: formatValue(payload.value[key], config.format),
-            color: is(Function, config.color) ? config.color(payload.value) : config.color,
+            color: typeof config.color === 'function' ? config.color(payload.value) : config.color,
             hide: config.hide
           }
         })

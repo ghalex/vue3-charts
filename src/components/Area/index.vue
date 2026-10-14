@@ -1,31 +1,33 @@
 <template>
   <Layer type="area" :dataKeys="dataKeys">
-    <path v-bind="toKebabCase(getStyle())" :d="d" />
+    <path class="chart-area" v-bind="toSvgAttrs(style)" :d="d" />
   </Layer>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, watch, ref } from 'vue'
+import { computed, defineComponent, inject, PropType, ref, watch } from 'vue'
 import { area, curveLinear, curveStep, curveNatural, curveMonotoneX, curveMonotoneY } from 'd3-shape'
 import Layer from '../Layer/index.vue'
 import { useBars, useChart, usePoints } from '@/hooks'
-import { kebabize, mapKeys } from '@/utils'
+import { resolveStyle, toSvgAttrs } from '@/utils'
+import { LayerProps, Point, Rectangle, StyleProp } from '@/types'
+import type { CurveType } from '../Line/index.vue'
 
 export default defineComponent({
   name: 'AreaComponent',
   components: { Layer },
   props: {
     areaStyle: {
-      type: Object,
+      type: [Function, Object] as PropType<StyleProp<void>>,
       required: false
     },
     dataKeys: {
-      type: Object as () => [string, string],
+      type: Object as PropType<[string, string]>,
       required: true
     },
     type: {
-      type: String as () => 'normal' | 'step' | 'natural' | 'monotone',
-      default: () => 'normal'
+      type: String as PropType<CurveType>,
+      default: 'normal'
     },
     gap: {
       type: Number,
@@ -34,75 +36,61 @@ export default defineComponent({
   },
   setup(props) {
     const chart = useChart()
-    const { stacked } = inject('layerProps', { stacked: false })
-    const { points } = usePoints(props.dataKeys, {
-      stacked: false,
-      type: 'area'
-    })
-    const { bars } = useBars(props.dataKeys, {
-      stacked,
-      type: 'area',
-      gap: props.gap,
-      maxWidth: -1
-    })
+    const { stacked = false } = inject<LayerProps>('layerProps', {})
+    const { points } = usePoints(props.dataKeys, { stacked: false, type: 'area' })
+    // Stacked areas are built from the stacked bar rectangles, which carry both ends of each segment.
+    const { bars } = useBars(props.dataKeys, { stacked, type: 'area', gap: props.gap, maxWidth: -1 })
     const d = ref('')
 
-    const lineType = (type: any) => {
-      // console.log(type, chart.config.direction)
-      const map: any = {
+    const curve = (type: CurveType) => {
+      const map = {
         normal: curveLinear,
         natural: curveNatural,
         step: curveStep,
         monotone: chart.config.direction === 'horizontal' ? curveMonotoneX : curveMonotoneY
       }
-
       return map[type]
     }
 
-    const buildArea = () => {
+    function update() {
       const { secondary } = chart.scales
+      const baseline = secondary.at(0)
+
       if (stacked) {
-        return area<any>()
-          .curve(lineType(props.type))
-          .x0((p) => p.x + p.width / 2)
-          .y0((p) => p.y)
-          .x1((p) => p.x + p.width / 2)
-          .y1((p) => p.y + p.height)
+        d.value =
+          area<Rectangle>()
+            .curve(curve(props.type))
+            .x0((p) => p.x + p.width / 2)
+            .y0((p) => p.y)
+            .x1((p) => p.x + p.width / 2)
+            .y1((p) => p.y + p.height)(bars.value) ?? ''
+      } else if (chart.config.direction === 'vertical') {
+        d.value =
+          area<Point>()
+            .curve(curve(props.type))
+            .y0((p) => p.y)
+            .y1((p) => p.y)
+            .x0((p) => p.x)
+            .x1(() => baseline)(points.value) ?? ''
+      } else {
+        d.value =
+          area<Point>()
+            .curve(curve(props.type))
+            .x0((p) => p.x)
+            .x1((p) => p.x)
+            .y0((p) => p.y)
+            .y1(() => baseline)(points.value) ?? ''
       }
-
-      if (chart.config.direction === 'vertical') {
-        return area<any>()
-          .curve(lineType(props.type))
-          .y0((p) => p.y)
-          .y1((p) => p.y)
-          .x0((p) => p.x)
-          .x1(() => secondary.scale(0))
-      }
-
-      return area<any>()
-        .curve(lineType(props.type))
-        .x0((p) => p.x)
-        .x1((p) => p.x)
-        .y0((p) => p.y)
-        .y1(() => secondary.scale(0))
     }
 
-    const getStyle = computed(() => {
-      return () => ({
-        fill: 'blue',
-        fillOpacity: 0.25,
-        stroke: 'none',
-        ...props.areaStyle
-      })
-    })
+    const style = computed(() =>
+      resolveStyle(props.areaStyle, undefined, { fill: 'blue', fillOpacity: 0.25, stroke: 'none' })
+    )
 
-    const toKebabCase = (data: any) => mapKeys(kebabize, data)
+    watch(stacked ? bars : points, update)
+    watch(() => props.type, update)
 
-    watch(points, () => {
-      d.value = (stacked ? buildArea()(bars.value) : buildArea()(points.value)) ?? ''
-    })
-
-    return { d, getStyle, toKebabCase }
+    return { d, style, toSvgAttrs }
   }
 })
 </script>

@@ -2,71 +2,56 @@
   <g class="layer-hover-bar" v-if="mouse.hover">
     <rect
       class="hover-bar"
-      v-bind="barStyle"
+      v-bind="toSvgAttrs(barStyle)"
       :x="bar.x"
       :y="bar.y"
-      :width="bar.width > 0 ? bar.width : 0"
-      :height="bar.height > 0 ? bar.height : 0"
+      :width="Math.max(bar.width, 0)"
+      :height="Math.max(bar.height, 0)"
     />
   </g>
 </template>
 
 <script lang="ts">
 import { useChart, useMouse } from '@/hooks'
-import { Canvas } from '@/types'
-import { ref, defineComponent, watch } from 'vue'
+import { StyleObject } from '@/types'
+import { toSvgAttrs } from '@/utils'
+import { defineComponent, PropType, ref, watch } from 'vue'
 
 export default defineComponent({
   name: 'HoverBar',
   props: {
     barStyle: {
-      type: Object,
-      default: () => ({ 'fill-opacity': 0.05 })
+      type: Object as PropType<StyleObject>,
+      default: () => ({ fillOpacity: 0.05 })
     }
   },
   setup() {
     const chart = useChart()
     const mouse = useMouse()
-
     const bar = ref({ x: 0, y: 0, width: 0, height: 0 })
-    const direction = ref('horizontal')
-    const canvas = ref<Canvas>({ x: 0, y: 0, width: 0, height: 0 })
-
-    watch(
-      chart.updates,
-      () => {
-        canvas.value = chart.canvas
-        direction.value = chart.config.direction
-      },
-      { immediate: true }
-    )
 
     watch(mouse, () => {
-      if (chart.bandScale) {
-        const vals = chart.getData(chart.getKeys(0)) as number[]
-        const [x] = chart.bandScale.map([vals[mouse.index]])
-        const width = chart.bandScale.bandwidth()
+      const band = chart.bandScale
+      if (!band) return
 
-        if (x !== undefined && !isNaN(x)) {
-          if (chart.config.direction === 'horizontal') {
-            bar.value = {
-              x: x - width / 2,
-              y: canvas.value.y,
-              width,
-              height: canvas.value.height - canvas.value.y
-            }
-          } else {
-            bar.value = {
-              x: canvas.value.x,
-              y: x - width / 2,
-              width: canvas.value.width - canvas.value.x,
-              height: width
-            }
-          }
-        }
+      const vals = chart.getData(chart.getKeys(0))
+      const value = vals[mouse.index]
+      if (value === undefined) return
+
+      const center = band.mapOne(value)
+      const width = band.bandwidth()
+      const { canvas } = chart
+
+      if (isNaN(center)) return
+
+      if (chart.config.direction === 'horizontal') {
+        bar.value = { x: center - width / 2, y: canvas.y, width, height: canvas.height }
+      } else {
+        bar.value = { x: canvas.x, y: center - width / 2, width: canvas.width, height: width }
       }
     })
-    return { bar, canvas, direction, mouse }
+
+    return { bar, mouse, toSvgAttrs }
   }
 })
 </script>
