@@ -31,11 +31,19 @@ Run `npm run format` before committing; CI fails on unformatted files. ESLint ha
 
 ## CI and publishing (important)
 
-`.github/workflows/ci.yml` runs on every pull request and every push to `main`: `lint` (eslint + prettier check), `typecheck`, `test` and `build` as separate jobs. On a push to `main` only, a `publish` job that `needs` all four builds again and runs `npm publish` when `package.json` `version` differs from what is on npm, so a release is "bump `version`, push to main". Do not bump the version unless a release is intended.
+`.github/workflows/ci.yml` runs on every pull request and every push to `main`: `lint` (eslint + prettier check), `typecheck`, `test` and `build` as separate jobs. On a push to `main` only, a `publish` job that `needs` all four builds again and runs `npm publish` when `package.json` `version` differs from what is on npm, so a release is "bump `version`, push to main". See **Versioning** below: the maintainer bumps, never the assistant.
 
 Publishing uses npm trusted publishing (GitHub OIDC, `id-token: write`), not a token secret. If publish fails with `E404 ... PUT https://registry.npmjs.org/vue3-charts`, the trusted publisher on npmjs.com (package Settings, Trusted Publisher: GitHub Actions, repo `ghalex/vue3-charts`, workflow `ci.yml`) is missing or misconfigured. The old `NPM_TOKEN` secret is a revoked classic token and is unused.
 
 `package-lock.json` is committed and CI installs with `npm ci`, so a dependency change must be made with `npm install <pkg>` locally and the updated lockfile committed alongside `package.json`.
+
+### Versioning (important)
+
+Pushing a changed `version` to `main` publishes to npm, and a publish cannot be undone. Rules:
+
+- **Never change `version` on your own.** Only the maintainer decides when to release and which version it is. If a release seems appropriate, say so and stop; do not bump "while you are at it", and never treat a vague reply such as "ok" or "push" as approval of a version number. Ask for the exact version and wait for it.
+- **Strict semantic versioning.** Patch (`x.y.Z`) for bug fixes with no API change. Minor (`x.Y.0`) for new, backwards-compatible features, including tooling and build changes that do not change behaviour for consumers. Major (`X.0.0`) is reserved for changes that break existing user code, and that call is the maintainer's; do not promote a release to major because a refactor _could_ affect someone.
+- Bump with `npm version <patch|minor|major> --no-git-tag-version` so `package-lock.json` stays in sync, move the `Unreleased` section of `CHANGELOG.md` under the new version, and make that its own `chore: release x.y.z` commit.
 
 ## Architecture
 
