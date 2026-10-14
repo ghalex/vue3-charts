@@ -30,8 +30,15 @@ const tscAlias = () => {
   }
 }
 
+// Runtime dependencies are installed by the consumer (see package.json `dependencies`),
+// so they must not be inlined into the bundle.
+const external = [...Object.keys(packageJson.dependencies), ...Object.keys(packageJson.peerDependencies)].map(
+  (name) => new RegExp(`^${name}(/|$)`)
+)
+
 export default {
   input: 'src/index.ts',
+  external,
   output: [
     {
       format: 'cjs',
