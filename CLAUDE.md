@@ -49,7 +49,7 @@ Pushing a changed `version` to `main` publishes to npm, and a publish cannot be 
 
 ### Entry and exports
 
-`src/index.ts` exports a Vue plugin (`app.use(...)` registers every component globally under its export name from `src/components/index.ts`) and also re-exports all components and hooks as named exports. A component that is not listed in `src/components/index.ts` is not part of the public API (`Labels` is an unfinished stub and is intentionally not exported).
+`src/index.ts` exports a Vue plugin (`app.use(...)` registers every component globally under its export name from `src/components/index.ts`) and also re-exports all components and hooks as named exports. A component that is not listed in `src/components/index.ts` is not part of the public API.
 
 ### The Chart model and the `updates` counter
 
