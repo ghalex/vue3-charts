@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1 (2026-10-14)
+
+- Versioning rules documented in CLAUDE.md; no library changes.
+
 ## 2.0.0 (2026-10-14)
 
 ### Breaking
