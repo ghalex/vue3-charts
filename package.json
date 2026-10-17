@@ -1,6 +1,6 @@
 {
   "name": "vue3-charts",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "SVG charting library for Vue 3 built on d3",
   "main": "dist/vue3-charts.js",
   "module": "dist/vue3-charts.esm.js",

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.2.0 (2026-10-17)
 
 - `Marker` accepts `axis="primary"` to mark a value on the primary axis (a vertical line on a horizontal chart);
   `value` can be a category string for band scales. The default stays `axis="secondary"` (#60).
