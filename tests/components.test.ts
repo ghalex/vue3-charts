@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent, h, nextTick } from 'vue'
-import { Bar, Chart, Group, Line, Pie } from '@/components'
+import { Bar, Chart, Group, Line, Marker, Pie } from '@/components'
 import { useChart } from '@/hooks'
 import type { Chart as ChartModel } from '@/models'
 
@@ -195,5 +195,58 @@ describe('Chart axis measurement', () => {
     } finally {
       vi.unstubAllGlobals()
     }
+  })
+})
+
+describe('Marker', () => {
+  const mountMarker = (
+    markerProps: InstanceType<typeof Marker>['$props'],
+    direction: 'horizontal' | 'vertical' = 'horizontal'
+  ) => {
+    const wrapper = mount(Chart, {
+      props: { data, direction, size: { width: 400, height: 300 } },
+      slots: {
+        layers: () => [h(ChartProbe), h(Bar, { dataKeys: ['name', 'pl'] }), h(Marker, markerProps)]
+      }
+    })
+    return wrapper
+  }
+
+  const lineAttrs = (wrapper: ReturnType<typeof mount>) => {
+    const line = wrapper.find('g.layer-marker line')
+    return ['x1', 'y1', 'x2', 'y2'].map((attr) => Number(line.attributes(attr)))
+  }
+
+  it('marks a value on the secondary axis by default', async () => {
+    const wrapper = mountMarker({ value: 20 })
+    await nextTick()
+
+    const [x1, y1, x2, y2] = lineAttrs(wrapper)
+    const { canvas, scales } = findChart(wrapper)
+    expect(y1).toBe(y2)
+    expect(y1).toBe(scales.secondary.at(20))
+    expect([x1, x2]).toEqual([canvas.x, canvas.x + canvas.width])
+  })
+
+  it('marks a category on the primary axis with a line across the chart (#60)', async () => {
+    const wrapper = mountMarker({ value: 'Feb', axis: 'primary' })
+    await nextTick()
+
+    const [x1, y1, x2, y2] = lineAttrs(wrapper)
+    const { canvas, scales } = findChart(wrapper)
+    expect(x1).toBe(x2)
+    expect(x1).toBe(scales.primary.mapOne('Feb'))
+    expect([y1, y2]).toEqual([canvas.y, canvas.y + canvas.height])
+  })
+
+  it('draws a primary-axis marker horizontally on a vertical chart', async () => {
+    const wrapper = mountMarker({ value: 'Feb', axis: 'primary' }, 'vertical')
+    await nextTick()
+
+    const [x1, y1, x2, y2] = lineAttrs(wrapper)
+    const { canvas, scales } = findChart(wrapper)
+    expect(y1).toBe(y2)
+    expect(y1).toBe(scales.primary.mapOne('Feb'))
+    expect([x1, x2]).toEqual([canvas.x, canvas.x + canvas.width])
   })
 })

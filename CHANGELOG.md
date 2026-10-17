@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- `Marker` accepts `axis="primary"` to mark a value on the primary axis (a vertical line on a horizontal chart);
+  `value` can be a category string for band scales. The default stays `axis="secondary"` (#60).
+
 ## 2.1.1 (2026-10-14)
 
 - `Chart` no longer crashes during server-side rendering (`ResizeObserver is not defined`); the observer is created

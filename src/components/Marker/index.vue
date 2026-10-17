@@ -1,11 +1,11 @@
 <template>
-  <g class="layer-marker" v-if="direction === 'horizontal'">
-    <text :x="canvas.x + 5" :y="y - 5" text-anchor="start" :fill="color">{{ label }}</text>
+  <g class="layer-marker" v-if="horizontal">
+    <text :x="canvas.x + 5" :y="position - 5" text-anchor="start" :fill="color">{{ label }}</text>
     <line
       :x1="canvas.x"
-      :y1="y"
+      :y1="position"
       :x2="canvas.x + canvas.width"
-      :y2="y"
+      :y2="position"
       :stroke="color"
       :stroke-opacity="strokeOpacity"
       :stroke-width="strokeWidth"
@@ -13,11 +13,13 @@
     />
   </g>
   <g class="layer-marker" v-else>
-    <text :x="y + 10" :y="canvas.y + 5" text-anchor="start" :fill="color" style="writing-mode: tb">{{ label }}</text>
+    <text :x="position + 10" :y="canvas.y + 5" text-anchor="start" :fill="color" style="writing-mode: tb">{{
+      label
+    }}</text>
     <line
-      :x1="y"
+      :x1="position"
       :y1="canvas.y"
-      :x2="y"
+      :x2="position"
       :y2="canvas.y + canvas.height"
       :stroke="color"
       :stroke-opacity="strokeOpacity"
@@ -29,15 +31,20 @@
 
 <script lang="ts">
 import { useChart } from '@/hooks'
-import { Canvas, Direction } from '@/types'
-import { ref, defineComponent, watch } from 'vue'
+import { Canvas } from '@/types'
+import { ref, defineComponent, watch, PropType } from 'vue'
 
 export default defineComponent({
   name: 'ChartMarker',
   props: {
     value: {
-      type: Number,
+      type: [Number, String] as PropType<number | string>,
       required: true
+    },
+    /** Which scale `value` belongs to. The line is drawn across the chart, perpendicular to that axis. */
+    axis: {
+      type: String as PropType<'primary' | 'secondary'>,
+      default: 'secondary'
     },
     label: {
       type: String,
@@ -62,20 +69,22 @@ export default defineComponent({
   },
   setup(props) {
     const chart = useChart()
-    const y = ref(0)
-    const direction = ref<Direction>('horizontal')
+    const position = ref(0)
+    // true when the marker is a horizontal line (the marked axis runs vertically on screen)
+    const horizontal = ref(true)
     const canvas = ref<Canvas>(chart.canvas)
 
     function update() {
-      y.value = chart.scales.secondary.at(props.value)
+      const scale = props.axis === 'primary' ? chart.scales.primary : chart.scales.secondary
+      position.value = scale.mapOne(props.value)
       canvas.value = chart.canvas
-      direction.value = chart.config.direction
+      horizontal.value = (props.axis === 'secondary') === (chart.config.direction === 'horizontal')
     }
 
     watch(chart.updates, update, { immediate: true })
-    watch(() => props.value, update)
+    watch(() => [props.value, props.axis], update)
 
-    return { y, canvas, direction }
+    return { position, canvas, horizontal }
   }
 })
 </script>

@@ -102,6 +102,7 @@
             <Area :dataKeys="['name', 'pl']" :areaStyle="{ fill: 'blue' }" type="normal" />
             <!-- </Group> -->
             <Marker :value="0" label="0$" color="red" strokeDasharray="0" />
+            <Marker value="Feb/21" axis="primary" label="Feb" color="green" strokeWidth="2" strokeDasharray="6 6" />
           </template>
           <template #widgets>
             <Tooltip color="red" hideLine />
